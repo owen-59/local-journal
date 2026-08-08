@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:journal/widgets/home_screen.dart';
 
 void main() {
     runApp(const App());
@@ -9,12 +10,7 @@ final _router = GoRouter(
     routes: [
         GoRoute(
             path: "/",
-            builder: (context, state) => Scaffold(
-                appBar: AppBar(title: Text("Home Screen")),
-                body: Center(
-                    child: Text("Home"),
-                )
-            )
+            builder: (context, state) => HomeScreen(),
         )
     ]
 );
