@@ -1,9 +1,6 @@
 class Entry {
-    final String body;
-    final DateTime date;
+  final String body;
+  final DateTime date;
 
-    Entry({
-        required this.body,
-        required this.date,
-    });
+  Entry({required this.body, required this.date});
 }
