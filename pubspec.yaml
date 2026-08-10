@@ -37,6 +37,7 @@ dependencies:
   go_router: ^17.4.0
   flutter_riverpod: ^3.3.2
   saf: ^2.1.0
+  saf_stream: ^2.0.0
 
 dev_dependencies:
   flutter_test:

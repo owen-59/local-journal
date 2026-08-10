@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:journal/db.dart';
 import 'package:journal/widgets/folder_selection_page.dart';
 import 'package:journal/widgets/home_screen.dart';
 import 'package:saf/saf.dart';
@@ -10,7 +11,10 @@ void main() async {
   runApp(const App());
 }
 
-final folderUriProvider = Provider<String>((ref) => "");
+// initialise this in overrides
+final databaseProvider = Provider<Database>((ref) {
+  throw UnimplementedError();
+});
 
 final _router = GoRouter(
   routes: [GoRoute(path: "/", builder: (context, state) => HomeScreen())],
@@ -25,7 +29,7 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   late Saf _saf;
-  String _folder = "";
+  late Database _database;
   bool _authorised = false;
 
   @override
@@ -38,14 +42,14 @@ class _AppState extends State<App> {
   Future<void> _initSaf() async {
     final grants = await _saf.persistedPermissions();
     if (grants.isNotEmpty) {
-      onPermissionsGranted(grants[0].uri);
+      onPermissionsGranted(Uri.parse(grants[0].uri));
     }
   }
 
-  void onPermissionsGranted(String dir) {
+  void onPermissionsGranted(Uri dirUri) {
     setState(() {
       _authorised = true;
-      _folder = dir;
+      _database = Database(folderUri: dirUri, saf: _saf);
     });
   }
 
@@ -53,7 +57,7 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     return _authorised
         ? ProviderScope(
-            overrides: [folderUriProvider.overrideWithValue(_folder)],
+            overrides: [databaseProvider.overrideWithValue(_database)],
             child: MaterialApp.router(routerConfig: _router),
           )
         : FolderSelectionPage(saf: _saf, onGranted: onPermissionsGranted);

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:journal/main.dart';
-import 'package:journal/providers/list_entries.dart';
+import 'package:journal/db.dart';
 import 'package:journal/widgets/entry_card.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -9,19 +8,21 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final entries = ref.watch(listEntriesProvider);
-    final uri = ref.watch(folderUriProvider);
+    final entries = ref.watch(itemsProvider);
 
-    return Scaffold(
-      appBar: AppBar(title: Text("Bar Title")),
-      body: Column(
-        children: [
-          Text("DEBUG: Reading $uri"),
-          ...entries.map((entry) {
-            return EntryCard(entry: entry);
-          }),
-        ],
+    return switch (entries) {
+      AsyncData(:final value) => Scaffold(
+        appBar: AppBar(title: Text("Bar Title")),
+        body: ListView.builder(
+          itemCount: value.length,
+          itemBuilder: (context, index) => EntryCard(entry: value[index]),
+        ),
       ),
-    );
+      AsyncError(:final error) => Scaffold(
+        appBar: AppBar(title: Text("Error")),
+        body: Text(error.toString()),
+      ),
+      _ => const CircularProgressIndicator(),
+    };
   }
 }

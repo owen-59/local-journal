@@ -3,7 +3,7 @@ import 'package:saf/saf.dart';
 
 class FolderSelectionPage extends StatelessWidget {
   final Saf saf;
-  final void Function(String) onGranted;
+  final void Function(Uri) onGranted;
 
   const FolderSelectionPage({
     super.key,
@@ -16,7 +16,7 @@ class FolderSelectionPage extends StatelessWidget {
       SafDocumentFile? dir = await saf.pickDirectory();
 
       if (dir != null) {
-        onGranted(dir.uri);
+        onGranted(Uri.parse(dir.uri));
       }
     } catch (e) {
       // ignore error
