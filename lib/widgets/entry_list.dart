@@ -10,13 +10,16 @@ class EntryList extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final entries = ref.watch(itemsProvider);
 
-    return switch (entries) {
-      AsyncData(:final value) => ListView.builder(
-        itemCount: value.length,
-        itemBuilder: (context, index) => EntryCard(entry: value[index]),
-      ),
-      AsyncError(:final error) => Center(child: Text(error.toString())),
-      _ => Center(child: const CircularProgressIndicator()),
-    };
+    return RefreshIndicator(
+      onRefresh: () async => ref.refresh(itemsProvider.future),
+      child: switch (entries) {
+        AsyncData(:final value) => ListView.builder(
+          itemCount: value.length,
+          itemBuilder: (context, index) => EntryCard(entry: value[index]),
+        ),
+        AsyncError(:final error) => Center(child: Text(error.toString())),
+        _ => Center(child: const CircularProgressIndicator()),
+      },
+    );
   }
 }
