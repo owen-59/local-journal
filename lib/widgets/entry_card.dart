@@ -14,7 +14,7 @@ class EntryCard extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: 5),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [Text(entry.body), Text(entry.date.toString())],
+          children: [Text(entry.body), Text(entry.datetime.toString())],
         ),
       ),
     );

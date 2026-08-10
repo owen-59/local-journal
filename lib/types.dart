@@ -1,7 +1,7 @@
 class Entry {
   final String body;
-  final DateTime date;
+  final DateTime datetime;
   final String filePath;
 
-  Entry({required this.body, required this.date, required this.filePath});
+  Entry({required this.body, required this.datetime, required this.filePath});
 }
