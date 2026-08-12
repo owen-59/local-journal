@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:journal/db.dart';
+import 'package:journal/widgets/entry_editor.dart';
 import 'package:journal/widgets/folder_selection_page.dart';
 import 'package:journal/widgets/home_screen.dart';
 import 'package:saf/saf.dart';
@@ -17,7 +18,14 @@ final databaseProvider = Provider<Database>((ref) {
 });
 
 final _router = GoRouter(
-  routes: [GoRoute(path: "/", builder: (context, state) => HomeScreen())],
+  routes: [
+    GoRoute(path: "/", builder: (context, state) => const HomeScreen()),
+    GoRoute(
+      path: "/entry/:datetime",
+      builder: (context, state) =>
+          EntryEditor(entryDateString: state.pathParameters["datetime"]!),
+    ),
+  ],
 );
 
 class App extends StatefulWidget {
@@ -58,6 +66,7 @@ class _AppState extends State<App> {
     return _authorised
         ? ProviderScope(
             overrides: [databaseProvider.overrideWithValue(_database)],
+            retry: (_, _) => null,
             child: MaterialApp.router(routerConfig: _router),
           )
         : FolderSelectionPage(saf: _saf, onGranted: onPermissionsGranted);

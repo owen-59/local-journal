@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:journal/types.dart';
 
 class EntryCard extends StatelessWidget {
@@ -6,9 +7,14 @@ class EntryCard extends StatelessWidget {
 
   const EntryCard({super.key, required this.entry});
 
+  void _redirectToEntry(BuildContext context) {
+    context.push("/entry/${entry.datetime}");
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      onTap: () => _redirectToEntry(context),
       child: Container(
         margin: const EdgeInsets.only(left: 20, right: 20, top: 5),
         padding: const EdgeInsets.only(bottom: 5),

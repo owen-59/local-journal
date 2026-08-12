@@ -8,10 +8,10 @@ class EntryList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final entries = ref.watch(itemsProvider);
+    final entries = ref.watch(entriesProvider);
 
     return RefreshIndicator(
-      onRefresh: () async => ref.refresh(itemsProvider.future),
+      onRefresh: () async => ref.refresh(entriesProvider.future),
       child: switch (entries) {
         AsyncData(:final value) => ListView.builder(
           itemCount: value.length,

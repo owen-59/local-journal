@@ -5,3 +5,4 @@
 build
 flutter_*.log
 .flutter-plugins-dependencies
+*.g.dart
