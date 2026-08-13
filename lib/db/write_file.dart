@@ -4,6 +4,17 @@ import 'package:saf/saf.dart';
 import 'package:saf_stream/saf_stream.dart';
 import 'package:saf_stream/saf_stream_platform_interface.dart';
 
+List<String> pathFromDatetime(DateTime datetime) {
+    return [
+      datetime.year.toString().padLeft(4, "0"),
+      datetime.month.toString().padLeft(2, "0"),
+      datetime.day.toString().padLeft(2,"0"),
+      datetime.hour.toString().padLeft(2, "0") +
+          // ignore: prefer_interpolation_to_compose_strings
+          datetime.minute.toString().padLeft(2, "0") + ".md",
+    ];
+}
+
 Future<SafNewFile> writeFile(
   String rootFolder,
   List<String> path,

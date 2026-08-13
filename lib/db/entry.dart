@@ -55,14 +55,7 @@ class EntryNotifier extends _$EntryNotifier {
     final (_, datetime) = await getUriAndDatetime();
     final rootFolder = ref.watch(folderUriProvider);
 
-    final path = [
-      datetime.year.toString().padLeft(4, "0"),
-      datetime.month.toString().padLeft(2, "0"),
-      datetime.day.toString().padLeft(2,"0"),
-      datetime.hour.toString().padLeft(2, "0") +
-          // ignore: prefer_interpolation_to_compose_strings
-          datetime.minute.toString().padLeft(2, "0") + ".md",
-    ];
+    final path = pathFromDatetime(datetime); 
     final result = await writeFile(rootFolder.toString(), path, newBody);
     logger.i("Wrote entry to ${result.uri}");
   }
