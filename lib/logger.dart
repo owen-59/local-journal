@@ -9,6 +9,5 @@ final Logger logger = Logger(
     methodCount: 0,
     errorMethodCount: 5,
     noBoxingByDefault: true,
-  )
+  ),
 );
-

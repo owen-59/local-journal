@@ -16,4 +16,3 @@ String getRelativePath(Uri folderUri, Uri fileUri) {
 
   return fileId.substring(rootId.length + 1);
 }
-

@@ -17,7 +17,7 @@ void main() async {
 }
 
 // initialise this in overrides
-@riverpod 
+@riverpod
 Uri folderUri(Ref ref) {
   logger.d("Accessed folderUriProvider before overriding!");
   throw UnimplementedError();
@@ -73,9 +73,7 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     return _authorised
         ? ProviderScope(
-            overrides: [
-              folderUriProvider.overrideWithValue(_folderUri)
-            ],
+            overrides: [folderUriProvider.overrideWithValue(_folderUri)],
             retry: (_, _) => null,
             child: MaterialApp.router(routerConfig: _router),
           )

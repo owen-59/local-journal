@@ -9,8 +9,7 @@ Future<String?> resolvePath(String folderUri, String relativePath) async {
 
     final child = children.firstWhere(
       (file) => file.name == component,
-      orElse: () =>
-          throw Exception('Could not find $component in $currentUri'),
+      orElse: () => throw Exception('Could not find $component in $currentUri'),
     );
 
     currentUri = child.uri;

@@ -12,4 +12,3 @@ DateTime? getTimeFromPath(String input) {
 
   return DateTime(year, month, day, hour, minute);
 }
-
