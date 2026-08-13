@@ -1,3 +1,4 @@
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -75,7 +76,17 @@ class _AppState extends State<App> {
         ? ProviderScope(
             overrides: [folderUriProvider.overrideWithValue(_folderUri)],
             retry: (_, _) => null,
-            child: MaterialApp.router(routerConfig: _router),
+            child: DynamicColorBuilder(
+              builder: (light, dark) => MaterialApp.router(
+                routerConfig: _router,
+                theme: ThemeData(
+                  colorScheme: light ?? ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+                ),
+                darkTheme: ThemeData(
+                  colorScheme: dark ?? ColorScheme.fromSeed(seedColor: Colors.deepPurple, brightness: Brightness.dark)
+                ),
+              ),
+            )
           )
         : FolderSelectionPage(saf: _saf, onGranted: onPermissionsGranted);
   }
