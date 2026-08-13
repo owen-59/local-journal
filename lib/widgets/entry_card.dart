@@ -29,6 +29,7 @@ class EntryCard extends StatelessWidget {
                 color: Theme.of(context).colorScheme.primary,
               ),
             ),
+            Divider(),
           ],
         ),
       ),
