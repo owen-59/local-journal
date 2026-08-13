@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:journal/logger.dart';
 import 'package:journal/widgets/entry_editor.dart';
 import 'package:journal/widgets/folder_selection_page.dart';
 import 'package:journal/widgets/home_screen.dart';
@@ -10,6 +11,7 @@ import 'package:saf/saf.dart';
 part "main.g.dart";
 
 void main() async {
+  logger.d("Starting main()");
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const App());
 }
@@ -17,6 +19,7 @@ void main() async {
 // initialise this in overrides
 @riverpod 
 Uri folderUri(Ref ref) {
+  logger.d("Accessed folderUriProvider before overriding!");
   throw UnimplementedError();
 }
 
@@ -51,6 +54,7 @@ class _AppState extends State<App> {
   }
 
   Future<void> _initSaf() async {
+    logger.d("Initialising Saf");
     final grants = await _saf.persistedPermissions();
     if (grants.isNotEmpty) {
       onPermissionsGranted(Uri.parse(grants[0].uri));
@@ -58,6 +62,7 @@ class _AppState extends State<App> {
   }
 
   void onPermissionsGranted(Uri dirUri) {
+    logger.d("Permissions granted to $dirUri");
     setState(() {
       _authorised = true;
       _folderUri = dirUri;
