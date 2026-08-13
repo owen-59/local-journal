@@ -19,14 +19,9 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
   Widget build(BuildContext context) {
     final entry = ref.watch(entryProvider(widget.entryDateString));
 
-    ref.listen(
-      entryProvider(widget.entryDateString),
-      (prev, next) {
-        next.whenOrNull(
-          data: (data) => body = data.body
-        );
-      }
-    );
+    ref.listen(entryProvider(widget.entryDateString), (prev, next) {
+      next.whenOrNull(data: (data) => body = data.body);
+    });
 
     return Scaffold(
       appBar: AppBar(),

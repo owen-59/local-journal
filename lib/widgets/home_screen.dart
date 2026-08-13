@@ -14,14 +14,16 @@ class HomeScreen extends ConsumerWidget {
       appBar: AppBar(title: Text("Journal")),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          final redirect = await ref.read(createControllerProvider.notifier).createEntry();
+          final redirect = await ref
+              .read(createControllerProvider.notifier)
+              .createEntry();
           if (context.mounted) {
             context.push(redirect);
           } else {
             logger.w("Created an entry, but context was no longer valid.");
           }
         },
-        child: const Icon(Icons.create)
+        child: const Icon(Icons.create),
       ),
       body: EntryList(),
     );

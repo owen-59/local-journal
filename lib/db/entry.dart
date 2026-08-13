@@ -1,61 +1,44 @@
-import 'dart:convert';
-
-import 'package:journal/db/resolve_path.dart';
-import 'package:journal/db/write_file.dart';
+import 'package:journal/db/file_utils.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/main.dart';
 import 'package:journal/types.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:saf_stream/saf_stream.dart';
 
 part "entry.g.dart";
 
 @riverpod
 class EntryNotifier extends _$EntryNotifier {
-  Future<(String, DateTime)> getUriAndDatetime() async {
+  Future<DateTime> getDatetime() async {
     final datetime = DateTime.tryParse(datetimeString);
     if (datetime == null) {
       logger.w("Tried to load an entry with an invalid datetime.");
       throw Exception("Not a valid entry identifier.");
     }
-    final path =
-        "${datetime.year.toString().padLeft(4, "0")}/${datetime.month.toString().padLeft(2, "0")}/${datetime.day.toString().padLeft(2, "0")}/${datetime.hour.toString().padLeft(2, "0")}${datetime.minute.toString().padLeft(2, "0")}.md";
-    final fullUri = await resolvePath(
-      ref.watch(folderUriProvider).toString(),
-      path,
-    );
-    if (fullUri == null) {
-      logger.w(
-        "Couldn't parse the entry file path from the datetime. (Entry file may not exist.)",
-      );
-      throw Exception("Couldn't find the entry.");
-    }
-    return (fullUri, datetime);
+    return datetime;
   }
 
   @override
   Future<Entry> build(String datetimeString) async {
     logger.i("Loading entry $datetimeString");
-    final (uri, datetime) = await getUriAndDatetime();
+    final rootFolder = ref.watch(folderUriProvider);
+    final datetime = await getDatetime();
 
-    final safStream = SafStream();
-    try {
-      final fileBytes = await safStream.readFileBytes(uri);
-      final fileContent = utf8.decode(fileBytes);
-      final entry = Entry(body: fileContent, datetime: datetime);
+    final path = pathFromDatetime(datetime);
+    final content = await readFile(rootFolder.toString(), path);
 
-      return entry;
-    } catch (err) {
-      logger.w("Couldn't load the entry from the entry file.");
+    if (content == null) {
+      logger.w("Couldn't load the requested entry.");
       throw Exception("Couldn't find the entry.");
     }
+
+    return Entry(body: content, datetime: datetime);
   }
 
   Future<void> updateEntry(String newBody) async {
-    final (_, datetime) = await getUriAndDatetime();
+    final datetime = await getDatetime();
     final rootFolder = ref.watch(folderUriProvider);
 
-    final path = pathFromDatetime(datetime); 
+    final path = pathFromDatetime(datetime);
     final result = await writeFile(rootFolder.toString(), path, newBody);
     logger.i("Wrote entry to ${result.uri}");
   }

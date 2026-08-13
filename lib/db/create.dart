@@ -1,4 +1,4 @@
-import 'package:journal/db/write_file.dart';
+import 'package:journal/db/file_utils.dart';
 import 'package:journal/main.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -13,7 +13,7 @@ class CreateController extends _$CreateController {
     final rootFolder = ref.watch(folderUriProvider);
     final newDatetime = DateTime.now();
     final path = pathFromDatetime(newDatetime);
-    await writeFile(rootFolder.toString(),path,"");
+    await writeFile(rootFolder.toString(), path, "");
 
     return "/entry/$newDatetime";
   }
