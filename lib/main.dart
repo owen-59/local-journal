@@ -80,13 +80,20 @@ class _AppState extends State<App> {
               builder: (light, dark) => MaterialApp.router(
                 routerConfig: _router,
                 theme: ThemeData(
-                  colorScheme: light ?? ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+                  colorScheme:
+                      light ??
+                      ColorScheme.fromSeed(seedColor: Colors.deepPurple),
                 ),
                 darkTheme: ThemeData(
-                  colorScheme: dark ?? ColorScheme.fromSeed(seedColor: Colors.deepPurple, brightness: Brightness.dark)
+                  colorScheme:
+                      dark ??
+                      ColorScheme.fromSeed(
+                        seedColor: Colors.deepPurple,
+                        brightness: Brightness.dark,
+                      ),
                 ),
               ),
-            )
+            ),
           )
         : FolderSelectionPage(saf: _saf, onGranted: onPermissionsGranted);
   }
