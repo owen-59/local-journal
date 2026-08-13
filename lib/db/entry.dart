@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:journal/db/resolve_path.dart';
+import 'package:journal/db/write_file.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/main.dart';
 import 'package:journal/types.dart';
@@ -51,7 +52,18 @@ class EntryNotifier extends _$EntryNotifier {
   }
 
   Future<void> updateEntry(String newBody) async {
-    final (uri, _) = await getUriAndDatetime();
-    logger.d("Not updating entry at $uri yet.");
+    final (_, datetime) = await getUriAndDatetime();
+    final rootFolder = ref.watch(folderUriProvider);
+
+    final path = [
+      datetime.year.toString().padLeft(4, "0"),
+      datetime.month.toString().padLeft(2, "0"),
+      datetime.day.toString().padLeft(2,"0"),
+      datetime.hour.toString().padLeft(2, "0") +
+          // ignore: prefer_interpolation_to_compose_strings
+          datetime.minute.toString().padLeft(2, "0") + ".md",
+    ];
+    final result = await writeFile(rootFolder.toString(), path, newBody);
+    logger.i("Wrote entry to ${result.uri}");
   }
 }
