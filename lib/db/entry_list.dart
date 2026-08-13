@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:journal/db/get_relative_path.dart';
 import 'package:journal/db/get_time_from_path.dart';
 import 'package:journal/logger.dart';
@@ -14,12 +15,8 @@ part "entry_list.g.dart";
 
 @riverpod
 class EntryList extends _$EntryList {
-  final _controller = StreamController<List<Entry>>.broadcast();
-
   @override
   Stream<List<Entry>> build() async* {
-    ref.onDispose(() => _controller.close());
-
     logger.i("Loading entries.");
     final folderUri = ref.watch(folderUriProvider);
     final saf = Saf();
@@ -30,7 +27,7 @@ class EntryList extends _$EntryList {
 
     final safStream = SafStream();
 
-    var readEntries = const <Entry>[];
+    var readEntries = <Entry>[];
 
     await for (var file in dirContents) {
       final path = getRelativePath(folderUri, Uri.parse(file.uri));
@@ -39,10 +36,14 @@ class EntryList extends _$EntryList {
       final fileBytes = await safStream.readFileBytes(file.uri);
       final fileContent = utf8.decode(fileBytes);
       final entry = Entry(body: fileContent, datetime: time);
-      readEntries = [...readEntries, entry];
+
+      int index = binarySearch(readEntries, entry);
+      if (index < 0) index = -index - 1;
+      readEntries.insert(index, entry); 
+      readEntries = [...readEntries];
       yield readEntries;
     }
 
-    yield* _controller.stream;
+    yield readEntries;
   }
 }
