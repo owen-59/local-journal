@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:journal/types.dart';
 
 class EntryCard extends StatelessWidget {
@@ -20,7 +21,15 @@ class EntryCard extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: 5),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [Text(entry.body), Text(entry.datetime.toString())],
+          children: [
+            Text(entry.body, style: Theme.of(context).textTheme.bodyLarge),
+            Text(
+              DateFormat("HH:mm dd MMMM").format(entry.datetime),
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+          ],
         ),
       ),
     );
