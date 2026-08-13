@@ -31,7 +31,7 @@ Stream<List<Entry>> entryList(Ref ref) async* {
     if (time == null) continue;
     final fileBytes = await safStream.readFileBytes(file.uri);
     final fileContent = utf8.decode(fileBytes);
-    final entry = Entry(body: fileContent, filePath: path, datetime: time);
+    final entry = Entry(body: fileContent, datetime: time);
     readEntries = [...readEntries, entry];
     yield readEntries;
   }

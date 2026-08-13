@@ -1,23 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:journal/db/entry.dart';
+import 'package:markdown_editor_live/markdown_editor_live.dart';
 
-class EntryEditor extends ConsumerWidget {
+class EntryEditor extends ConsumerStatefulWidget {
   final String entryDateString;
   const EntryEditor({super.key, required this.entryDateString});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final entry = ref.watch(entryProvider(entryDateString));
+  ConsumerState<EntryEditor> createState() => _EntryEditorState();
+}
+
+class _EntryEditorState extends ConsumerState<EntryEditor> {
+  String body = "";
+
+  @override
+  Widget build(BuildContext context) {
+    final entry = ref.watch(entryProvider(widget.entryDateString));
     return Scaffold(
       appBar: AppBar(),
-      body: Center(
-        child: switch (entry) {
-          AsyncData(:final value) => Text(value.body),
-          AsyncError(:final error) => Text(error.toString()),
-          _ => const CircularProgressIndicator(),
-        },
-      ),
+      body: switch (entry) {
+        AsyncData(:final value) => PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, result) async {
+            if (didPop) return;
+            ref
+                .read(entryProvider(widget.entryDateString).notifier)
+                .updateEntry(body);
+            context.pop();
+          },
+          child: MarkdownEditor(
+            initialValue: value.body,
+            onChanged: (text) => setState(() => body = text),
+          ),
+        ),
+        AsyncError(:final error) => Center(child: Text(error.toString())),
+        _ => const Center(child: CircularProgressIndicator()),
+      },
     );
   }
 }
