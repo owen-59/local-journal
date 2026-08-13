@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:async';
 
 import 'package:journal/db/get_relative_path.dart';
 import 'package:journal/db/get_time_from_path.dart';
@@ -12,27 +13,36 @@ import 'package:saf_stream/saf_stream.dart';
 part "entry_list.g.dart";
 
 @riverpod
-Stream<List<Entry>> entryList(Ref ref) async* {
-  logger.i("Loading entries.");
-  final folderUri = ref.watch(folderUriProvider);
-  final saf = Saf();
-  final dirContents = saf
-      .walk(ref.watch(folderUriProvider).toString())
-      .map((walkEntry) => walkEntry.file)
-      .where((file) => !file.isDir);
+class EntryList extends _$EntryList {
+  final _controller = StreamController<List<Entry>>.broadcast();
 
-  final safStream = SafStream();
+  @override
+  Stream<List<Entry>> build() async* {
+    ref.onDispose(() => _controller.close());
 
-  var readEntries = const <Entry>[];
+    logger.i("Loading entries.");
+    final folderUri = ref.watch(folderUriProvider);
+    final saf = Saf();
+    final dirContents = saf
+        .walk(ref.watch(folderUriProvider).toString())
+        .map((walkEntry) => walkEntry.file)
+        .where((file) => !file.isDir);
 
-  await for (var file in dirContents) {
-    final path = getRelativePath(folderUri, Uri.parse(file.uri));
-    final time = getTimeFromPath(path);
-    if (time == null) continue;
-    final fileBytes = await safStream.readFileBytes(file.uri);
-    final fileContent = utf8.decode(fileBytes);
-    final entry = Entry(body: fileContent, datetime: time);
-    readEntries = [...readEntries, entry];
-    yield readEntries;
+    final safStream = SafStream();
+
+    var readEntries = const <Entry>[];
+
+    await for (var file in dirContents) {
+      final path = getRelativePath(folderUri, Uri.parse(file.uri));
+      final time = getTimeFromPath(path);
+      if (time == null) continue;
+      final fileBytes = await safStream.readFileBytes(file.uri);
+      final fileContent = utf8.decode(fileBytes);
+      final entry = Entry(body: fileContent, datetime: time);
+      readEntries = [...readEntries, entry];
+      yield readEntries;
+    }
+
+    yield* _controller.stream;
   }
 }

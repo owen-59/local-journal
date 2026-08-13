@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:journal/db/entry.dart';
+import 'package:journal/db/entry_list.dart';
 import 'package:markdown_editor_live/markdown_editor_live.dart';
 
 class EntryEditor extends ConsumerStatefulWidget {
@@ -30,10 +31,13 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
           canPop: false,
           onPopInvokedWithResult: (didPop, result) async {
             if (didPop) return;
-            ref
+            await ref
                 .read(entryProvider(widget.entryDateString).notifier)
                 .updateEntry(body);
-            context.pop();
+            ref.invalidate(entryListProvider);
+            if (context.mounted) {
+              context.pop();
+            }
           },
           child: MarkdownEditor(
             initialValue: value.body,
