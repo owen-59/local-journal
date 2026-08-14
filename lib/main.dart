@@ -8,13 +8,19 @@ import 'package:journal/widgets/folder_selection_page.dart';
 import 'package:journal/widgets/home_screen.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:saf/saf.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part "main.g.dart";
 
 void main() async {
   logger.d("Starting main()");
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const App());
+  final saf = Saf();
+  final prefs = SharedPreferencesAsync();
+
+  final String? cachedUri = await prefs.getString("saf_authorised_uri");
+
+  runApp(App(saf: saf, cachedUri: cachedUri, prefs: prefs));
 }
 
 // initialise this in overrides
@@ -36,34 +42,45 @@ final _router = GoRouter(
 );
 
 class App extends StatefulWidget {
-  const App({super.key});
+  final Saf saf;
+  final SharedPreferencesAsync prefs;
+  final String? cachedUri;
+  const App({
+    super.key,
+    required this.saf,
+    required this.prefs,
+    required this.cachedUri,
+  });
 
   @override
   State<App> createState() => _AppState();
 }
 
 class _AppState extends State<App> {
-  late Saf _saf;
   late Uri _folderUri;
   bool _authorised = false;
 
   @override
   initState() {
     super.initState();
-    _saf = Saf();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _initSaf());
+    _initSaf();
   }
 
   Future<void> _initSaf() async {
-    logger.d("Initialising Saf");
-    final grants = await _saf.persistedPermissions();
-    if (grants.isNotEmpty) {
-      onPermissionsGranted(Uri.parse(grants[0].uri));
+    final cachedUri = widget.cachedUri;
+    if (cachedUri != null) {
+      onPermissionsGranted(Uri.parse(cachedUri));
+    } else {
+      logger.i("Didn't use cached uri.");
+      final grants = await widget.saf.persistedPermissions();
+      if (grants.isNotEmpty) {
+        onPermissionsGranted(Uri.parse(grants[0].uri));
+      }
     }
   }
 
   void onPermissionsGranted(Uri dirUri) {
-    logger.d("Permissions granted to $dirUri");
+    widget.prefs.setString("saf_authorised_uri", dirUri.toString());
     setState(() {
       _authorised = true;
       _folderUri = dirUri;
@@ -95,6 +112,6 @@ class _AppState extends State<App> {
               ),
             ),
           )
-        : FolderSelectionPage(saf: _saf, onGranted: onPermissionsGranted);
+        : FolderSelectionPage(saf: widget.saf, onGranted: onPermissionsGranted);
   }
 }
