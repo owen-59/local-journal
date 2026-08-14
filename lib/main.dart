@@ -1,5 +1,6 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_controller/flutter_keyboard_controller.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:journal/logger.dart';
@@ -94,20 +95,22 @@ class _AppState extends State<App> {
             overrides: [folderUriProvider.overrideWithValue(_folderUri)],
             retry: (_, _) => null,
             child: DynamicColorBuilder(
-              builder: (light, dark) => MaterialApp.router(
-                routerConfig: _router,
-                theme: ThemeData(
-                  colorScheme:
-                      light ??
-                      ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-                ),
-                darkTheme: ThemeData(
-                  colorScheme:
-                      dark ??
-                      ColorScheme.fromSeed(
-                        seedColor: Colors.deepPurple,
-                        brightness: Brightness.dark,
-                      ),
+              builder: (light, dark) => KeyboardProvider(
+                child: MaterialApp.router(
+                  routerConfig: _router,
+                  theme: ThemeData(
+                    colorScheme:
+                        light ??
+                        ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+                  ),
+                  darkTheme: ThemeData(
+                    colorScheme:
+                        dark ??
+                        ColorScheme.fromSeed(
+                          seedColor: Colors.deepPurple,
+                          brightness: Brightness.dark,
+                        ),
+                  ),
                 ),
               ),
             ),

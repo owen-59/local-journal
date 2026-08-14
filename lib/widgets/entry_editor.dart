@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_controller/flutter_keyboard_controller.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:journal/db/entry.dart';
@@ -26,6 +27,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
 
     return Scaffold(
       appBar: AppBar(),
+      resizeToAvoidBottomInset: false,
       body: switch (entry) {
         AsyncData(:final value) => PopScope(
           canPop: false,
@@ -39,9 +41,27 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
               context.pop();
             }
           },
-          child: MarkdownEditor(
-            initialValue: value.body,
-            onChanged: (text) => setState(() => body = text),
+          child: KeyboardAvoidingView(
+            child: Column(
+              children: [
+                Expanded(
+                  child: MarkdownEditor(
+                    initialValue: value.body,
+                    onChanged: (text) => setState(() => body = text),
+                  ),
+                ),
+                Row(children: [
+                  IconButton.filledTonal(
+                    icon: const Icon(Icons.label_outline),
+                    onPressed: () => {},
+                  ),
+                  IconButton.filledTonal(
+                    icon: const Icon(Icons.add_photo_alternate_outlined),
+                    onPressed: () => {},
+                  )
+                ],)
+              ],
+            )
           ),
         ),
         AsyncError(:final error) => Center(child: Text(error.toString())),
