@@ -39,7 +39,7 @@ class EntryList extends _$EntryList {
 
       int index = binarySearch(readEntries, entry);
       if (index < 0) index = -index - 1;
-      readEntries.insert(index, entry); 
+      readEntries.insert(index, entry);
       readEntries = [...readEntries];
       yield readEntries;
     }
