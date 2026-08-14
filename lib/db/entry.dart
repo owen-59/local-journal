@@ -31,15 +31,21 @@ class EntryNotifier extends _$EntryNotifier {
       throw Exception("Couldn't find the entry.");
     }
 
-    return Entry(body: content, datetime: datetime);
+    final entry = await Entry.read(datetimeString, rootFolder.toString());
+    if (entry != null) return entry;
+
+    throw Exception("Entry not found.");
   }
 
   Future<void> updateEntry(String newBody) async {
-    final datetime = await getDatetime();
+    final entry = state.asData?.value;
+    if (entry == null) {
+      logger.w("Tried to update entry when the entry provider was busy.");
+      return;
+    }
+
     final rootFolder = ref.watch(folderUriProvider);
 
-    final path = pathFromDatetime(datetime);
-    final result = await writeFile(rootFolder.toString(), path, newBody);
-    logger.i("Wrote entry to ${result.uri}");
+    await entry.write(rootFolder.toString());
   }
 }

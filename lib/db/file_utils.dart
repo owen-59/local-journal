@@ -29,20 +29,29 @@ Future<SafNewFile> writeFile(
     rootFolder,
     path.sublist(0, path.length - 1),
   );
-
-  final currentFile = await saf.child(deepestDir.uri, [path.last]);
-  if (currentFile != null) {
-    await saf.delete(currentFile.uri);
+  try {
+    final currentFile = await saf.child(deepestDir.uri, [path.last]);
+    if (currentFile != null) {
+      await saf.delete(currentFile.uri);
+    }
+  } catch (err) {
+    logger.e("While running saf.child: $err");
+    rethrow;
   }
 
-  return await safStream.writeFileBytes(
-    deepestDir.uri,
-    path.last,
-    "text/markdown",
-    utf8.encode(content),
-    overwrite: true,
-    append: false,
-  );
+  try {
+    return await safStream.writeFileBytes(
+      deepestDir.uri,
+      path.last,
+      "text/markdown",
+      utf8.encode(content),
+      overwrite: true,
+      append: false,
+    );
+  } catch (err) {
+    logger.e("While writing file: $err");
+    rethrow;
+  }
 }
 
 Future<String?> readFile(String rootFolder, List<String> path) async {
