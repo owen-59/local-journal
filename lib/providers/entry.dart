@@ -37,39 +37,28 @@ class EntryNotifier extends _$EntryNotifier {
     throw Exception("Entry not found.");
   }
 
-  Future<void> updateEntry(String newBody) async {
-    final entry = state.asData?.value;
-    if (entry == null) {
+  Future<Entry> writeWith({
+    String? body,
+    DateTime? datetime,
+    List<String>? tags,
+  }) async {
+    final current = state.asData?.value;
+    final rootFolder = ref.watch(folderUriProvider).toString();
+    if (current == null) {
       logger.w("Tried to update entry when the entry provider was busy.");
-      return;
+      throw Exception("Tried to update entry when the provider was busy.");
     }
 
-    final newEntry = entry.copyWith(body: newBody);
+    final newEntry = current.copyWith(
+      body: body,
+      datetime: datetime,
+      tags: tags,
+    );
 
-    final rootFolder = ref.watch(folderUriProvider);
-    await newEntry.write(rootFolder.toString());
-  }
-
-  Future<Entry?> updateDatetime(DateTime datetime, String body) async {
-    final entry = state.asData?.value;
-    final rootFolder = ref.watch(folderUriProvider).toString();
-
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      if (entry == null) {
-        logger.w(
-          "Tried to update entry time when the entry provider was busy.",
-        );
-        throw Exception("Can't update the entry when the provider is busy.");
-      }
-      final newEntry = entry.copyWith(datetime: datetime, body: body);
-      await entry.delete(rootFolder);
-      await newEntry.write(rootFolder);
-      return newEntry;
-    });
-
-    final newEntry = state.asData?.value;
-    assert(newEntry != null);
+    if (newEntry.datetime != current.datetime) {
+      await current.delete(rootFolder);
+    }
+    await newEntry.write(rootFolder);
     return newEntry;
   }
 }

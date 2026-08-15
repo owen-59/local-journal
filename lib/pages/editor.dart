@@ -80,7 +80,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
     if (didPop) return;
     await ref
         .read(entryProvider(widget.entryDateString).notifier)
-        .updateEntry(body);
+        .writeWith(body: body);
     ref.invalidate(entryListProvider);
     if (context.mounted) {
       context.pop();
@@ -94,12 +94,8 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
   ) async {
     final newEntry = await ref
         .read(entryProvider(widget.entryDateString).notifier)
-        .updateDatetime(datetime, body);
+        .writeWith(body: body, datetime: datetime);
 
-    if (newEntry == null) {
-      logger.w("updatedEntry from time change did not have a data state.");
-      return;
-    }
     if (context.mounted) {
       context.replace("/entry/${newEntry.datetime}");
     } else {
