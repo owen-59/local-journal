@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_controller/flutter_keyboard_controller.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -17,20 +16,8 @@ class EntryEditor extends ConsumerStatefulWidget {
   ConsumerState<EntryEditor> createState() => _EntryEditorState();
 }
 
-class _EntryEditorState extends ConsumerState<EntryEditor> with WidgetsBindingObserver {
+class _EntryEditorState extends ConsumerState<EntryEditor> {
   String body = "";
-
-  @override
-  void initState() {
-      super.initState();
-      WidgetsBinding.instance.addObserver(this);
-  }
-
-  @override
-    void dispose() {
-      WidgetsBinding.instance.removeObserver(this);
-      super.dispose();
-    }
 
   @override
   Widget build(BuildContext context) {
@@ -41,18 +28,12 @@ class _EntryEditorState extends ConsumerState<EntryEditor> with WidgetsBindingOb
     });
 
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            onGoBack();
-            context.pop();
-          },
-        ),
-      ),
+      appBar: AppBar(),
       resizeToAvoidBottomInset: false,
       body: switch (entry) {
         AsyncData(:final value) => PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, _) => onGoBack(didPop, context),
           child: KeyboardAvoidingView(
             child: Column(
               children: [
@@ -95,17 +76,15 @@ class _EntryEditorState extends ConsumerState<EntryEditor> with WidgetsBindingOb
     );
   }
 
-  Future<void> onGoBack() async {
+  Future<void> onGoBack(bool didPop, BuildContext context) async {
+    if (didPop) return;
     await ref
         .read(entryProvider(widget.entryDateString).notifier)
         .updateEntry(body);
     ref.invalidate(entryListProvider);
-  }
-
-  @override
-  bool handleStartBackGesture(PredictiveBackEvent backEvent) {
-    onGoBack(); 
-    return false;
+    if (context.mounted) {
+      context.pop();
+    }
   }
 
   Future<void> setDatetime(
