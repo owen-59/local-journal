@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:journal/db/file_utils.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/main.dart';
@@ -48,5 +49,28 @@ class EntryNotifier extends _$EntryNotifier {
 
     final rootFolder = ref.watch(folderUriProvider);
     await newEntry.write(rootFolder.toString());
+  }
+
+  Future<Entry?> updateDatetime(DateTime datetime, String body) async {
+    final entry = state.asData?.value;
+    final rootFolder = ref.watch(folderUriProvider).toString();
+
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      if (entry == null) {
+        logger.w(
+          "Tried to update entry time when the entry provider was busy.",
+        );
+        throw Exception("Can't update the entry when the provider is busy.");
+      }
+      final newEntry = entry.copyWith(datetime: datetime, body: body);
+      await entry.delete(rootFolder);
+      await newEntry.write(rootFolder);
+      return newEntry;
+    });
+
+    final newEntry = state.asData?.value;
+    assert(newEntry != null);
+    return newEntry;
   }
 }

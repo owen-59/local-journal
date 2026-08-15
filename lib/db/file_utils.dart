@@ -70,3 +70,14 @@ Future<String?> readFile(String rootFolder, List<String> path) async {
     return null;
   }
 }
+
+Future<void> deleteFile(String rootFolder, List<String> path) async {
+  final saf = Saf();
+
+  final fileDoc = await saf.child(rootFolder, path);
+  if (fileDoc == null) {
+    logger.w("Tried to delete a non existent file at $path");
+    return;
+  }
+  await saf.delete(fileDoc.uri);
+}

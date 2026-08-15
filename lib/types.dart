@@ -7,11 +7,7 @@ class Entry implements Comparable<Entry> {
   final DateTime datetime;
   final List<String> tags;
 
-  Entry({
-    required this.body,
-    required this.datetime,
-    required this.tags,
-  });
+  Entry({required this.body, required this.datetime, required this.tags});
 
   @override
   int compareTo(Entry other) {
@@ -28,16 +24,16 @@ class Entry implements Comparable<Entry> {
 
   Future<void> write(String rootFolder) async {
     final path = pathFromDatetime(datetime);
-    final content = addMdFrontmatter(
-      body,
-      {
-        "tags": tags.join(",")
-      }
-    );
+    final content = addMdFrontmatter(body, {"tags": tags.join(",")});
 
     logger.d(content);
 
     await writeFile(rootFolder, path, content);
+  }
+
+  Future<void> delete(String rootFolder) async {
+    final path = pathFromDatetime(datetime);
+    await deleteFile(rootFolder, path);
   }
 
   static Future<Entry?> read(String datetimeString, String rootFolder) async {
@@ -47,26 +43,17 @@ class Entry implements Comparable<Entry> {
     final path = pathFromDatetime(datetime);
     final content = await readFile(rootFolder.toString(), path);
     if (content == null) return null;
-    
+
     final (body, frontmatter) = parseMdFrontmatter(content);
     final tagsString = frontmatter["tags"] ?? "";
     final tags = tagsString.split(",");
 
-    return Entry(
-      body: body,
-      datetime: datetime,
-      tags: tags,
-    );
+    return Entry(body: body, datetime: datetime, tags: tags);
   }
 
   static Entry fromContent(String fileContent, DateTime datetime) {
     final (body, yamlData) = parseMdFrontmatter(fileContent);
 
-    return Entry(
-      body: body, 
-      datetime: datetime,
-      tags: [],
-    );
+    return Entry(body: body, datetime: datetime, tags: []);
   }
 }
-
