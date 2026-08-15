@@ -38,7 +38,6 @@ class EntryList extends _$EntryList {
       final entry = Entry.fromContent(fileContent, time);
 
       int index = lowerBound(readEntries, entry, compare: (a,b) => -a.compareTo(b));
-      logger.i("$index, ${entry.datetime}");
       readEntries.insert(index, entry);
       readEntries = [...readEntries];
       yield readEntries;
