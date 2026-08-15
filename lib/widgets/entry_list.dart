@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:journal/db/entry_list.dart';
+import 'package:journal/providers/entry_list.dart';
 import 'package:journal/widgets/entry_card.dart';
 
 class EntryList extends ConsumerWidget {

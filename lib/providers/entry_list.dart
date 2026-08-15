@@ -2,11 +2,10 @@ import 'dart:convert';
 import 'dart:async';
 
 import 'package:collection/collection.dart';
-import 'package:journal/db/get_relative_path.dart';
-import 'package:journal/db/get_time_from_path.dart';
+import 'package:journal/entry.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/main.dart';
-import 'package:journal/types.dart';
+import 'package:journal/utils/path.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:saf/saf.dart';
 import 'package:saf_stream/saf_stream.dart';
@@ -37,7 +36,11 @@ class EntryList extends _$EntryList {
       final fileContent = utf8.decode(fileBytes);
       final entry = Entry.fromContent(fileContent, time);
 
-      int index = lowerBound(readEntries, entry, compare: (a,b) => -a.compareTo(b));
+      int index = lowerBound(
+        readEntries,
+        entry,
+        compare: (a, b) => -a.compareTo(b),
+      );
       readEntries.insert(index, entry);
       readEntries = [...readEntries];
       yield readEntries;

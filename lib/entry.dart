@@ -1,6 +1,6 @@
-import 'package:journal/db/file_utils.dart';
-import 'package:journal/frontmatter.dart';
 import 'package:journal/logger.dart';
+import 'package:journal/utils/file.dart';
+import 'package:journal/utils/frontmatter.dart';
 
 class Entry implements Comparable<Entry> {
   final String body;

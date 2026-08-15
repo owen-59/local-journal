@@ -1,8 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:journal/db/file_utils.dart';
+import 'package:journal/entry.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/main.dart';
-import 'package:journal/types.dart';
+import 'package:journal/utils/file.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part "entry.g.dart";

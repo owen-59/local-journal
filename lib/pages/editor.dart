@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_keyboard_controller/flutter_keyboard_controller.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:journal/db/entry.dart';
-import 'package:journal/db/entry_list.dart';
+import 'package:journal/entry.dart';
 import 'package:journal/logger.dart';
-import 'package:journal/types.dart';
+import 'package:journal/providers/entry.dart';
+import 'package:journal/providers/entry_list.dart';
 import 'package:markdown_editor_live/markdown_editor_live.dart';
 
 class EntryEditor extends ConsumerStatefulWidget {
@@ -120,9 +119,9 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
       datetime.copyWith(
         hour: entry.datetime.hour,
         minute: entry.datetime.minute,
-        // ignore: use_build_context_synchronously - because it's checked in setDatetime
       ),
       entry,
+      // ignore: use_build_context_synchronously - because it's checked in setDatetime
       context,
     );
   }
@@ -135,12 +134,9 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
 
     if (time == null) return;
     await setDatetime(
-      entry.datetime.copyWith(
-        hour: time.hour,
-        minute: time.minute,
-        // ignore: use_build_context_synchronously - because it's checked in setDatetime
-      ),
+      entry.datetime.copyWith(hour: time.hour, minute: time.minute),
       entry,
+      // ignore: use_build_context_synchronously - because it's checked in setDatetime
       context,
     );
   }
