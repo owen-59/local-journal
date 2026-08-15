@@ -44,8 +44,9 @@ class EntryNotifier extends _$EntryNotifier {
       return;
     }
 
-    final rootFolder = ref.watch(folderUriProvider);
+    final newEntry = entry.copyWith(body: newBody);
 
-    await entry.write(rootFolder.toString());
+    final rootFolder = ref.watch(folderUriProvider);
+    await newEntry.write(rootFolder.toString());
   }
 }
