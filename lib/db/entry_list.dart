@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
+import 'package:collection/collection.dart';
 import 'package:journal/db/get_relative_path.dart';
 import 'package:journal/db/get_time_from_path.dart';
 import 'package:journal/logger.dart';
@@ -37,8 +37,8 @@ class EntryList extends _$EntryList {
       final fileContent = utf8.decode(fileBytes);
       final entry = Entry.fromContent(fileContent, time);
 
-      int index = binarySearch(readEntries, entry);
-      if (index < 0) index = -index - 1;
+      int index = lowerBound(readEntries, entry, compare: (a,b) => -a.compareTo(b));
+      logger.i("$index, ${entry.datetime}");
       readEntries.insert(index, entry);
       readEntries = [...readEntries];
       yield readEntries;
