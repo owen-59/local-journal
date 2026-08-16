@@ -1,4 +1,3 @@
-import 'package:journal/logger.dart';
 import 'package:journal/utils/file.dart';
 import 'package:journal/utils/frontmatter.dart';
 
@@ -25,8 +24,6 @@ class Entry implements Comparable<Entry> {
   Future<void> write(String rootFolder) async {
     final path = pathFromDatetime(datetime);
     final content = addMdFrontmatter(body, {"tags": tags.join(",")});
-
-    logger.d(content);
 
     await writeFile(rootFolder, path, content);
   }
