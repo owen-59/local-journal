@@ -6,6 +6,7 @@ import 'package:journal/entry.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/providers/entry.dart';
 import 'package:journal/providers/entry_list.dart';
+import 'package:journal/widgets/tags_editor.dart';
 import 'package:markdown_editor_live/markdown_editor_live.dart';
 
 class EntryEditor extends ConsumerStatefulWidget {
@@ -27,53 +28,71 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
       next.whenOrNull(data: (data) => body = data.body);
     });
 
-    return Scaffold(
-      appBar: AppBar(),
-      resizeToAvoidBottomInset: false,
-      body: switch (entry) {
-        AsyncData(:final value) => PopScope(
-          canPop: false,
-          onPopInvokedWithResult: (didPop, _) => onGoBack(didPop, context),
-          child: KeyboardAvoidingView(
-            child: Column(
-              children: [
-                Expanded(
-                  child: MarkdownEditor(
-                    initialValue: value.body,
-                    onChanged: (text) => setState(() => body = text),
+    return switch (entry) {
+      AsyncData(:final value) => Scaffold(
+        appBar: AppBar(),
+        resizeToAvoidBottomInset: false,
+        body: Builder(
+          builder: (innerContext) => PopScope(
+            canPop: false,
+            onPopInvokedWithResult: (didPop, _) => onGoBack(didPop, context),
+            child: KeyboardAvoidingView(
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        MarkdownEditor(
+                          initialValue: value.body,
+                          onChanged: (text) => setState(() => body = text),
+                        ),
+                        Padding(
+                          padding: EdgeInsetsGeometry.all(8),
+                          child: Wrap(
+                            spacing: 8,
+                            children: [
+                              for (final tag in value.tags)
+                                Chip(label: Text(tag)),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsetsGeometry.all(8.0),
-                  child: Row(
-                    children: [
-                      IconButton.filledTonal(
-                        icon: const Icon(Icons.label_outline),
-                        onPressed: () => {},
-                      ),
-                      IconButton.filledTonal(
-                        icon: const Icon(Icons.add_photo_alternate_outlined),
-                        onPressed: () => {},
-                      ),
-                      IconButton.filledTonal(
-                        icon: const Icon(Icons.schedule),
-                        onPressed: () => onSetTimeClicked(context, value),
-                      ),
-                      IconButton.filledTonal(
-                        icon: const Icon(Icons.calendar_month),
-                        onPressed: () => onSetDateClicked(context, value),
-                      ),
-                    ],
+                  Padding(
+                    padding: EdgeInsetsGeometry.all(8.0),
+                    child: Row(
+                      children: [
+                        IconButton.filledTonal(
+                          icon: const Icon(Icons.label_outline),
+                          // onPressed: () => {},
+                          onPressed: () => onAddTagsClicked(context, value),
+                        ),
+                        IconButton.filledTonal(
+                          icon: const Icon(Icons.add_photo_alternate_outlined),
+                          onPressed: () => {},
+                        ),
+                        IconButton.filledTonal(
+                          icon: const Icon(Icons.schedule),
+                          onPressed: () => onSetTimeClicked(context, value),
+                        ),
+                        IconButton.filledTonal(
+                          icon: const Icon(Icons.calendar_month),
+                          onPressed: () => onSetDateClicked(context, value),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
-        AsyncError(:final error) => Center(child: Text(error.toString())),
-        _ => const Center(child: CircularProgressIndicator()),
-      },
-    );
+      ),
+      AsyncError(:final error) => Center(child: Text(error.toString())),
+      _ => const Center(child: CircularProgressIndicator()),
+    };
   }
 
   Future<void> onGoBack(bool didPop, BuildContext context) async {
@@ -135,5 +154,20 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
       // ignore: use_build_context_synchronously - because it's checked in setDatetime
       context,
     );
+  }
+
+  Future<void> onAddTagsClicked(BuildContext context, Entry entry) async {
+    final tags = await showModalBottomSheet<List<String>>(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => TagsEditor(initialTags: entry.tags),
+    );
+    if (tags == null) {
+      logger.w("Tags editor did not return a list?");
+      return;
+    }
+    await ref
+        .read(entryProvider(widget.entryDateString).notifier)
+        .writeWith(body: body, tags: tags);
   }
 }

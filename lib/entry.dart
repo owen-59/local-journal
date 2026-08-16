@@ -44,16 +44,19 @@ class Entry implements Comparable<Entry> {
     final content = await readFile(rootFolder.toString(), path);
     if (content == null) return null;
 
-    final (body, frontmatter) = parseMdFrontmatter(content);
-    final tagsString = frontmatter["tags"] ?? "";
-    final tags = tagsString.split(",");
-
-    return Entry(body: body, datetime: datetime, tags: tags);
+    return Entry.fromContent(content, datetime);
   }
 
   static Entry fromContent(String fileContent, DateTime datetime) {
-    final (body, yamlData) = parseMdFrontmatter(fileContent);
+    final (body, frontmatter) = parseMdFrontmatter(fileContent);
+    final tagsString = frontmatter["tags"] ?? "";
+    final tags = tagsString
+        .split(",")
+        .map((tag) => tag.trim())
+        .where((tag) => tag.isNotEmpty)
+        .toSet()
+        .toList();
 
-    return Entry(body: body, datetime: datetime, tags: []);
+    return Entry(body: body, datetime: datetime, tags: tags);
   }
 }

@@ -24,7 +24,7 @@ class EntryCard extends StatelessWidget {
           children: [
             Text(entry.body, style: Theme.of(context).textTheme.bodyLarge),
             Text(
-              DateFormat("HH:mm dd MMMM").format(entry.datetime),
+              "${DateFormat("HH:mm dd MMMM").format(entry.datetime)}${entry.tags.isNotEmpty ? " - " : ""}${entry.tags.join(", ")}",
               style: Theme.of(context).textTheme.labelMedium?.copyWith(
                 color: Theme.of(context).colorScheme.primary,
               ),

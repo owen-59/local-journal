@@ -59,6 +59,7 @@ class EntryNotifier extends _$EntryNotifier {
       await current.delete(rootFolder);
     }
     await newEntry.write(rootFolder);
+    state = AsyncData(newEntry);
     return newEntry;
   }
 }
