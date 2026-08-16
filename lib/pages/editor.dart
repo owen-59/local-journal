@@ -33,8 +33,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
         resizeToAvoidBottomInset: false,
         body: Builder(
           builder: (innerContext) => PopScope(
-            canPop: false,
-            onPopInvokedWithResult: (didPop, _) => onGoBack(didPop, context),
+            onPopInvokedWithResult: (didPop, object) => onGoBack(didPop, context, object),
             child: KeyboardAvoidingView(
               child: Column(
                 children: [
@@ -98,14 +97,11 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
     };
   }
 
-  Future<void> onGoBack(bool didPop, BuildContext context) async {
-    if (didPop) return;
-    await ref
+  void onGoBack(bool didPop, BuildContext context, Object? popObject) {
+    if (!didPop || popObject == "DO_NOT_WRITE") return;
+    ref
         .read(entryProvider(widget.entryDateString).notifier)
         .writeWith(body: body);
-    if (context.mounted) {
-      context.pop();
-    }
   }
 
   Future<void> setDatetime(
@@ -196,10 +192,10 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
     );
 
     if (result == true) {
-      await ref
+      ref
         .read(entryProvider(widget.entryDateString).notifier)
         .delete();
-      if (context.mounted) context.pop();
+      if (context.mounted) context.pop("DO_NOT_WRITE");
     }
   }
 }
