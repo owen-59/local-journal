@@ -1,6 +1,7 @@
 import 'package:journal/entry.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/main.dart';
+import 'package:journal/providers/entry_list.dart';
 import 'package:journal/utils/file.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -57,8 +58,10 @@ class EntryNotifier extends _$EntryNotifier {
 
     if (newEntry.datetime != current.datetime) {
       await current.delete(rootFolder);
+      ref.read(entryListProvider.notifier).removeEntry(current);
     }
     await newEntry.write(rootFolder);
+    ref.read(entryListProvider.notifier).addEntry(newEntry);
     state = AsyncData(newEntry);
     return newEntry;
   }

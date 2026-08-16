@@ -11,7 +11,7 @@ class EntryList extends ConsumerWidget {
     final entries = ref.watch(entryListProvider);
 
     return RefreshIndicator(
-      onRefresh: () async => ref.refresh(entryListProvider.future),
+      onRefresh: () async => ref.read(entryListProvider.notifier).fullReload(),
       child: switch (entries) {
         AsyncData(:final value) => ListView.builder(
           itemCount: value.length,

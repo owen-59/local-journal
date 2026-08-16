@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:journal/entry.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/providers/entry.dart';
-import 'package:journal/providers/entry_list.dart';
 import 'package:journal/widgets/tags_editor.dart';
 import 'package:markdown_editor_live/markdown_editor_live.dart';
 
@@ -100,7 +99,6 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
     await ref
         .read(entryProvider(widget.entryDateString).notifier)
         .writeWith(body: body);
-    ref.invalidate(entryListProvider);
     if (context.mounted) {
       context.pop();
     }

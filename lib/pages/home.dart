@@ -23,7 +23,7 @@ class HomeScreen extends ConsumerWidget {
 
   Future<void> createEntry(BuildContext context, WidgetRef ref) async {
     final rootFolder = ref.watch(folderUriProvider);
-    final newDatetime = DateTime.now();
+    final newDatetime = DateTime.now().copyWith(second: 0, millisecond: 0, microsecond: 0);
     final path = pathFromDatetime(newDatetime);
     await writeFile(rootFolder.toString(), path, "");
 
