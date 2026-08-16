@@ -42,10 +42,12 @@ class EntryList extends _$EntryList {
   }
 
   void removeEntry(Entry entry) {
-    logger.d("Removing entry at ${entry.datetime} from list.");
+    final initialLength = _state.length;
     _state = _state
         .where((stateEntry) => !_isSameDatetime(entry.datetime, stateEntry.datetime))
         .toList();
+    _controller.add(_state);
+    logger.d("Removing entry at ${entry.datetime} from list, deleted ${_state.length - initialLength}");
   }
 
   Future<void> fullReload() async {

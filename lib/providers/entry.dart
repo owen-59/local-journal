@@ -65,4 +65,15 @@ class EntryNotifier extends _$EntryNotifier {
     state = AsyncData(newEntry);
     return newEntry;
   }
+
+  Future<void> delete() async {
+    final current = state.asData?.value;
+    final rootFolder = ref.watch(folderUriProvider).toString();
+    if (current == null) {
+      logger.w("Tried to update entry when the entry provider was busy.");
+      throw Exception("Tried to update entry when the provider was busy.");
+    }
+    await current.delete(rootFolder);
+    ref.read(entryListProvider.notifier).removeEntry(current);
+  }
 }

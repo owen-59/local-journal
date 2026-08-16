@@ -80,6 +80,10 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                           icon: const Icon(Icons.calendar_month),
                           onPressed: () => onSetDateClicked(context, value),
                         ),
+                        IconButton.filledTonal(
+                          icon: const Icon(Icons.delete_outline),
+                          onPressed: () => onDeleteClicked(context, value),
+                        )
                       ],
                     ),
                   ),
@@ -167,5 +171,35 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
     await ref
         .read(entryProvider(widget.entryDateString).notifier)
         .writeWith(body: body, tags: tags);
+  }
+
+  Future<void> onDeleteClicked(BuildContext context, Entry entry) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Delete?"),
+        content: const Text("Are you sure you want to delete this entry?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.onErrorContainer,
+            ),
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text("Delete")
+          )
+        ],
+      )
+    );
+
+    if (result == true) {
+      await ref
+        .read(entryProvider(widget.entryDateString).notifier)
+        .delete();
+      if (context.mounted) context.pop();
+    }
   }
 }
