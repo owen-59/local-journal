@@ -16,6 +16,7 @@ class EntryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => _redirectToEntry(context),
+      behavior: HitTestBehavior.opaque,
       child: Container(
         margin: const EdgeInsets.only(left: 20, right: 20, top: 5),
         padding: const EdgeInsets.only(bottom: 5),
