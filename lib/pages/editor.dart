@@ -40,70 +40,72 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
           builder: (innerContext) => PopScope(
             onPopInvokedWithResult: (didPop, object) =>
                 onGoBack(didPop, context, object),
-            child: KeyboardAvoidingView(
-              child: Column(
-                children: [
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+            child: SafeArea(
+              child: KeyboardAvoidingView(
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            MarkdownEditor(
+                              initialValue: value.body,
+                              onChanged: (text) => setState(() => body = text),
+                            ),
+                            Padding(
+                              padding: EdgeInsetsGeometry.all(8),
+                              child: Wrap(
+                                spacing: 8,
+                                children: [
+                                  for (final tag in value.tags)
+                                    Chip(label: Text(tag)),
+                                ],
+                              ),
+                            ),
+                            ?switch (entryImages) {
+                              AsyncData(value: final images) => ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: images.length,
+                                itemBuilder: (context, index) =>
+                                    ImageView(imageData: images[index]),
+                              ),
+                              _ => null,
+                            },
+                          ],
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsetsGeometry.all(8.0),
+                      child: Row(
                         children: [
-                          MarkdownEditor(
-                            initialValue: value.body,
-                            onChanged: (text) => setState(() => body = text),
+                          IconButton.filledTonal(
+                            icon: const Icon(Icons.label_outline),
+                            onPressed: () => onAddTagsClicked(context, value),
                           ),
-                          Padding(
-                            padding: EdgeInsetsGeometry.all(8),
-                            child: Wrap(
-                              spacing: 8,
-                              children: [
-                                for (final tag in value.tags)
-                                  Chip(label: Text(tag)),
-                              ],
-                            ),
+                          IconButton.filledTonal(
+                            icon: const Icon(Icons.add_photo_alternate_outlined),
+                            onPressed: () => onAddImageClicked(context, value),
                           ),
-                          ?switch (entryImages) {
-                            AsyncData(value: final images) => ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: images.length,
-                              itemBuilder: (context, index) =>
-                                  ImageView(imageData: images[index]),
-                            ),
-                            _ => null,
-                          },
+                          IconButton.filledTonal(
+                            icon: const Icon(Icons.schedule),
+                            onPressed: () => onSetTimeClicked(context, value),
+                          ),
+                          IconButton.filledTonal(
+                            icon: const Icon(Icons.calendar_month),
+                            onPressed: () => onSetDateClicked(context, value),
+                          ),
+                          IconButton.filledTonal(
+                            icon: const Icon(Icons.delete_outline),
+                            onPressed: () => onDeleteClicked(context, value),
+                          ),
                         ],
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsetsGeometry.all(8.0),
-                    child: Row(
-                      children: [
-                        IconButton.filledTonal(
-                          icon: const Icon(Icons.label_outline),
-                          onPressed: () => onAddTagsClicked(context, value),
-                        ),
-                        IconButton.filledTonal(
-                          icon: const Icon(Icons.add_photo_alternate_outlined),
-                          onPressed: () => onAddImageClicked(context, value),
-                        ),
-                        IconButton.filledTonal(
-                          icon: const Icon(Icons.schedule),
-                          onPressed: () => onSetTimeClicked(context, value),
-                        ),
-                        IconButton.filledTonal(
-                          icon: const Icon(Icons.calendar_month),
-                          onPressed: () => onSetDateClicked(context, value),
-                        ),
-                        IconButton.filledTonal(
-                          icon: const Icon(Icons.delete_outline),
-                          onPressed: () => onDeleteClicked(context, value),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
