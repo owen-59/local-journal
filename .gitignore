@@ -6,3 +6,4 @@ build
 flutter_*.log
 .flutter-plugins-dependencies
 *.g.dart
+devtools_options.yaml
