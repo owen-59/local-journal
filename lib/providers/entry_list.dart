@@ -95,5 +95,6 @@ class EntryList extends _$EntryList {
       addEntry(entry, shouldYield: false);
       _controller.add(_state);
     }
+    _controller.add(_state);
   }
 }
