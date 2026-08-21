@@ -5,6 +5,7 @@ import 'package:collection/collection.dart';
 import 'package:journal/entry.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/main.dart';
+import 'package:journal/utils/file.dart';
 import 'package:journal/utils/path.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:saf/saf.dart';
@@ -56,6 +57,20 @@ class EntryList extends _$EntryList {
     logger.d(
       "Removing entry at ${entry.datetime} from list, deleted ${_state.length - initialLength}",
     );
+  }
+
+  Future<DateTime> newEntry() async {
+    var dt = DateTime.now().copyWith(second: 0, millisecond: 0, microsecond: 0);
+
+    while (_state.any((entry) => entry.datetime.isAtSameMomentAs(dt))) {
+      dt = dt.copyWith(minute: dt.minute + 1);
+    }
+
+    final rootFolder = ref.read(folderUriProvider);
+    final path = pathFromDatetime(dt);
+    await writeFileString(rootFolder.toString(), path, "", "text/markdown");
+
+    return dt;
   }
 
   Future<void> fullReload() async {

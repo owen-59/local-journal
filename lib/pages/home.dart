@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:journal/logger.dart';
-import 'package:journal/main.dart';
-import 'package:journal/utils/file.dart';
-import 'package:journal/widgets/entry_list.dart';
+import 'package:journal/providers/entry_list.dart';
+import 'package:journal/widgets/entry_list.dart' as wid;
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -17,22 +16,15 @@ class HomeScreen extends ConsumerWidget {
         onPressed: () => createEntry(context, ref),
         child: const Icon(Icons.create),
       ),
-      body: EntryList(),
+      body: wid.EntryList(),
     );
   }
 
   Future<void> createEntry(BuildContext context, WidgetRef ref) async {
-    final rootFolder = ref.watch(folderUriProvider);
-    final newDatetime = DateTime.now().copyWith(
-      second: 0,
-      millisecond: 0,
-      microsecond: 0,
-    );
-    final path = pathFromDatetime(newDatetime);
-    await writeFileString(rootFolder.toString(), path, "", "text/markdown");
+    final entryDatetime = await ref.read(entryListProvider.notifier).newEntry();
 
     if (context.mounted) {
-      context.push("/entry/$newDatetime");
+      context.push("/entry/$entryDatetime");
     } else {
       logger.w("Created an entry, but the context was no longer valid.");
     }
