@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_controller/flutter_keyboard_controller.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:journal/entry.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/providers/entry.dart';
+import 'package:journal/providers/images.dart';
+import 'package:journal/widgets/image_view.dart';
 import 'package:journal/widgets/tags_editor.dart';
+import 'package:journal/widgets/text_input.dialogue.dart';
 import 'package:markdown_editor_live/markdown_editor_live.dart';
 
 class EntryEditor extends ConsumerStatefulWidget {
@@ -22,6 +26,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
   @override
   Widget build(BuildContext context) {
     final entry = ref.watch(entryProvider(widget.entryDateString));
+    final entryImages = ref.watch(imagesProvider(widget.entryDateString));
 
     ref.listen(entryProvider(widget.entryDateString), (prev, next) {
       next.whenOrNull(data: (data) => body = data.body);
@@ -33,29 +38,42 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
         resizeToAvoidBottomInset: false,
         body: Builder(
           builder: (innerContext) => PopScope(
-            onPopInvokedWithResult: (didPop, object) => onGoBack(didPop, context, object),
+            onPopInvokedWithResult: (didPop, object) =>
+                onGoBack(didPop, context, object),
             child: KeyboardAvoidingView(
               child: Column(
                 children: [
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        MarkdownEditor(
-                          initialValue: value.body,
-                          onChanged: (text) => setState(() => body = text),
-                        ),
-                        Padding(
-                          padding: EdgeInsetsGeometry.all(8),
-                          child: Wrap(
-                            spacing: 8,
-                            children: [
-                              for (final tag in value.tags)
-                                Chip(label: Text(tag)),
-                            ],
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          MarkdownEditor(
+                            initialValue: value.body,
+                            onChanged: (text) => setState(() => body = text),
                           ),
-                        ),
-                      ],
+                          Padding(
+                            padding: EdgeInsetsGeometry.all(8),
+                            child: Wrap(
+                              spacing: 8,
+                              children: [
+                                for (final tag in value.tags)
+                                  Chip(label: Text(tag)),
+                              ],
+                            ),
+                          ),
+                          ?switch (entryImages) {
+                            AsyncData(value: final images) => ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: images.length,
+                              itemBuilder: (context, index) =>
+                                  ImageView(imageData: images[index]),
+                            ),
+                            _ => null,
+                          },
+                        ],
+                      ),
                     ),
                   ),
                   Padding(
@@ -64,12 +82,11 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                       children: [
                         IconButton.filledTonal(
                           icon: const Icon(Icons.label_outline),
-                          // onPressed: () => {},
                           onPressed: () => onAddTagsClicked(context, value),
                         ),
                         IconButton.filledTonal(
                           icon: const Icon(Icons.add_photo_alternate_outlined),
-                          onPressed: () => {},
+                          onPressed: () => onAddImageClicked(context, value),
                         ),
                         IconButton.filledTonal(
                           icon: const Icon(Icons.schedule),
@@ -82,7 +99,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                         IconButton.filledTonal(
                           icon: const Icon(Icons.delete_outline),
                           onPressed: () => onDeleteClicked(context, value),
-                        )
+                        ),
                       ],
                     ),
                   ),
@@ -185,17 +202,38 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
               foregroundColor: Theme.of(context).colorScheme.onErrorContainer,
             ),
             onPressed: () => Navigator.pop(context, true),
-            child: const Text("Delete")
-          )
+            child: const Text("Delete"),
+          ),
         ],
-      )
+      ),
     );
 
     if (result == true) {
-      ref
-        .read(entryProvider(widget.entryDateString).notifier)
-        .delete();
+      ref.read(entryProvider(widget.entryDateString).notifier).delete();
       if (context.mounted) context.pop("DO_NOT_WRITE");
+    }
+  }
+
+  Future<void> onAddImageClicked(BuildContext context, Entry entry) async {
+    final picker = ImagePicker();
+    final image = await picker.pickImage(source: ImageSource.gallery);
+
+    if (image == null) return;
+    if (context.mounted) {
+      final name = await showDialog<String>(
+        context: context,
+        builder: (context) => TextInputDialog(),
+      );
+      if (name == null) return;
+      logger.i("fileUri: ${image.path} $name");
+      ref
+          .read(entryProvider(widget.entryDateString).notifier)
+          .addImage(image, name);
+    } else {
+      logger.w(
+        "Received image, but context became unmounted before showing name chooser.",
+      );
+      return;
     }
   }
 }

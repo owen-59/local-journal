@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:journal/logger.dart';
 import 'package:saf/saf.dart';
@@ -17,18 +18,41 @@ List<String> pathFromDatetime(DateTime datetime) {
   ];
 }
 
-Future<SafNewFile> writeFile(
+List<String> parentPathFromDatetime(DateTime datetime) {
+  return [
+    datetime.year.toString().padLeft(4, "0"),
+    datetime.month.toString().padLeft(2, "0"),
+    datetime.day.toString().padLeft(2, "0"),
+  ];
+}
+
+Future<SafNewFile> writeFileString(
   String rootFolder,
   List<String> path,
   String content,
+  String mime,
+) async {
+  return await writeFileBytes(rootFolder, path, utf8.encode(content), mime);
+}
+
+Future<SafNewFile> writeFileBytes(
+  String rootFolder,
+  List<String> path,
+  Uint8List content,
+  String mime,
 ) async {
   final saf = Saf();
   final safStream = SafStream();
 
-  final deepestDir = await saf.mkdirp(
-    rootFolder,
-    path.sublist(0, path.length - 1),
-  );
+  late final SafDocumentFile deepestDir;
+
+  try {
+    deepestDir = await saf.mkdirp(rootFolder, path.sublist(0, path.length - 1));
+  } catch (err) {
+    logger.e("Error while getting the deepest directory: $err");
+    rethrow;
+  }
+
   try {
     final currentFile = await saf.child(deepestDir.uri, [path.last]);
     if (currentFile != null) {
@@ -43,8 +67,8 @@ Future<SafNewFile> writeFile(
     return await safStream.writeFileBytes(
       deepestDir.uri,
       path.last,
-      "text/markdown",
-      utf8.encode(content),
+      mime,
+      content,
       overwrite: true,
       append: false,
     );
@@ -55,6 +79,11 @@ Future<SafNewFile> writeFile(
 }
 
 Future<String?> readFile(String rootFolder, List<String> path) async {
+  final fileBytes = await readFileBytes(rootFolder, path);
+  return fileBytes == null ? null : utf8.decode(fileBytes);
+}
+
+Future<Uint8List?> readFileBytes(String rootFolder, List<String> path) async {
   final saf = Saf();
   final safStream = SafStream();
 
@@ -62,9 +91,7 @@ Future<String?> readFile(String rootFolder, List<String> path) async {
   if (fileSafDocument == null) return null;
 
   try {
-    final fileBytes = await safStream.readFileBytes(fileSafDocument.uri);
-    final fileContent = utf8.decode(fileBytes);
-    return fileContent;
+    return await safStream.readFileBytes(fileSafDocument.uri);
   } catch (err) {
     logger.w("Failed reading an entry at ${fileSafDocument.uri}.");
     return null;
@@ -80,4 +107,41 @@ Future<void> deleteFile(String rootFolder, List<String> path) async {
     return;
   }
   await saf.delete(fileDoc.uri);
+}
+
+Future<SafDocumentFile> copyLocalFile(
+  String rootFolder,
+  String srcPath,
+  List<String> destPath,
+  String mime,
+) async {
+  final saf = Saf();
+
+  final deepestDir = await saf.mkdirp(
+    rootFolder,
+    destPath.sublist(0, destPath.length - 1),
+  );
+  // await saf.child(deepestDir.uri, [destPath.last]);
+  return await saf.pasteLocalFile(
+    srcPath,
+    deepestDir.uri,
+    destPath.last,
+    mime,
+    overwrite: true,
+  );
+}
+
+Future<SafDocumentFile?> moveFile(
+  String rootFolder,
+  List<String> srcPath,
+  List<String> destDirPath,
+) async {
+  final saf = Saf();
+
+  final deepestDir = await saf.mkdirp(rootFolder, destDirPath);
+
+  final srcUri = await saf.child(rootFolder, srcPath);
+  if (srcUri == null) return null;
+
+  return await saf.moveTo(srcUri.uri, deepestDir.uri);
 }

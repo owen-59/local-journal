@@ -30,7 +30,11 @@ class EntryList extends _$EntryList {
   }
 
   bool _isSameDatetime(DateTime a, DateTime b) {
-    return a.year == b.year && a.month == b.month && a.day == b.day && a.hour == b.hour && a.minute == b.minute;
+    return a.year == b.year &&
+        a.month == b.month &&
+        a.day == b.day &&
+        a.hour == b.hour &&
+        a.minute == b.minute;
   }
 
   void addEntry(Entry entry, {bool shouldYield = true}) {
@@ -44,10 +48,14 @@ class EntryList extends _$EntryList {
   void removeEntry(Entry entry) {
     final initialLength = _state.length;
     _state = _state
-        .where((stateEntry) => !_isSameDatetime(entry.datetime, stateEntry.datetime))
+        .where(
+          (stateEntry) => !_isSameDatetime(entry.datetime, stateEntry.datetime),
+        )
         .toList();
     _controller.add(_state);
-    logger.d("Removing entry at ${entry.datetime} from list, deleted ${_state.length - initialLength}");
+    logger.d(
+      "Removing entry at ${entry.datetime} from list, deleted ${_state.length - initialLength}",
+    );
   }
 
   Future<void> fullReload() async {
