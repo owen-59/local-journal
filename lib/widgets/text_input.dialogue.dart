@@ -25,13 +25,13 @@ class _TextInputDialogState extends State<TextInputDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Enter Details'),
+      title: const Text('Enter name'),
       content: TextField(
         controller: _textController,
         autofocus: true,
         decoration: const InputDecoration(
-          labelText: 'Your Name',
-          hintText: 'John Doe',
+          labelText: 'Image file name',
+          hintText: 'Sunset at the beach',
           border: OutlineInputBorder(),
         ),
       ),
