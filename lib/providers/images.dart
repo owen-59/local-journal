@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:journal/image.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/main.dart';
@@ -7,23 +9,45 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'images.g.dart';
 
 @riverpod
-Stream<List<ImageData>> images(Ref ref, String datetimeString) async* {
-  final asyncValue = ref.watch(entryProvider(datetimeString));
-  final entry = asyncValue.asData?.value;
-  if (entry == null) {
-    yield [];
-    return;
+class Images extends _$Images {
+  var _state = <ImageData>[];
+
+  @override
+  Future<List<ImageData>> build(String datetimeString) async {
+    ref.listen(entryProvider(datetimeString), (prev, next) async {
+      final current = next.asData?.value;
+      if (current == null) return;
+
+      await fullReload();
+      _state = _state
+          .where((image) => current.images.contains(image.name))
+          .toList();
+    });
+
+    return [];
   }
 
-  final rootFolder = ref.watch(folderUriProvider);
+  Future<void> fullReload() async {
+    logger.i("Doing full reload of images.");
+    final asyncValue = ref.watch(entryProvider(datetimeString));
+    final entry = asyncValue.asData?.value;
+    if (entry == null) {
+      _state = [];
+      state = AsyncData(_state);
+      return;
+    }
 
-  var imageList = <ImageData>[];
+    final rootFolder = ref.watch(folderUriProvider);
 
-  for (final imageName in entry.images) {
-    logger.d("Reading image $imageName for entry ${entry.datetime}");
-    final imageData = await entry.readImage(rootFolder.toString(), imageName);
-    imageList.add(imageData);
-    imageList = [...imageList];
-    yield imageList;
+    var imageList = <ImageData>[];
+
+    for (final imageName in entry.images) {
+      logger.d("Reading image $imageName for entry ${entry.datetime}");
+      final imageData = await entry.readImage(rootFolder.toString(), imageName);
+      imageList.add(imageData);
+      imageList = [...imageList];
+      _state = imageList;
+    }
+    state = AsyncData(_state);
   }
 }

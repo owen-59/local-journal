@@ -116,6 +116,19 @@ class Entry implements Comparable<Entry> {
     return copyWith(rootFolder, images: [...images, imageName]);
   }
 
+  Future<Entry> removeImage(String rootFolder, String name) async {
+    final entryPath = pathFromDatetime(datetime);
+    final imagePath = [...entryPath.sublist(0, entryPath.length - 1), name];
+
+    logger.d("Deleting image at path $imagePath");
+
+    await deleteFile(rootFolder, imagePath);
+
+    final newImages = images.where((image) => image != name).toList();
+
+    return copyWith(rootFolder, images: newImages);
+  }
+
   Future<ImageData> readImage(String rootFolder, String name) async {
     final entryPath = pathFromDatetime(datetime);
     final imagePath = [...entryPath.sublist(0, entryPath.length - 1), name];

@@ -4,10 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:journal/entry.dart';
+import 'package:journal/image.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/providers/entry.dart';
-import 'package:journal/providers/images.dart';
-import 'package:journal/widgets/image_view.dart';
+import 'package:journal/widgets/images_list.dart';
 import 'package:journal/widgets/tags_editor.dart';
 import 'package:journal/widgets/text_input.dialogue.dart';
 import 'package:markdown_editor_live/markdown_editor_live.dart';
@@ -26,7 +26,6 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
   @override
   Widget build(BuildContext context) {
     final entry = ref.watch(entryProvider(widget.entryDateString));
-    final entryImages = ref.watch(imagesProvider(widget.entryDateString));
 
     ref.listen(entryProvider(widget.entryDateString), (prev, next) {
       next.whenOrNull(data: (data) => body = data.body);
@@ -63,16 +62,11 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                                 ],
                               ),
                             ),
-                            ?switch (entryImages) {
-                              AsyncData(value: final images) => ListView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: images.length,
-                                itemBuilder: (context, index) =>
-                                    ImageView(imageData: images[index]),
-                              ),
-                              _ => null,
-                            },
+                            ImagesList(
+                              entryDateString: widget.entryDateString,
+                              removeCallback: (imageData) =>
+                                  onRemoveImageLink(value, imageData),
+                            ),
                           ],
                         ),
                       ),
@@ -86,7 +80,9 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                             onPressed: () => onAddTagsClicked(context, value),
                           ),
                           IconButton.filledTonal(
-                            icon: const Icon(Icons.add_photo_alternate_outlined),
+                            icon: const Icon(
+                              Icons.add_photo_alternate_outlined,
+                            ),
                             onPressed: () => onAddImageClicked(context, value),
                           ),
                           IconButton.filledTonal(
@@ -237,5 +233,12 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
       );
       return;
     }
+  }
+
+  Future<void> onRemoveImageLink(Entry entry, ImageData imageData) async {
+    logger.i("Removing ${imageData.name}");
+    await ref
+        .read(entryProvider(widget.entryDateString).notifier)
+        .removeImage(imageData.name);
   }
 }

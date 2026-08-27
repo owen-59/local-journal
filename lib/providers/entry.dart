@@ -90,6 +90,18 @@ class EntryNotifier extends _$EntryNotifier {
     final newEntry = await current.addImage(rootFolder, image, name);
     state = AsyncData(newEntry);
   }
+
+  Future<void> removeImage(String name) async {
+    final current = state.asData?.value;
+    final rootFolder = ref.watch(folderUriProvider).toString();
+    if (current == null) {
+      logger.w("Tried to add image when the entry provider was busy.");
+      throw Exception("Tried to update entry when the provider was busy.");
+    }
+
+    final newEntry = await current.removeImage(rootFolder, name);
+    state = AsyncData(newEntry);
+  }
 }
 
 // @riverpod
