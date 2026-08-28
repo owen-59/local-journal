@@ -43,6 +43,7 @@ class EntryNotifier extends _$EntryNotifier {
     String? body,
     DateTime? datetime,
     List<String>? tags,
+    String? locationId,
   }) async {
     final current = state.asData?.value;
     final rootFolder = ref.watch(folderUriProvider).toString();
@@ -56,6 +57,7 @@ class EntryNotifier extends _$EntryNotifier {
       body: body,
       datetime: datetime,
       tags: tags,
+      locationId: locationId,
     );
 
     if (newEntry.datetime != current.datetime) {

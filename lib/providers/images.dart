@@ -10,31 +10,13 @@ part 'images.g.dart';
 
 @riverpod
 class Images extends _$Images {
-  var _state = <ImageData>[];
-
   @override
   Future<List<ImageData>> build(String datetimeString) async {
-    ref.listen(entryProvider(datetimeString), (prev, next) async {
-      final current = next.asData?.value;
-      if (current == null) return;
-
-      await fullReload();
-      _state = _state
-          .where((image) => current.images.contains(image.name))
-          .toList();
-    });
-
-    return [];
-  }
-
-  Future<void> fullReload() async {
     logger.i("Doing full reload of images.");
     final asyncValue = ref.watch(entryProvider(datetimeString));
     final entry = asyncValue.asData?.value;
     if (entry == null) {
-      _state = [];
-      state = AsyncData(_state);
-      return;
+      return [];
     }
 
     final rootFolder = ref.watch(folderUriProvider);
@@ -44,10 +26,10 @@ class Images extends _$Images {
     for (final imageName in entry.images) {
       logger.d("Reading image $imageName for entry ${entry.datetime}");
       final imageData = await entry.readImage(rootFolder.toString(), imageName);
+      logger.d("Read image $imageName");
       imageList.add(imageData);
       imageList = [...imageList];
-      _state = imageList;
     }
-    state = AsyncData(_state);
+    return imageList;
   }
 }

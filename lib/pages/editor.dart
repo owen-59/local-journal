@@ -8,6 +8,8 @@ import 'package:journal/image.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/providers/entry.dart';
 import 'package:journal/widgets/images_list.dart';
+import 'package:journal/widgets/osm_name_text.dart';
+import 'package:journal/widgets/place_search.dart';
 import 'package:journal/widgets/tags_editor.dart';
 import 'package:journal/widgets/text_input.dialogue.dart';
 import 'package:markdown_editor_live/markdown_editor_live.dart';
@@ -52,6 +54,18 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                               initialValue: value.body,
                               onChanged: (text) => setState(() => body = text),
                             ),
+
+                            if (value.locationId != null)
+                              Padding(
+                                padding:
+                                    EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 8,
+                                    ) +
+                                    EdgeInsets.only(top: 4),
+                                child: OsmNameText(osmId: value.locationId!),
+                              ),
+
                             Padding(
                               padding: EdgeInsetsGeometry.all(8),
                               child: Wrap(
@@ -92,6 +106,11 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                           IconButton.filledTonal(
                             icon: const Icon(Icons.calendar_month),
                             onPressed: () => onSetDateClicked(context, value),
+                          ),
+                          IconButton.filledTonal(
+                            icon: const Icon(Icons.edit_location_outlined),
+                            onPressed: () =>
+                                onSetLocationClicked(context, value),
                           ),
                           IconButton.filledTonal(
                             icon: const Icon(Icons.delete_outline),
@@ -240,5 +259,22 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
     await ref
         .read(entryProvider(widget.entryDateString).notifier)
         .removeImage(imageData.name);
+  }
+
+  Future<void> onSetLocationClicked(BuildContext context, Entry entry) async {
+    final locationId = await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (_) => PlaceSearch(),
+    );
+
+    if (locationId == null) return;
+
+    logger.i("location: $locationId");
+
+    await ref
+        .read(entryProvider(widget.entryDateString).notifier)
+        .writeWith(body: body, locationId: locationId);
   }
 }

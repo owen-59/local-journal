@@ -28,7 +28,7 @@ class ImagesList extends ConsumerWidget {
         ),
       ),
       AsyncError(:final error) => Center(child: Text(error.toString())),
-      _ => SizedBox.shrink(),
+      _ => Center(child: const CircularProgressIndicator()),
     };
   }
 }

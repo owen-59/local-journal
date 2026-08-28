@@ -7,6 +7,7 @@ import 'package:journal/logger.dart';
 import 'package:journal/pages/editor.dart';
 import 'package:journal/pages/home.dart';
 import 'package:journal/widgets/folder_selection_page.dart';
+import 'package:nominatim_flutter/nominatim_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:saf/saf.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,6 +21,13 @@ void main() async {
   final prefs = SharedPreferencesAsync();
 
   final String? cachedUri = await prefs.getString("saf_authorised_uri");
+
+  NominatimFlutter.instance.configureNominatim(
+    useCacheInterceptor: true,
+    maxStale: Duration(days: 14),
+    userAgent: "LocalJournal/1.0.0 (owen00064@gmail.com)",
+    convertFormData: true,
+  );
 
   runApp(App(saf: saf, cachedUri: cachedUri, prefs: prefs));
 }

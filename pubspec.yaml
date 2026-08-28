@@ -48,6 +48,7 @@ dependencies:
   collection: ^1.19.1
   image_picker: ^1.2.3
   path: ^1.9.1
+  nominatim_flutter: ^0.0.8
 
 dev_dependencies:
   flutter_test:

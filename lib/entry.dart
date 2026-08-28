@@ -11,12 +11,14 @@ class Entry implements Comparable<Entry> {
   final DateTime datetime;
   final List<String> tags;
   final List<String> images;
+  final String? locationId;
 
   Entry({
     required this.body,
     required this.datetime,
     required this.tags,
     required this.images,
+    required this.locationId,
   });
 
   @override
@@ -56,6 +58,7 @@ class Entry implements Comparable<Entry> {
     DateTime? datetime,
     List<String>? tags,
     List<String>? images,
+    String? locationId,
   }) async {
     final isSameDay = DateUtils.isSameDay(
       datetime ?? this.datetime,
@@ -79,6 +82,7 @@ class Entry implements Comparable<Entry> {
       datetime: datetime ?? this.datetime,
       tags: tags ?? this.tags,
       images: images ?? this.images,
+      locationId: locationId ?? this.locationId,
     );
   }
 
@@ -87,6 +91,7 @@ class Entry implements Comparable<Entry> {
     final content = addMdFrontmatter(body, {
       "tags": tags.join(","),
       "images": images.join(","),
+      "locationId": locationId ?? "",
     });
 
     await writeFileString(rootFolder, path, content, "text/markdown");
@@ -153,6 +158,8 @@ class Entry implements Comparable<Entry> {
     final (body, frontmatter) = parseMdFrontmatter(fileContent);
     final tagsString = frontmatter["tags"] ?? "";
     final imagesString = frontmatter["images"] ?? "";
+    final locationId = frontmatter["locationId"] ?? "";
+
     final tags = tagsString
         .split(",")
         .map((tag) => tag.trim())
@@ -166,6 +173,12 @@ class Entry implements Comparable<Entry> {
         .toSet()
         .toList();
 
-    return Entry(body: body, datetime: datetime, tags: tags, images: images);
+    return Entry(
+      body: body,
+      datetime: datetime,
+      tags: tags,
+      images: images,
+      locationId: locationId,
+    );
   }
 }
