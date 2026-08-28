@@ -2,11 +2,11 @@ import 'dart:convert';
 import 'dart:async';
 
 import 'package:collection/collection.dart';
+import 'package:intl/intl.dart';
 import 'package:journal/entry.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/main.dart';
 import 'package:journal/utils/file.dart';
-import 'package:journal/utils/path.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:saf/saf.dart';
 import 'package:saf_stream/saf_stream.dart';
@@ -15,19 +15,13 @@ part "entry_list.g.dart";
 
 @Riverpod(keepAlive: true)
 class EntryList extends _$EntryList {
-  final _controller = StreamController<List<Entry>>.broadcast();
   var _state = <Entry>[];
 
   @override
-  Stream<List<Entry>> build() async* {
-    ref.onDispose(() {
-      logger.w("Closing controller.");
-      _controller.close();
-    });
-
+  Future<List<Entry>> build() async {
     fullReload();
 
-    yield* _controller.stream;
+    return [];
   }
 
   bool _isSameDatetime(DateTime a, DateTime b) {
@@ -38,12 +32,12 @@ class EntryList extends _$EntryList {
         a.minute == b.minute;
   }
 
-  void addEntry(Entry entry, {bool shouldYield = true}) {
+  void addEntry(Entry entry) {
     removeEntry(entry);
     logger.d("Adding entry at ${entry.datetime} to list.");
     final index = lowerBound(_state, entry, compare: (a, b) => -a.compareTo(b));
     _state.insert(index, entry);
-    if (shouldYield) _controller.add(_state);
+    state = AsyncData(_state);
   }
 
   void removeEntry(Entry entry) {
@@ -53,7 +47,7 @@ class EntryList extends _$EntryList {
           (stateEntry) => !_isSameDatetime(entry.datetime, stateEntry.datetime),
         )
         .toList();
-    _controller.add(_state);
+    state = AsyncData(_state);
     logger.d(
       "Removing entry at ${entry.datetime} from list, deleted ${_state.length - initialLength}",
     );
@@ -74,27 +68,72 @@ class EntryList extends _$EntryList {
   }
 
   Future<void> fullReload() async {
-    logger.i("Doing expensive full entry reload.");
-    final folderUri = ref.watch(folderUriProvider);
-    final saf = Saf();
-    final dirContents = saf
-        .walk(ref.watch(folderUriProvider).toString())
-        .map((walkEntry) => walkEntry.file)
-        .where((file) => !file.isDir);
+    try {
+      logger.i("Doing expensive full entry reload.");
+      final rootFolder = ref.read(folderUriProvider).toString();
 
-    final safStream = SafStream();
+      final saf = Saf();
+      final safStream = SafStream();
 
-    await for (var file in dirContents) {
-      final path = getRelativePath(folderUri, Uri.parse(file.uri));
-      final time = getTimeFromPath(path);
-      if (time == null) continue;
-      final fileBytes = await safStream.readFileBytes(file.uri);
-      final fileContent = utf8.decode(fileBytes);
-      final entry = Entry.fromContent(fileContent, time);
+      final yearDirs = (await saf.list(rootFolder))
+          .where((file) => file.isDir)
+          .toList()
+          .sorted((a, b) => int.parse(b.name) - int.parse(a.name));
 
-      addEntry(entry, shouldYield: false);
-      _controller.add(_state);
+      for (final year in yearDirs) {
+        final yearDt = DateFormat.y().tryParse(year.name);
+        if (yearDt == null) {
+          logger.w("Skipping ${year.name} because it is not a year.");
+          continue;
+        }
+
+        final monthDirs = (await saf.list(year.uri))
+            .where((file) => file.isDir)
+            .toList()
+            .sorted((a, b) => int.parse(b.name) - int.parse(a.name));
+
+        for (final month in monthDirs) {
+          final monthDt = DateFormat.M().tryParse(month.name);
+          if (monthDt == null) continue;
+
+          final dayDirs = (await saf.list(month.uri))
+              .where((file) => file.isDir)
+              .toList()
+              .sorted((a, b) => int.parse(b.name) - int.parse(a.name));
+
+          for (final day in dayDirs) {
+            final dayDt = DateFormat.d().tryParse(day.name);
+            if (dayDt == null) continue;
+
+            final files = await saf.list(day.uri);
+            for (final file in files) {
+              if (file.name.length != 7) continue;
+
+              final timeString = file.name.substring(0, 4);
+              final time = DateFormat("HH:mm").tryParse(
+                "${timeString.substring(0, 2)}:${timeString.substring(2)}",
+              );
+              if (time == null) continue;
+
+              final datetime = yearDt.copyWith(
+                month: monthDt.month,
+                day: dayDt.day,
+                hour: time.hour,
+                minute: time.minute,
+              );
+
+              final fileBytes = await safStream.readFileBytes(file.uri);
+              final fileContent = utf8.decode(fileBytes);
+              final entry = Entry.fromContent(fileContent, datetime);
+
+              addEntry(entry);
+            }
+          }
+        }
+      }
+      state = AsyncData(_state);
+    } catch (err) {
+      state = AsyncError(err, StackTrace.current);
     }
-    _controller.add(_state);
   }
 }
