@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:journal/providers/entry_list.dart';
 import 'package:journal/widgets/entry_card.dart';
+import 'package:journal/widgets/error_card.dart';
 
 class EntryList extends ConsumerWidget {
   const EntryList({super.key});
@@ -17,7 +18,9 @@ class EntryList extends ConsumerWidget {
           itemCount: value.length,
           itemBuilder: (context, index) => EntryCard(entry: value[index]),
         ),
-        AsyncError(:final error) => Center(child: Text(error.toString())),
+        AsyncError(:final error, :final stackTrace) => Center(
+          child: ErrorCard(error: error, stackTrace: stackTrace),
+        ),
         _ => Center(child: const CircularProgressIndicator()),
       },
     );

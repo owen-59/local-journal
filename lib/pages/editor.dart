@@ -7,6 +7,7 @@ import 'package:journal/entry.dart';
 import 'package:journal/image.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/providers/entry.dart';
+import 'package:journal/widgets/error_card.dart';
 import 'package:journal/widgets/images_list.dart';
 import 'package:journal/widgets/osm_name_text.dart';
 import 'package:journal/widgets/place_search.dart';
@@ -126,7 +127,12 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
           ),
         ),
       ),
-      AsyncError(:final error) => Center(child: Text(error.toString())),
+      AsyncError(:final error, :final stackTrace) => Scaffold(
+        appBar: AppBar(),
+        body: Center(
+          child: ErrorCard(error: error, stackTrace: stackTrace),
+        ),
+      ),
       _ => const Center(child: CircularProgressIndicator()),
     };
   }
