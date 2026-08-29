@@ -1,6 +1,6 @@
 inputs:
   nixpkgs:
-    url: github:NixOS/nixpkgs?ref=nixos-26.05
+    url: github:NixOS/nixpkgs/nixos-unstable
 
 allow_unfree: true
 
