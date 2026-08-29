@@ -56,7 +56,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                               onChanged: (text) => setState(() => body = text),
                             ),
 
-                            if (value.locationId != null)
+                            if (value.locationId?.trim().isNotEmpty == true)
                               Padding(
                                 padding:
                                     EdgeInsets.symmetric(
