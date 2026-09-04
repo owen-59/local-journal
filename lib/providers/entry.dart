@@ -52,22 +52,28 @@ class EntryNotifier extends _$EntryNotifier {
       throw Exception("Tried to update entry when the provider was busy.");
     }
 
-    final newEntry = await current.copyWith(
-      rootFolder,
-      body: body,
-      datetime: datetime,
-      tags: tags,
-      locationId: locationId,
-    );
+    final keepAliveLink = ref.keepAlive();
 
-    if (newEntry.datetime != current.datetime) {
-      await current.delete(rootFolder);
-      ref.read(entryListProvider.notifier).removeEntry(current);
+    try {
+      final newEntry = await current.copyWith(
+        rootFolder,
+        body: body,
+        datetime: datetime,
+        tags: tags,
+        locationId: locationId,
+      );
+
+      if (newEntry.datetime != current.datetime) {
+        await current.delete(rootFolder);
+        ref.read(entryListProvider.notifier).removeEntry(current);
+      }
+      await newEntry.write(rootFolder);
+      ref.read(entryListProvider.notifier).addEntry(newEntry);
+      state = AsyncData(newEntry);
+      return newEntry;
+    } finally {
+      keepAliveLink.close();
     }
-    await newEntry.write(rootFolder);
-    ref.read(entryListProvider.notifier).addEntry(newEntry);
-    state = AsyncData(newEntry);
-    return newEntry;
   }
 
   Future<void> delete() async {
