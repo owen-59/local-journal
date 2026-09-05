@@ -76,7 +76,7 @@ class EntryList extends _$EntryList {
       final safStream = SafStream();
 
       final yearDirs = (await saf.list(rootFolder))
-          .where((file) => file.isDir)
+          .where((file) => file.isDir && int.tryParse(file.name) != null)
           .toList()
           .sorted((a, b) => int.parse(b.name) - int.parse(a.name));
 
@@ -88,7 +88,7 @@ class EntryList extends _$EntryList {
         }
 
         final monthDirs = (await saf.list(year.uri))
-            .where((file) => file.isDir)
+            .where((file) => file.isDir && int.tryParse(file.name) != null)
             .toList()
             .sorted((a, b) => int.parse(b.name) - int.parse(a.name));
 
@@ -97,7 +97,7 @@ class EntryList extends _$EntryList {
           if (monthDt == null) continue;
 
           final dayDirs = (await saf.list(month.uri))
-              .where((file) => file.isDir)
+              .where((file) => file.isDir && int.tryParse(file.name) != null)
               .toList()
               .sorted((a, b) => int.parse(b.name) - int.parse(a.name));
 
