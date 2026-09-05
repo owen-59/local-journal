@@ -25,7 +25,7 @@ void main() async {
   NominatimFlutter.instance.configureNominatim(
     useCacheInterceptor: true,
     maxStale: Duration(days: 14),
-    userAgent: "LocalJournal/1.0.0 (owen00064@gmail.com)",
+    userAgent: "LocalJournal/1.0.1 (owen00064@gmail.com)",
     convertFormData: true,
   );
 
