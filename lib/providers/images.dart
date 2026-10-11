@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:journal/image.dart';
+import 'package:journal/models/image.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/main.dart';
 import 'package:journal/providers/entry.dart';

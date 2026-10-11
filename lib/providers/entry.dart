@@ -1,5 +1,5 @@
 import 'package:image_picker/image_picker.dart';
-import 'package:journal/entry.dart';
+import 'package:journal/models/entry.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/main.dart';
 import 'package:journal/providers/entry_list.dart';

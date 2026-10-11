@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:journal/image.dart';
+import 'package:journal/models/image.dart';
 import 'package:journal/providers/images.dart';
 import 'package:journal/widgets/image_view.dart';
 

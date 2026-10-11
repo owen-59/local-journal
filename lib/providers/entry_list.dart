@@ -3,7 +3,7 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:intl/intl.dart';
-import 'package:journal/entry.dart';
+import 'package:journal/models/entry.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/main.dart';
 import 'package:journal/utils/file.dart';

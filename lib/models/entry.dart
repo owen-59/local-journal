@@ -3,7 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:journal/utils/location.dart';
 import 'package:journal/utils/yaml.dart';
 import 'package:path/path.dart' as path;
-import 'package:journal/image.dart';
+import 'package:journal/models/image.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/utils/file.dart';
 import 'package:journal/utils/frontmatter.dart';

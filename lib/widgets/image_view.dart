@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:journal/image.dart';
+import 'package:journal/models/image.dart';
 
 class ImageView extends StatefulWidget {
   final ImageData imageData;
