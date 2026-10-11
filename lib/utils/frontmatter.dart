@@ -18,8 +18,7 @@ Iterable<String> _getLinesSync(String text) sync* {
   final lineStream = _getLinesSync(text);
   final iterator = lineStream.iterator;
 
-  iterator.moveNext();
-  if (iterator.current != "---") {
+  if (iterator.moveNext() && iterator.current != "---") {
     logger.w("No YAML frontmatter found.");
     return (text, null);
   }
@@ -37,7 +36,7 @@ Iterable<String> _getLinesSync(String text) sync* {
   var yamlData = loadYaml(yamlText);
   if (yamlData is! YamlMap) {
     logger.w("$yamlText did not load into a YamlMap, loaded as $yamlData.");
-    yamlData = YamlMap(sourceUrl: {});
+    yamlData = YamlMap();
   }
 
   var remainingLines = [];

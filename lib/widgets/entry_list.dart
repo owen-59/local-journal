@@ -16,7 +16,7 @@ class EntryList extends ConsumerWidget {
       child: switch (entries) {
         AsyncData(:final value) => ListView.builder(
           itemCount: value.length,
-          itemBuilder: (context, index) => EntryCard(entry: value[index]),
+          itemBuilder: (context, index) => EntryCard(entryDt: value[index]),
         ),
         AsyncError(:final error, :final stackTrace) => Center(
           child: ErrorCard(error: error, stackTrace: stackTrace),

@@ -11,8 +11,9 @@ Future<List<String>> tags(Ref ref) async {
     return [];
   }
   var foundTags = <String>{};
-  for (var entry in entries) {
-    foundTags.addAll(entry.tags);
-  }
+  // for (var entry in entries) {
+  // foundTags.addAll(entry.tags);
+  //                                      TODO CACHING <---
+  // }
   return foundTags.toList();
 }

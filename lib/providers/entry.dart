@@ -66,10 +66,10 @@ class EntryNotifier extends _$EntryNotifier {
 
       if (newEntry.datetime != current.datetime) {
         await current.delete(rootFolder);
-        ref.read(entryListProvider.notifier).removeEntry(current);
+        ref.read(entryListProvider.notifier).removeEntry(current.datetime);
       }
       await newEntry.write(rootFolder);
-      ref.read(entryListProvider.notifier).addEntry(newEntry);
+      ref.read(entryListProvider.notifier).addEntry(newEntry.datetime);
       state = AsyncData(newEntry);
       return newEntry;
     } finally {
@@ -85,7 +85,7 @@ class EntryNotifier extends _$EntryNotifier {
       throw Exception("Tried to update entry when the provider was busy.");
     }
     await current.delete(rootFolder);
-    ref.read(entryListProvider.notifier).removeEntry(current);
+    ref.read(entryListProvider.notifier).removeEntry(current.datetime);
   }
 
   Future<void> addImage(XFile image, String name) async {
@@ -112,25 +112,3 @@ class EntryNotifier extends _$EntryNotifier {
     state = AsyncData(newEntry);
   }
 }
-
-// @riverpod
-// Stream<List<ImageData>> images(Ref ref, String datetimeString) async* {
-//   final asyncValue = ref.watch(entryProvider(datetimeString));
-//   final entry = asyncValue.asData?.value;
-//   if (entry == null) {
-//     yield [];
-//     return;
-//   }
-//
-//   final rootFolder = ref.watch(folderUriProvider);
-//
-//   var imageList = <ImageData>[];
-//
-//   for (final imageName in entry.images) {
-//     logger.d("Reading image $imageName for entry ${entry.datetime}");
-//     final imageData = await entry.readImage(rootFolder.toString(), imageName);
-//     imageList.add(imageData);
-//     imageList = [...imageList];
-//     yield imageList;
-//   }
-// }

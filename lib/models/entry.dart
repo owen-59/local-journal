@@ -100,8 +100,6 @@ class Entry implements Comparable<Entry> {
 
     final content = addMdFrontmatter(body, yamlData);
 
-    logger.e(content);
-
     await writeFileString(rootFolder, path, content, "text/markdown");
   }
 

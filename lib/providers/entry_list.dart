@@ -1,24 +1,21 @@
-import 'dart:convert';
 import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:intl/intl.dart';
-import 'package:journal/models/entry.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/main.dart';
 import 'package:journal/utils/file.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:saf/saf.dart';
-import 'package:saf_stream/saf_stream.dart';
 
 part "entry_list.g.dart";
 
 @Riverpod(keepAlive: true)
 class EntryList extends _$EntryList {
-  var _state = <Entry>[];
+  var _state = <DateTime>[];
 
   @override
-  Future<List<Entry>> build() async {
+  Future<List<DateTime>> build() async {
     fullReload();
 
     return [];
@@ -32,31 +29,30 @@ class EntryList extends _$EntryList {
         a.minute == b.minute;
   }
 
-  void addEntry(Entry entry) {
-    removeEntry(entry);
-    logger.d("Adding entry at ${entry.datetime} to list.");
-    final index = lowerBound(_state, entry, compare: (a, b) => -a.compareTo(b));
-    _state.insert(index, entry);
+  void addEntry(DateTime entryDt) {
+    removeEntry(entryDt);
+    logger.d("Adding entry at $entryDt to list.");
+    final index = lowerBound(
+      _state,
+      entryDt,
+      compare: (a, b) => -a.compareTo(b),
+    );
+    _state.insert(index, entryDt);
     state = AsyncData(_state);
   }
 
-  void removeEntry(Entry entry) {
-    final initialLength = _state.length;
+  void removeEntry(DateTime entryDt) {
     _state = _state
-        .where(
-          (stateEntry) => !_isSameDatetime(entry.datetime, stateEntry.datetime),
-        )
+        .where((stateEntryDt) => !_isSameDatetime(entryDt, stateEntryDt))
         .toList();
     state = AsyncData(_state);
-    logger.d(
-      "Removing entry at ${entry.datetime} from list, deleted ${_state.length - initialLength}",
-    );
+    logger.d("Removing entry at $entryDt from list");
   }
 
   Future<DateTime> newEntry() async {
     var dt = DateTime.now().copyWith(second: 0, millisecond: 0, microsecond: 0);
 
-    while (_state.any((entry) => entry.datetime.isAtSameMomentAs(dt))) {
+    while (_state.any((entryDt) => entryDt.isAtSameMomentAs(dt))) {
       dt = dt.copyWith(minute: dt.minute + 1);
     }
 
@@ -73,7 +69,6 @@ class EntryList extends _$EntryList {
       final rootFolder = ref.read(folderUriProvider).toString();
 
       final saf = Saf();
-      final safStream = SafStream();
 
       final yearDirs = (await saf.list(rootFolder))
           .where((file) => file.isDir && int.tryParse(file.name) != null)
@@ -122,11 +117,7 @@ class EntryList extends _$EntryList {
                 minute: time.minute,
               );
 
-              final fileBytes = await safStream.readFileBytes(file.uri);
-              final fileContent = utf8.decode(fileBytes);
-              final entry = Entry.fromContent(fileContent, datetime);
-
-              addEntry(entry);
+              addEntry(datetime);
             }
           }
         }
