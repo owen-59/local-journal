@@ -217,6 +217,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.1"
+  dump_yaml:
+    dependency: "direct main"
+    description:
+      name: dump_yaml
+      sha256: "2afa1984d7829bfb91edbd53052c1181283838fd10cefd0bbac077d6f56aa837"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0-beta.6"
   dynamic_color:
     dependency: "direct main"
     description:
@@ -720,6 +728,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.8"
+  rookie_yaml:
+    dependency: transitive
+    description:
+      name: rookie_yaml
+      sha256: d7306d2ef156acf0f1a59f266aecad688d5c585e31a0522e77649ca13476d02e
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.0-pre.3"
   saf:
     dependency: "direct main"
     description:
@@ -1014,7 +1030,7 @@ packages:
     source: hosted
     version: "1.1.0"
   yaml:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: yaml
       sha256: f67cdd8e07d3c6329146aaef1ba043542b3134c12489f553ca9a7435d1068aea

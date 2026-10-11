@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:journal/utils/yaml.dart';
 import 'package:path/path.dart' as path;
 import 'package:journal/image.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/utils/file.dart';
 import 'package:journal/utils/frontmatter.dart';
+import 'package:yaml/yaml.dart';
 
 class Entry implements Comparable<Entry> {
   final String body;
@@ -88,11 +90,12 @@ class Entry implements Comparable<Entry> {
 
   Future<void> write(String rootFolder) async {
     final path = pathFromDatetime(datetime);
-    final content = addMdFrontmatter(body, {
-      "tags": tags.join(","),
-      "images": images.join(","),
-      "locationId": locationId ?? "",
-    });
+
+    final yamlData = {
+      "tags": tags,
+      "images": images
+    };
+    final content = addMdFrontmatter(body, yamlData);
 
     await writeFileString(rootFolder, path, content, "text/markdown");
   }
@@ -156,29 +159,18 @@ class Entry implements Comparable<Entry> {
 
   static Entry fromContent(String fileContent, DateTime datetime) {
     final (body, frontmatter) = parseMdFrontmatter(fileContent);
-    final tagsString = frontmatter["tags"] ?? "";
-    final imagesString = frontmatter["images"] ?? "";
-    final locationId = frontmatter["locationId"] ?? "";
+    final tags = dynamicYamlToList<String>(frontmatter?["tags"]);
+    final images = dynamicYamlToList<String>(frontmatter?["images"]);
 
-    final tags = tagsString
-        .split(",")
-        .map((tag) => tag.trim())
-        .where((tag) => tag.isNotEmpty)
-        .toSet()
-        .toList();
-    final images = imagesString
-        .split(",")
-        .map((img) => img.trim())
-        .where((img) => img.isNotEmpty)
-        .toSet()
-        .toList();
+    // todo locations
 
     return Entry(
       body: body,
       datetime: datetime,
       tags: tags,
       images: images,
-      locationId: locationId,
+      locationId: null
+      // locationId: locationId,
     );
   }
 }
