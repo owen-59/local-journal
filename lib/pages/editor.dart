@@ -10,7 +10,6 @@ import 'package:journal/providers/entry.dart';
 import 'package:journal/utils/location.dart';
 import 'package:journal/widgets/error_card.dart';
 import 'package:journal/widgets/images_list.dart';
-import 'package:journal/widgets/osm_name_text.dart';
 import 'package:journal/widgets/place_search.dart';
 import 'package:journal/widgets/tags_editor.dart';
 import 'package:journal/widgets/text_input.dialogue.dart';
