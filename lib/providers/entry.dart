@@ -4,6 +4,7 @@ import 'package:journal/logger.dart';
 import 'package:journal/main.dart';
 import 'package:journal/providers/entry_list.dart';
 import 'package:journal/utils/file.dart';
+import 'package:journal/utils/location.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part "entry.g.dart";
@@ -43,7 +44,7 @@ class EntryNotifier extends _$EntryNotifier {
     String? body,
     DateTime? datetime,
     List<String>? tags,
-    String? locationId,
+    Location? location,
   }) async {
     final current = state.asData?.value;
     final rootFolder = ref.watch(folderUriProvider).toString();
@@ -60,7 +61,7 @@ class EntryNotifier extends _$EntryNotifier {
         body: body,
         datetime: datetime,
         tags: tags,
-        locationId: locationId,
+        location: location,
       );
 
       if (newEntry.datetime != current.datetime) {

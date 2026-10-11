@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:journal/utils/location.dart';
 import 'package:journal/utils/yaml.dart';
 import 'package:path/path.dart' as path;
 import 'package:journal/image.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/utils/file.dart';
 import 'package:journal/utils/frontmatter.dart';
-import 'package:yaml/yaml.dart';
 
 class Entry implements Comparable<Entry> {
   final String body;
   final DateTime datetime;
   final List<String> tags;
   final List<String> images;
-  final String? locationId;
+  final Location? location;
 
   Entry({
     required this.body,
     required this.datetime,
     required this.tags,
     required this.images,
-    required this.locationId,
+    required this.location,
   });
 
   @override
@@ -60,7 +60,7 @@ class Entry implements Comparable<Entry> {
     DateTime? datetime,
     List<String>? tags,
     List<String>? images,
-    String? locationId,
+    Location? location,
   }) async {
     final isSameDay = DateUtils.isSameDay(
       datetime ?? this.datetime,
@@ -84,18 +84,23 @@ class Entry implements Comparable<Entry> {
       datetime: datetime ?? this.datetime,
       tags: tags ?? this.tags,
       images: images ?? this.images,
-      locationId: locationId ?? this.locationId,
+      location: location ?? this.location,
     );
   }
 
   Future<void> write(String rootFolder) async {
     final path = pathFromDatetime(datetime);
 
-    final yamlData = {
-      "tags": tags,
-      "images": images
-    };
+    Map<String, dynamic> yamlData = {"tags": tags, "images": images};
+
+    if (location != null) {
+      yamlData["location"] = [location!.latitude, location!.longitude];
+      yamlData["place_name"] = location!.name;
+    }
+
     final content = addMdFrontmatter(body, yamlData);
+
+    logger.e(content);
 
     await writeFileString(rootFolder, path, content, "text/markdown");
   }
@@ -161,16 +166,14 @@ class Entry implements Comparable<Entry> {
     final (body, frontmatter) = parseMdFrontmatter(fileContent);
     final tags = dynamicYamlToList<String>(frontmatter?["tags"]);
     final images = dynamicYamlToList<String>(frontmatter?["images"]);
-
-    // todo locations
+    final location = frontmatter != null ? locationFromYaml(frontmatter) : null;
 
     return Entry(
       body: body,
       datetime: datetime,
       tags: tags,
       images: images,
-      locationId: null
-      // locationId: locationId,
+      location: location,
     );
   }
 }

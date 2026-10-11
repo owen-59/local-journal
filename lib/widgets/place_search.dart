@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_controller/flutter_keyboard_controller.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:journal/providers/osm_search.dart';
-import 'package:journal/utils/nominatim.dart';
 import 'package:nominatim_flutter/model/response/response.dart';
 
 class PlaceSearch extends ConsumerStatefulWidget {
@@ -42,10 +41,7 @@ class _PlaceSearchState extends ConsumerState<PlaceSearch> {
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: value.length,
                       itemBuilder: (context, index) => GestureDetector(
-                        onTap: () => Navigator.pop(
-                          context,
-                          osmIdFromNomatinimObj(value[index]),
-                        ),
+                        onTap: () => Navigator.pop(context, value[index]),
                         behavior: HitTestBehavior.opaque,
                         child: Text(
                           value[index].displayName ?? "No name found.",

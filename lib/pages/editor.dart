@@ -7,6 +7,7 @@ import 'package:journal/entry.dart';
 import 'package:journal/image.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/providers/entry.dart';
+import 'package:journal/utils/location.dart';
 import 'package:journal/widgets/error_card.dart';
 import 'package:journal/widgets/images_list.dart';
 import 'package:journal/widgets/osm_name_text.dart';
@@ -14,6 +15,7 @@ import 'package:journal/widgets/place_search.dart';
 import 'package:journal/widgets/tags_editor.dart';
 import 'package:journal/widgets/text_input.dialogue.dart';
 import 'package:markdown_editor_live/markdown_editor_live.dart';
+import 'package:nominatim_flutter/model/response/response.dart';
 
 class EntryEditor extends ConsumerStatefulWidget {
   final String entryDateString;
@@ -56,7 +58,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                               onChanged: (text) => setState(() => body = text),
                             ),
 
-                            if (value.locationId?.trim().isNotEmpty == true)
+                            if (value.location is Location)
                               Padding(
                                 padding:
                                     EdgeInsets.symmetric(
@@ -64,7 +66,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                                       vertical: 8,
                                     ) +
                                     EdgeInsets.only(top: 4),
-                                child: OsmNameText(osmId: value.locationId!),
+                                child: Text(value.location!.name),
                               ),
 
                             Padding(
@@ -268,19 +270,31 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
   }
 
   Future<void> onSetLocationClicked(BuildContext context, Entry entry) async {
-    final locationId = await showModalBottomSheet<String>(
+    final nominatimResponse = await showModalBottomSheet<NominatimResponse>(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
       builder: (_) => PlaceSearch(),
     );
 
-    if (locationId == null) return;
+    if (nominatimResponse == null) return;
 
-    logger.i("location: $locationId");
+    logger.i("location: $nominatimResponse");
 
-    await ref
-        .read(entryProvider(widget.entryDateString).notifier)
-        .writeWith(body: body, locationId: locationId);
+    final latStr = nominatimResponse.lat;
+    final lonStr = nominatimResponse.lon;
+
+    final lat = latStr is String ? double.tryParse(latStr) : null;
+    final lon = lonStr is String ? double.tryParse(lonStr) : null;
+
+    final name = nominatimResponse.displayName;
+
+    if (name is String && lat is double && lon is double) {
+      final location = Location(name: name, latitude: lat, longitude: lon);
+
+      await ref
+          .read(entryProvider(widget.entryDateString).notifier)
+          .writeWith(body: body, location: location);
+    }
   }
 }

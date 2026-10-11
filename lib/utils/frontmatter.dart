@@ -14,7 +14,6 @@ Iterable<String> _getLinesSync(String text) sync* {
   }
 }
 
-
 (String, YamlMap?) parseMdFrontmatter(String text) {
   final lineStream = _getLinesSync(text);
   final iterator = lineStream.iterator;
@@ -59,4 +58,3 @@ String addMdFrontmatter(String body, Map frontmatter) {
 
   return output;
 }
-
