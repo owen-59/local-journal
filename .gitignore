@@ -8,3 +8,4 @@ flutter_*.log
 *.g.dart
 devtools_options.yaml
 local.properties
+release-keystore.jks
