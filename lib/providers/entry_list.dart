@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:intl/intl.dart';
+import 'package:journal/database.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/main.dart';
 import 'package:journal/utils/file.dart';
@@ -13,9 +14,12 @@ part "entry_list.g.dart";
 @Riverpod(keepAlive: true)
 class EntryList extends _$EntryList {
   var _state = <DateTime>[];
+  late AppDatabase database;
 
   @override
   Future<List<DateTime>> build() async {
+    database = ref.watch(appDatabaseProvider);
+
     fullReload();
 
     return [];
@@ -29,8 +33,8 @@ class EntryList extends _$EntryList {
         a.minute == b.minute;
   }
 
-  void addEntry(DateTime entryDt) {
-    removeEntry(entryDt);
+  Future addEntry(DateTime entryDt) async {
+    removeEntry(entryDt, skipDbDelete: true);
     logger.d("Adding entry at $entryDt to list.");
     final index = lowerBound(
       _state,
@@ -41,7 +45,7 @@ class EntryList extends _$EntryList {
     state = AsyncData(_state);
   }
 
-  void removeEntry(DateTime entryDt) {
+  void removeEntry(DateTime entryDt, {bool skipDbDelete = false}) {
     _state = _state
         .where((stateEntryDt) => !_isSameDatetime(entryDt, stateEntryDt))
         .toList();

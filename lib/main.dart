@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_controller/flutter_keyboard_controller.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:journal/database.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/pages/editor.dart';
 import 'package:journal/pages/home.dart';
@@ -19,6 +20,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final saf = Saf();
   final prefs = SharedPreferencesAsync();
+  final database = AppDatabase();
 
   final String? cachedUri = await prefs.getString("saf_authorised_uri");
 
@@ -29,13 +31,19 @@ void main() async {
     convertFormData: true,
   );
 
-  runApp(App(saf: saf, cachedUri: cachedUri, prefs: prefs));
+  runApp(App(saf: saf, cachedUri: cachedUri, prefs: prefs, database: database));
 }
 
 // initialise this in overrides
 @riverpod
 Uri folderUri(Ref ref) {
-  logger.d("Accessed folderUriProvider before overriding!");
+  logger.e("Accessed folderUriProvider before overriding!");
+  throw UnimplementedError();
+}
+
+@riverpod
+AppDatabase appDatabase(Ref ref) {
+  logger.e("Accessed appDatabaseProvider before overriding!");
   throw UnimplementedError();
 }
 
@@ -54,11 +62,14 @@ class App extends StatefulWidget {
   final Saf saf;
   final SharedPreferencesAsync prefs;
   final String? cachedUri;
+  final AppDatabase database;
+
   const App({
     super.key,
     required this.saf,
     required this.prefs,
     required this.cachedUri,
+    required this.database,
   });
 
   @override
@@ -100,7 +111,10 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     return _authorised
         ? ProviderScope(
-            overrides: [folderUriProvider.overrideWithValue(_folderUri)],
+            overrides: [
+              folderUriProvider.overrideWithValue(_folderUri),
+              appDatabaseProvider.overrideWithValue(widget.database),
+            ],
             retry: (_, _) => null,
             child: DynamicColorBuilder(
               builder: (light, dark) => KeyboardProvider(

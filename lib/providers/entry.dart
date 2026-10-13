@@ -1,4 +1,5 @@
 import 'package:image_picker/image_picker.dart';
+import 'package:journal/database.dart';
 import 'package:journal/models/entry.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/main.dart';
@@ -24,6 +25,7 @@ class EntryNotifier extends _$EntryNotifier {
   Future<Entry> build(String datetimeString) async {
     logger.i("Loading entry $datetimeString");
     final rootFolder = ref.watch(folderUriProvider);
+    final database = ref.watch(appDatabaseProvider);
     final datetime = await getDatetime();
 
     final path = pathFromDatetime(datetime);
@@ -35,7 +37,10 @@ class EntryNotifier extends _$EntryNotifier {
     }
 
     final entry = await Entry.read(datetimeString, rootFolder.toString());
-    if (entry != null) return entry;
+    if (entry != null) {
+      database.into(database.entriesCache).insert(cacheEntryFromEntry(entry));
+      return entry;
+    }
 
     throw Exception("Entry not found.");
   }
@@ -48,6 +53,7 @@ class EntryNotifier extends _$EntryNotifier {
   }) async {
     final current = state.asData?.value;
     final rootFolder = ref.watch(folderUriProvider).toString();
+    final database = ref.watch(appDatabaseProvider);
     if (current == null) {
       logger.w("Tried to update entry when the entry provider was busy.");
       throw Exception("Tried to update entry when the provider was busy.");
@@ -70,6 +76,9 @@ class EntryNotifier extends _$EntryNotifier {
       }
       await newEntry.write(rootFolder);
       ref.read(entryListProvider.notifier).addEntry(newEntry.datetime);
+      database
+          .into(database.entriesCache)
+          .insert(cacheEntryFromEntry(newEntry));
       state = AsyncData(newEntry);
       return newEntry;
     } finally {
