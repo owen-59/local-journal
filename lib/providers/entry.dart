@@ -23,7 +23,7 @@ class EntryNotifier extends _$EntryNotifier {
 
   @override
   Future<Entry> build(String datetimeString) async {
-    logger.i("Loading entry $datetimeString");
+    logger.d("Loading entry $datetimeString");
     final rootFolder = ref.watch(folderUriProvider);
     final database = ref.watch(appDatabaseProvider);
     final datetime = await getDatetime();
@@ -80,7 +80,7 @@ class EntryNotifier extends _$EntryNotifier {
       ref.read(entryListProvider.notifier).addEntry(newEntry.datetime);
       database
           .into(database.entriesCache)
-          .insert(cacheEntryFromEntry(newEntry));
+          .insertOnConflictUpdate(cacheEntryFromEntry(newEntry));
       state = AsyncData(newEntry);
       return newEntry;
     } finally {

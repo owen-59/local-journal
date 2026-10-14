@@ -7,6 +7,7 @@ import 'package:journal/models/image.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/utils/file.dart';
 import 'package:journal/utils/frontmatter.dart';
+import 'package:yaml/yaml.dart';
 
 class Entry implements Comparable<Entry> {
   final String body;
@@ -162,8 +163,10 @@ class Entry implements Comparable<Entry> {
 
   static Entry fromContent(String fileContent, DateTime datetime) {
     final (body, frontmatter) = parseMdFrontmatter(fileContent);
-    final tags = dynamicYamlToList<String>(frontmatter?["tags"]);
-    final images = dynamicYamlToList<String>(frontmatter?["images"]);
+    final tags = dynamicYamlToList<String>(frontmatter?["tags"] ?? YamlList());
+    final images = dynamicYamlToList<String>(
+      frontmatter?["images"] ?? YamlList(),
+    );
     final location = frontmatter != null ? locationFromYaml(frontmatter) : null;
 
     return Entry(

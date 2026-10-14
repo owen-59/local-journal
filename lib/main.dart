@@ -16,7 +16,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 part "main.g.dart";
 
 void main() async {
-  logger.d("Starting main()");
+  logger.i("Starting main()");
   WidgetsFlutterBinding.ensureInitialized();
   final saf = Saf();
   final prefs = SharedPreferencesAsync();

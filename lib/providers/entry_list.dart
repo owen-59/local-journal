@@ -35,7 +35,6 @@ class EntryList extends _$EntryList {
 
   Future addEntry(DateTime entryDt) async {
     removeEntry(entryDt, skipDbDelete: true);
-    logger.d("Adding entry at $entryDt to list.");
     final index = lowerBound(
       _state,
       entryDt,
@@ -50,7 +49,6 @@ class EntryList extends _$EntryList {
         .where((stateEntryDt) => !_isSameDatetime(entryDt, stateEntryDt))
         .toList();
     state = AsyncData(_state);
-    logger.d("Removing entry at $entryDt from list");
   }
 
   Future<DateTime> newEntry() async {
