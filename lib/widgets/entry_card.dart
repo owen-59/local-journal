@@ -26,69 +26,93 @@ class EntryCard extends ConsumerWidget {
       child: Container(
         margin: const EdgeInsets.only(left: 20, right: 20, top: 5),
         padding: const EdgeInsets.only(bottom: 5),
-        child: switch (entry) {
-          AsyncData(:final value) => Column(
+        child: IntrinsicHeight(
+          child: Stack(
             children: [
-              IntrinsicHeight(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+              Column(
+                children: [
+                  Text("\n\n", style: Theme.of(context).textTheme.bodyLarge),
+                  Spacer(),
+                  Text("", style: Theme.of(context).textTheme.labelMedium),
+                ],
+              ),
+              switch (entry) {
+                AsyncError(:final error, :final stackTrace) => ErrorCard(
+                  error: error,
+                  stackTrace: stackTrace,
+                ),
+                AsyncData(:final value) => Column(
                   children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
+                    IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Text(
-                            value.body,
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                          Spacer(),
-                          Text(
-                            "${DateFormat("HH:mm dd MMMM").format(entryDt)}${value.tags.isNotEmpty ? " - " : ""}${value.tags.join(", ")}",
-                            style: Theme.of(context).textTheme.labelMedium
-                                ?.copyWith(
-                                  color: Theme.of(context).colorScheme.primary,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  value.body,
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
+                                Spacer(),
+                                Text(
+                                  "${DateFormat("HH:mm dd MMMM").format(entryDt)}${value.tags.isNotEmpty ? " - " : ""}${value.tags.join(", ")}",
+                                  maxLines: 1,
+                                  overflow: TextOverflow.fade,
+                                  style: Theme.of(context).textTheme.labelMedium
+                                      ?.copyWith(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.primary,
+                                      ),
+                                ),
+                              ],
+                            ),
                           ),
+                          switch (entryImages) {
+                            AsyncData(value: final images) =>
+                              images.isNotEmpty && images[0].bytes != null
+                                  ? SizedBox.square(
+                                      dimension: 80,
+                                      child: ClipRRect(
+                                        borderRadius: const BorderRadius.all(
+                                          Radius.circular(4.0),
+                                        ),
+                                        child: Image.memory(
+                                          images[0].bytes!,
+                                          fit: BoxFit.cover,
+                                          frameBuilder:
+                                              (
+                                                context,
+                                                child,
+                                                frame,
+                                                _,
+                                              ) => frame == null
+                                              ? const Center(
+                                                  child:
+                                                      CircularProgressIndicator(),
+                                                )
+                                              : child,
+                                        ),
+                                      ),
+                                    )
+                                  : const SizedBox.shrink(),
+                            _ => Text(""),
+                          },
                         ],
                       ),
                     ),
-                    switch (entryImages) {
-                      AsyncData(value: final images) =>
-                        images.isNotEmpty && images[0].bytes != null
-                            ? SizedBox.square(
-                                dimension: 80,
-                                child: ClipRRect(
-                                  borderRadius: const BorderRadius.all(
-                                    Radius.circular(4.0),
-                                  ),
-                                  child: Image.memory(
-                                    images[0].bytes!,
-                                    fit: BoxFit.cover,
-                                    frameBuilder: (context, child, frame, _) =>
-                                        frame == null
-                                        ? const Center(
-                                            child: CircularProgressIndicator(),
-                                          )
-                                        : child,
-                                  ),
-                                ),
-                              )
-                            : const SizedBox.shrink(),
-                      _ => Text(""),
-                    },
                   ],
                 ),
-              ),
-              Divider(),
+                _ => const Center(child: CircularProgressIndicator()),
+              },
             ],
           ),
-          AsyncError(:final error, :final stackTrace) => ErrorCard(
-            error: error,
-            stackTrace: stackTrace,
-          ),
-          _ => const Center(child: CircularProgressIndicator()),
-        },
+        ),
       ),
     );
   }

@@ -17,6 +17,7 @@ class EntryList extends ConsumerWidget {
       child: switch (entries) {
         AsyncData(:final value) => ListView.separated(
           itemCount: value.length,
+          addAutomaticKeepAlives: true,
           itemBuilder: (context, index) => index == 0
               ? Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
