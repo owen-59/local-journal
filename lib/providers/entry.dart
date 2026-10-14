@@ -38,7 +38,9 @@ class EntryNotifier extends _$EntryNotifier {
 
     final entry = await Entry.read(datetimeString, rootFolder.toString());
     if (entry != null) {
-      database.into(database.entriesCache).insert(cacheEntryFromEntry(entry));
+      database
+          .into(database.entriesCache)
+          .insertOnConflictUpdate(cacheEntryFromEntry(entry));
       return entry;
     }
 
