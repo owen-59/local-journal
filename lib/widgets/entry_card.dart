@@ -28,6 +28,7 @@ class EntryCard extends ConsumerWidget {
         padding: const EdgeInsets.only(bottom: 5),
         child: IntrinsicHeight(
           child: Stack(
+            alignment: Alignment.center,
             children: [
               Column(
                 children: [
@@ -37,9 +38,19 @@ class EntryCard extends ConsumerWidget {
                 ],
               ),
               switch (entry) {
-                AsyncError(:final error, :final stackTrace) => ErrorCard(
-                  error: error,
-                  stackTrace: stackTrace,
+                AsyncError(:final error, :final stackTrace) => ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.error,
+                    foregroundColor: Theme.of(context).colorScheme.onError,
+                  ),
+                  onPressed: () => showModalBottomSheet(
+                    context: context,
+                    builder: (_) => ErrorCard(
+                      error: error,
+                      stackTrace: stackTrace,
+                    )
+                  ),
+                  child: Text("Error"),
                 ),
                 AsyncData(:final value) => Column(
                   children: [
