@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:journal/providers/entry.dart';
 import 'package:journal/providers/images.dart';
+import 'package:journal/widgets/entry_card_template.dart';
 import 'package:journal/widgets/error_card.dart';
 
 class EntryCard extends ConsumerWidget {
@@ -30,13 +31,7 @@ class EntryCard extends ConsumerWidget {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              Column(
-                children: [
-                  Text("\n\n", style: Theme.of(context).textTheme.bodyLarge),
-                  Spacer(),
-                  Text("", style: Theme.of(context).textTheme.labelMedium),
-                ],
-              ),
+              EntryCardTemplate(),
               switch (entry) {
                 AsyncError(:final error, :final stackTrace) => ElevatedButton(
                   style: ElevatedButton.styleFrom(

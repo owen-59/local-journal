@@ -672,6 +672,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.13.0"
+  measured:
+    dependency: "direct main"
+    description:
+      name: measured
+      sha256: b2a0857f7a4ee0d8b81b9da4ff0ebba35ffbd8d456900cfd884ea1316f19855e
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
   meta:
     dependency: transitive
     description:

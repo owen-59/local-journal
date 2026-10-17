@@ -16,8 +16,12 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   int _currentPageIndex = 0;
   final _pageController = PageController();
+  final GlobalKey<wid.EntryListState> _entryListKey = GlobalKey();
 
-  final List<Widget> _screens = [wid.EntryList(), MapPage()];
+  late final List<Widget> _screens = [
+    wid.EntryList(key: _entryListKey),
+    MapPage(),
+  ];
 
   @override
   void dispose() {
@@ -28,7 +32,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Journal")),
+      appBar: AppBar(
+        title: Text("Journal"),
+        actions: [
+          ?_currentPageIndex == 0
+            ? IconButton(
+              icon: Icon(Icons.calendar_month),
+              onPressed: () => onDateClicked(context, ref),
+            )
+            : null
+        ],
+      ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentPageIndex,
         onDestinationSelected: (int index) {
@@ -68,5 +82,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     } else {
       logger.w("Created an entry, but the context was no longer valid.");
     }
+  }
+
+  void onDateClicked(BuildContext context, WidgetRef ref) {
+    ref.read(entryListProvider).whenData((entries) async {
+      final chosenDate = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now().isAfter(entries.first)
+            ? entries.first
+            : DateTime.now().isBefore(entries.last)
+            ? entries.last
+            : DateTime.now(),
+        firstDate: entries.last,
+        lastDate: entries.first,
+      );
+      if (chosenDate == null) return;
+
+      _entryListKey.currentState?.jumpToDate(chosenDate, entries);
+    });
   }
 }
