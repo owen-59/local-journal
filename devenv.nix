@@ -4,10 +4,12 @@
     android = {
         enable = true;
         flutter.enable = true;
-        
-        platforms.version = [ "34" "35" "36" ];
-        buildTools.version = [ "34.0.0" "35.0.0" "36.0.0" ];
+
+        platforms.version = [ "34" "35" "36" "37" ];
+        buildTools.version = [ "34.0.0" "35.0.0" "36.0.0" "37.0.0" ];
     };
+
+    languages.java.jdk.package = pkgs.jdk21;
 
     packages = with pkgs; [
         at-spi2-core

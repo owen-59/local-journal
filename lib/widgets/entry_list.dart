@@ -5,11 +5,21 @@ import 'package:journal/widgets/entry_card.dart';
 import 'package:journal/widgets/entry_card_seperator.dart';
 import 'package:journal/widgets/error_card.dart';
 
-class EntryList extends ConsumerWidget {
+class EntryList extends ConsumerStatefulWidget {
   const EntryList({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() => _EntryListState();
+}
+
+class _EntryListState extends ConsumerState<EntryList>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
     final entries = ref.watch(entryListProvider);
 
     return RefreshIndicator(

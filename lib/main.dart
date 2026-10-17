@@ -8,6 +8,7 @@ import 'package:journal/logger.dart';
 import 'package:journal/pages/editor.dart';
 import 'package:journal/pages/home.dart';
 import 'package:journal/widgets/folder_selection_page.dart';
+import 'package:maplibre_gl/maplibre_gl.dart';
 import 'package:nominatim_flutter/nominatim_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:saf/saf.dart';
@@ -18,6 +19,7 @@ part "main.g.dart";
 void main() async {
   logger.i("Starting main()");
   WidgetsFlutterBinding.ensureInitialized();
+  MapLibreMap.preWarm();
   final saf = Saf();
   final prefs = SharedPreferencesAsync();
   final database = AppDatabase();
@@ -118,20 +120,23 @@ class _AppState extends State<App> {
             retry: (_, _) => null,
             child: DynamicColorBuilder(
               builder: (light, dark) => KeyboardProvider(
-                child: MaterialApp.router(
-                  routerConfig: _router,
-                  theme: ThemeData(
-                    colorScheme:
-                        light ??
-                        ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-                  ),
-                  darkTheme: ThemeData(
-                    colorScheme:
-                        dark ??
-                        ColorScheme.fromSeed(
-                          seedColor: Colors.deepPurple,
-                          brightness: Brightness.dark,
-                        ),
+                child: DefaultTabController(
+                  length: 2,
+                  child: MaterialApp.router(
+                    routerConfig: _router,
+                    theme: ThemeData(
+                      colorScheme:
+                          light ??
+                          ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+                    ),
+                    darkTheme: ThemeData(
+                      colorScheme:
+                          dark ??
+                          ColorScheme.fromSeed(
+                            seedColor: Colors.deepPurple,
+                            brightness: Brightness.dark,
+                          ),
+                    ),
                   ),
                 ),
               ),

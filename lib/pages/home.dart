@@ -4,19 +4,59 @@ import 'package:go_router/go_router.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/providers/entry_list.dart';
 import 'package:journal/widgets/entry_list.dart' as wid;
+import 'package:journal/widgets/map.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  int _currentPageIndex = 0;
+  final _pageController = PageController();
+
+  final List<Widget> _screens = [wid.EntryList(), MapPage()];
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Journal")),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => createEntry(context, ref),
-        child: const Icon(Icons.create),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _currentPageIndex,
+        onDestinationSelected: (int index) {
+          _pageController.animateToPage(
+            index,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+          setState(() {
+            _currentPageIndex = index;
+          });
+        },
+        destinations: [
+          NavigationDestination(icon: Icon(Icons.home), label: "Home"),
+          NavigationDestination(icon: Icon(Icons.map), label: "Map"),
+        ],
       ),
-      body: wid.EntryList(),
+      floatingActionButton: _currentPageIndex == 0
+          ? FloatingActionButton(
+              onPressed: () => createEntry(context, ref),
+              child: const Icon(Icons.create),
+            )
+          : null,
+      body: PageView(
+        physics: const NeverScrollableScrollPhysics(),
+        controller: _pageController,
+        children: _screens,
+      ),
     );
   }
 

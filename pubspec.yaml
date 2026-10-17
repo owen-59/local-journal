@@ -56,6 +56,9 @@ dependencies:
   drift: ^2.35.2
   drift_flutter: ^0.3.1
   path_provider: ^2.1.6
+  maplibre_gl: ^0.27.1
+  url_launcher: ^6.3.3
+  permission_handler: ^13.0.2
 
 dev_dependencies:
   flutter_test:

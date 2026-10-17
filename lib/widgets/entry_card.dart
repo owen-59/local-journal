@@ -45,10 +45,8 @@ class EntryCard extends ConsumerWidget {
                   ),
                   onPressed: () => showModalBottomSheet(
                     context: context,
-                    builder: (_) => ErrorCard(
-                      error: error,
-                      stackTrace: stackTrace,
-                    )
+                    builder: (_) =>
+                        ErrorCard(error: error, stackTrace: stackTrace),
                   ),
                   child: Text("Error"),
                 ),
