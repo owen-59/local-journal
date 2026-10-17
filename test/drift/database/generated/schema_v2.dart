@@ -24,7 +24,7 @@ class EntriesCache extends Table
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    $customConstraints: 'NOT NULL UNIQUE',
+    $customConstraints: 'NOT NULL',
   );
   late final GeneratedColumn<String> tags = GeneratedColumn<String>(
     'tags',

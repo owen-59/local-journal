@@ -19,7 +19,7 @@ EntriesCacheCompanion cacheEntryFromEntry(Entry entry) {
 
 class EntriesCache extends Table {
   DateTimeColumn get lastCheckedAt => dateTime()();
-  DateTimeColumn get createdDate => dateTime().unique()();
+  DateTimeColumn get createdDate => dateTime()();
   TextColumn get tags => text().map(const StringListConverter())();
   Column<double> get longitude => real().nullable()();
   Column<double> get latitude => real().nullable()();

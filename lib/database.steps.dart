@@ -50,7 +50,7 @@ i1.GeneratedColumn<int> _column_1(String aliasedName) =>
       aliasedName,
       false,
       type: i1.DriftSqlType.int,
-      $customConstraints: 'NOT NULL UNIQUE',
+      $customConstraints: 'NOT NULL',
     );
 i1.GeneratedColumn<String> _column_2(String aliasedName) =>
     i1.GeneratedColumn<String>(

@@ -31,15 +31,9 @@
             "moor_type": "dateTime",
             "nullable": false,
             "customConstraints": null,
-            "defaultConstraints": "UNIQUE",
-            "dialectAwareDefaultConstraints": {
-              "sqlite": "UNIQUE"
-            },
             "default_dart": null,
             "default_client_dart": null,
-            "dsl_features": [
-              "unique"
-            ]
+            "dsl_features": []
           },
           {
             "name": "tags",
@@ -91,7 +85,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"entries_cache\" (\"last_checked_at\" INTEGER NOT NULL, \"created_date\" INTEGER NOT NULL UNIQUE, \"tags\" TEXT NOT NULL, \"longitude\" REAL NULL, \"latitude\" REAL NULL, PRIMARY KEY (\"created_date\"));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"entries_cache\" (\"last_checked_at\" INTEGER NOT NULL, \"created_date\" INTEGER NOT NULL, \"tags\" TEXT NOT NULL, \"longitude\" REAL NULL, \"latitude\" REAL NULL, PRIMARY KEY (\"created_date\"));"
         }
       ]
     }
