@@ -11,6 +11,7 @@ EntriesCacheCompanion cacheEntryFromEntry(Entry entry) {
   return EntriesCacheCompanion(
     createdDate: Value(entry.datetime),
     tags: Value(entry.tags),
+    images: Value(entry.images),
     lastCheckedAt: Value(DateTime.now()),
     longitude: Value.absentIfNull(entry.location?.longitude),
     latitude: Value.absentIfNull(entry.location?.latitude),
@@ -21,6 +22,7 @@ class EntriesCache extends Table {
   DateTimeColumn get lastCheckedAt => dateTime()();
   DateTimeColumn get createdDate => dateTime()();
   TextColumn get tags => text().map(const StringListConverter())();
+  TextColumn get images => text().map(const StringListConverter()).nullable()();
   Column<double> get longitude => real().nullable()();
   Column<double> get latitude => real().nullable()();
 
@@ -33,7 +35,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration {
@@ -60,6 +62,14 @@ extension Migrations on GeneratedDatabase {
             schema.entriesCache.longitude,
             schema.entriesCache.latitude,
           ],
+        ),
+      );
+    },
+    from2To3: (m, schema) async {
+      await m.alterTable(
+        TableMigration(
+          schema.entriesCache,
+          newColumns: [schema.entriesCache.images],
         ),
       );
     },

@@ -120,23 +120,20 @@ class _AppState extends State<App> {
             retry: (_, _) => null,
             child: DynamicColorBuilder(
               builder: (light, dark) => KeyboardProvider(
-                child: DefaultTabController(
-                  length: 2,
-                  child: MaterialApp.router(
-                    routerConfig: _router,
-                    theme: ThemeData(
-                      colorScheme:
-                          light ??
-                          ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-                    ),
-                    darkTheme: ThemeData(
-                      colorScheme:
-                          dark ??
-                          ColorScheme.fromSeed(
-                            seedColor: Colors.deepPurple,
-                            brightness: Brightness.dark,
-                          ),
-                    ),
+                child: MaterialApp.router(
+                  routerConfig: _router,
+                  theme: ThemeData(
+                    colorScheme:
+                        light ??
+                        ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+                  ),
+                  darkTheme: ThemeData(
+                    colorScheme:
+                        dark ??
+                        ColorScheme.fromSeed(
+                          seedColor: Colors.deepPurple,
+                          brightness: Brightness.dark,
+                        ),
                   ),
                 ),
               ),

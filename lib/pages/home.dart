@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/providers/entry_list.dart';
+import 'package:journal/widgets/calendar_view.dart';
 import 'package:journal/widgets/entry_list.dart' as wid;
 import 'package:journal/widgets/map.dart';
 
@@ -21,6 +22,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   late final List<Widget> _screens = [
     wid.EntryList(key: _entryListKey),
     MapPage(),
+    CalendarView(
+      goToDate: (dt) {
+        setState(() => _currentPageIndex = 0);
+        _entryListKey.currentState?.jumpToDate(dt);
+        _pageController.animateToPage(
+          0,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      },
+    ),
   ];
 
   @override
@@ -36,11 +48,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         title: Text("Journal"),
         actions: [
           ?_currentPageIndex == 0
-            ? IconButton(
-              icon: Icon(Icons.calendar_month),
-              onPressed: () => onDateClicked(context, ref),
-            )
-            : null
+              ? IconButton(
+                  icon: Icon(Icons.calendar_month),
+                  onPressed: () => onDateClicked(context, ref),
+                )
+              : null,
         ],
       ),
       bottomNavigationBar: NavigationBar(
@@ -58,6 +70,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         destinations: [
           NavigationDestination(icon: Icon(Icons.home), label: "Home"),
           NavigationDestination(icon: Icon(Icons.map), label: "Map"),
+          NavigationDestination(
+            icon: Icon(Icons.calendar_today),
+            label: "Calendar",
+          ),
         ],
       ),
       floatingActionButton: _currentPageIndex == 0
@@ -66,10 +82,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               child: const Icon(Icons.create),
             )
           : null,
-      body: PageView(
-        physics: const NeverScrollableScrollPhysics(),
-        controller: _pageController,
-        children: _screens,
+      body: DefaultTabController(
+        length: 3,
+        child: PageView(
+          physics: const NeverScrollableScrollPhysics(),
+          controller: _pageController,
+          children: _screens,
+        ),
       ),
     );
   }
@@ -98,7 +117,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       );
       if (chosenDate == null) return;
 
-      _entryListKey.currentState?.jumpToDate(chosenDate, entries);
+      _entryListKey.currentState?.jumpToDate(chosenDate);
     });
   }
 }

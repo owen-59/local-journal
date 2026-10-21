@@ -127,41 +127,43 @@ class EntryListState extends ConsumerState<EntryList>
     return separatorHeight + _entryCardTemplateHeight;
   }
 
-  Future<void> jumpToDate(DateTime target, List<DateTime> entries) async {
-    final entriesOnDay = max(
-      entries
-          .where(
-            (dt) =>
-                dt.year == target.year &&
-                dt.month == target.month &&
-                dt.day == target.day,
-          )
-          .length,
-      1,
-    );
+  Future<void> jumpToDate(DateTime target) async {
+    ref.read(entryListProvider).whenData((entries) async {
+      final entriesOnDay = max(
+        entries
+            .where(
+              (dt) =>
+                  dt.year == target.year &&
+                  dt.month == target.month &&
+                  dt.day == target.day,
+            )
+            .length,
+        1,
+      );
 
-    final index =
-        lowerBound(entries, target, compare: (a, b) => -a.compareTo(b)) -
-        entriesOnDay +
-        1;
+      final index =
+          lowerBound(entries, target, compare: (a, b) => -a.compareTo(b)) -
+          entriesOnDay +
+          1;
 
-    final textSeperatorCount =
-        entries.whereIndexed((index, element) {
-          if (index == 0 || element.isBefore(target)) return false;
-          final prev = entries[index - 1];
-          return element.year != prev.year || element.month != prev.month;
-        }).length +
-        1;
-    final separatorCount = (index - 1 - textSeperatorCount);
+      final textSeperatorCount =
+          entries.whereIndexed((index, element) {
+            if (index == 0 || element.isBefore(target)) return false;
+            final prev = entries[index - 1];
+            return element.year != prev.year || element.month != prev.month;
+          }).length +
+          1;
+      final separatorCount = (index - 1 - textSeperatorCount);
 
-    final totalTextSeparatorHeight =
-        textSeperatorCount * _entrySeparatorWithTextHeight;
-    final totalSeparatorHeight = separatorCount * _entrySeparatorHeight;
-    final totalEntryHeight = (index - 1) * _entryCardTemplateHeight;
+      final totalTextSeparatorHeight =
+          textSeperatorCount * _entrySeparatorWithTextHeight;
+      final totalSeparatorHeight = separatorCount * _entrySeparatorHeight;
+      final totalEntryHeight = (index - 1) * _entryCardTemplateHeight;
 
-    final scrollPixels =
-        totalTextSeparatorHeight + totalSeparatorHeight + totalEntryHeight;
+      final scrollPixels =
+          totalTextSeparatorHeight + totalSeparatorHeight + totalEntryHeight;
 
-    _scrollController.jumpTo(scrollPixels);
+      _scrollController.jumpTo(scrollPixels);
+    });
   }
 }
