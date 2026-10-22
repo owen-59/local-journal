@@ -38,45 +38,36 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
 
   @override
   Widget build(BuildContext context) {
-    final entriesList = ref.watch(entryListProvider);
-
     return Stack(
       children: [
-        switch (entriesList) {
-          AsyncData() => CustomScrollView(
-            center: _centerKey,
-            slivers: [
-              SliverVariedExtentList.builder(
-                itemBuilder: (context, index) {
-                  final month = _getMonthForIndex(-index - 1);
-                  return MonthSectionWidget(
-                    key: ValueKey(month),
-                    month: month,
-                    goToDate: widget.goToDate,
-                  );
-                },
-                itemExtentBuilder: (index, _) => _getHeightForIndex(-index - 1),
-              ),
-              SliverVariedExtentList.builder(
-                key: _centerKey,
-                itemBuilder: (context, index) {
-                  final month = _getMonthForIndex(index);
-                  return MonthSectionWidget(
-                    key: ValueKey(month),
-                    month: month,
-                    goToDate: widget.goToDate,
-                  );
-                },
-                itemExtentBuilder: (index, _) => _getHeightForIndex(index),
-              ),
-            ],
-          ),
-          AsyncError(:final error, :final stackTrace) => ErrorCard(
-            error: error,
-            stackTrace: stackTrace,
-          ),
-          AsyncLoading() => Center(child: CircularProgressIndicator()),
-        },
+        CustomScrollView(
+          center: _centerKey,
+          slivers: [
+            SliverVariedExtentList.builder(
+              itemBuilder: (context, index) {
+                final month = _getMonthForIndex(-index - 1);
+                return MonthSectionWidget(
+                  key: ValueKey(month),
+                  month: month,
+                  goToDate: widget.goToDate,
+                );
+              },
+              itemExtentBuilder: (index, _) => _getHeightForIndex(-index - 1),
+            ),
+            SliverVariedExtentList.builder(
+              key: _centerKey,
+              itemBuilder: (context, index) {
+                final month = _getMonthForIndex(index);
+                return MonthSectionWidget(
+                  key: ValueKey(month),
+                  month: month,
+                  goToDate: widget.goToDate,
+                );
+              },
+              itemExtentBuilder: (index, _) => _getHeightForIndex(index),
+            ),
+          ],
+        ),
         Offstage(
           child: Measured(
             onChanged: (size) {
