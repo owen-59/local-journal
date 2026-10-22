@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:journal/database.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/main.dart';
+import 'package:journal/providers/cache_entries.dart';
 import 'package:journal/utils/file.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:saf/saf.dart';
@@ -40,6 +41,30 @@ class EntryList extends _$EntryList {
       entryDt,
       compare: (a, b) => -a.compareTo(b),
     );
+    final entriesCache = ref.read(cacheEntriesProvider);
+    entriesCache.whenData((cachedEntries) {
+      final matching = cachedEntries
+          .where((cacheValue) => cacheValue.createdDate == entryDt)
+          .toList();
+      if (matching.isEmpty) return;
+      if (DateTime.now().difference(matching[0].lastCheckedAt) > cacheTtl) {
+        (() async {
+          final entry = await ref
+              .read(workerManagerProvider)
+              .updateStaleEntry(
+                entryDt,
+                ref.read(folderUriProvider).toString(),
+              );
+          if (entry != null) {
+            final database = ref.read(appDatabaseProvider);
+            final entryCacheData = cacheEntryFromEntry(entry);
+            database
+                .into(database.entriesCache)
+                .insertOnConflictUpdate(entryCacheData);
+          }
+        })();
+      }
+    });
     _state.insert(index, entryDt);
     state = AsyncData(_state);
   }

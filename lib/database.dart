@@ -7,9 +7,12 @@ import 'package:path_provider/path_provider.dart';
 
 part 'database.g.dart';
 
+const cacheTtl = Duration(days: 30);
+
 EntriesCacheCompanion cacheEntryFromEntry(Entry entry) {
   return EntriesCacheCompanion(
     createdDate: Value(entry.datetime),
+    body: Value(entry.body),
     tags: Value(entry.tags),
     images: Value(entry.images),
     lastCheckedAt: Value(DateTime.now()),
@@ -21,6 +24,7 @@ EntriesCacheCompanion cacheEntryFromEntry(Entry entry) {
 class EntriesCache extends Table {
   DateTimeColumn get lastCheckedAt => dateTime()();
   DateTimeColumn get createdDate => dateTime()();
+  TextColumn get body => text().nullable()();
   TextColumn get tags => text().map(const StringListConverter())();
   TextColumn get images => text().map(const StringListConverter()).nullable()();
   Column<double> get longitude => real().nullable()();
@@ -35,7 +39,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration {
@@ -70,6 +74,14 @@ extension Migrations on GeneratedDatabase {
         TableMigration(
           schema.entriesCache,
           newColumns: [schema.entriesCache.images],
+        ),
+      );
+    },
+    from3To4: (m, schema) async {
+      await m.alterTable(
+        TableMigration(
+          schema.entriesCache,
+          newColumns: [schema.entriesCache.body],
         ),
       );
     },

@@ -536,6 +536,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.0"
+  isolate_kit:
+    dependency: "direct main"
+    description:
+      name: isolate_kit
+      sha256: "9ff3ed5f8c07d1a3ca5d7ef814a75a6fd14e8ac6a607aa75c28f4f377e20cf17"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2"
   jni:
     dependency: transitive
     description:
