@@ -96,7 +96,12 @@ class Entry implements Comparable<Entry> {
 
     if (location != null) {
       yamlData["location"] = [location!.latitude, location!.longitude];
-      yamlData["place_name"] = location!.name;
+      if (location!.name != null) {
+        yamlData["place_name"] = location!.name;
+      }
+      if (location!.displayName != null) {
+        yamlData["address"] = location!.displayName;
+      }
     }
 
     final content = addMdFrontmatter(body, yamlData);

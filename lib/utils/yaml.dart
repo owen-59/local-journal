@@ -16,15 +16,25 @@ List<R> dynamicYamlToList<R>(dynamic obj) {
 Location? locationFromYaml(YamlMap map) {
   final coordsList = map["location"];
   final name = map["place_name"];
+  final address = map["address"];
 
-  if (coordsList != null && name != null) {
+  if (coordsList != null) {
     if (coordsList is! YamlList) {
       logger.w("Coordinates were not a YamlList, was $coordsList");
       return null;
     }
 
-    if (name is! String) {
-      logger.w("Place name was not a String, was $name");
+    if (name is! String && name != null) {
+      logger.w("Place name was not a String or null, was $name");
+      return null;
+    }
+
+    if (name is! String && name != null) {
+      logger.w("Place name was not a String or null, was $name");
+      return null;
+    }
+    if (address is! String && address != null) {
+      logger.w("Address was not a String or null, was $address");
       return null;
     }
 
@@ -34,11 +44,14 @@ Location? locationFromYaml(YamlMap map) {
       return null;
     }
 
+    assert(coords.length == 2, "coords.length was not 2, coords was $coords");
+
     final lat = coords[0];
     final lon = coords[1];
 
     return Location(
       name: name,
+      displayName: address,
       latitude: lat.toDouble(),
       longitude: lon.toDouble(),
     );
