@@ -89,7 +89,7 @@ void main() {
         lastCheckedAt: 50000,
         longitude: 10.5,
         latitude: 5.2,
-        images: null
+        images: null,
       ),
     ];
 
@@ -130,7 +130,7 @@ void main() {
         lastCheckedAt: 50000,
         longitude: 10.5,
         latitude: 5.2,
-        body: null
+        body: null,
       ),
     ];
 

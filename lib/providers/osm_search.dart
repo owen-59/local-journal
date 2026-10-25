@@ -8,10 +8,7 @@ part "osm_search.g.dart";
 @riverpod
 Future<List<Location>> osmSearch(Ref ref, String name) async {
   if (name == "") return [];
-  final searchRequest = SearchRequest(
-    query: name,
-    limit: 3,
-  );
+  final searchRequest = SearchRequest(query: name, limit: 3);
 
   final results = await NominatimFlutter.instance.search(
     searchRequest: searchRequest,

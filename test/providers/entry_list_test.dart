@@ -17,21 +17,25 @@ void main() {
   test("test entryListProvider", () async {
     final safClient = MockSafClient();
 
-    when(
-      safClient.list(folderUri.toString())
-    ).thenAnswer((_) async => []);
+    when(safClient.list(folderUri.toString())).thenAnswer((_) async => []);
 
     final container = ProviderContainer.test(
       overrides: [
-        appDatabaseProvider.overrideWithValue(AppDatabase.forTesting(NativeDatabase.memory())),
+        appDatabaseProvider.overrideWithValue(
+          AppDatabase.forTesting(NativeDatabase.memory()),
+        ),
         folderUriProvider.overrideWithValue(folderUri),
         safProvider.overrideWithValue(safClient),
-      ]
+      ],
     );
 
     final entryListNotifier = container.read(entryListProvider.notifier);
     var entryList = await container.read(entryListProvider.future);
-    expect(entryList, [], reason: "entryListProvider should be empty if no data could be loaded.");
+    expect(
+      entryList,
+      [],
+      reason: "entryListProvider should be empty if no data could be loaded.",
+    );
 
     final dates = [
       DateTime(1970, 1, 1),
@@ -39,13 +43,17 @@ void main() {
       DateTime(1970, 1, 5),
       DateTime(1970, 4, 1),
     ];
-    
+
     for (var i = 0; i < dates.length; i++) {
       await entryListNotifier.addEntry(dates[i]);
     }
 
     entryList = await container.read(entryListProvider.future);
-    expect(entryList, dates.sorted().reversed.toList(), reason: "Dates in entryListProvider should be sorted.");
+    expect(
+      entryList,
+      dates.sorted().reversed.toList(),
+      reason: "Dates in entryListProvider should be sorted.",
+    );
 
     entryListNotifier.removeEntry(dates[0]);
     entryList = await container.read(entryListProvider.future);
