@@ -45,8 +45,8 @@ class EntryList extends _$EntryList {
       final matching = cachedEntries
           .where((cacheValue) => cacheValue.createdDate == entryDt)
           .toList();
-      if (matching.isEmpty) return;
-      if (DateTime.now().difference(matching[0].lastCheckedAt) > cacheTtl) {
+      final lastChecked = matching.elementAtOrNull(0)?.lastCheckedAt;
+      if (lastChecked == null || DateTime.now().difference(lastChecked) > cacheTtl) {
         (() async {
           final entry = await ref
               .read(workerManagerProvider)
