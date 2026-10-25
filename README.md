@@ -14,7 +14,6 @@ Get the latest release off the [releases page](https://github.com/owen-59/local-
 This tool is very rough and does not support all Day One features.
  - Download your Day One data as JSON.
  - Use the tool at [owen-59/dayone2journal](https://github.com/owen-59/dayone2journal).
- - Images are not supported yet.
 
 ## Gallery
 <p float="left">
