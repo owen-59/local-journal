@@ -38,6 +38,8 @@ class EntriesCache extends Table {
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
+  AppDatabase.forTesting(super.e);
+
   @override
   int get schemaVersion => 4;
 

@@ -71,6 +71,11 @@ WorkerManager workerManager(Ref ref) {
   throw UnimplementedError();
 }
 
+@riverpod
+Saf saf(Ref ref) {
+  return Saf();
+}
+
 final _router = GoRouter(
   routes: [
     GoRoute(path: "/", builder: (context, state) => const HomeScreen()),

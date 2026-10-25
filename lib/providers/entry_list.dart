@@ -8,7 +8,6 @@ import 'package:journal/main.dart';
 import 'package:journal/providers/cache_entries.dart';
 import 'package:journal/utils/file.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:saf/saf.dart';
 
 part "entry_list.g.dart";
 
@@ -34,7 +33,7 @@ class EntryList extends _$EntryList {
         a.minute == b.minute;
   }
 
-  Future addEntry(DateTime entryDt) async {
+  Future<void> addEntry(DateTime entryDt) async {
     removeEntry(entryDt, skipDbDelete: true);
     final index = lowerBound(
       _state,
@@ -95,7 +94,7 @@ class EntryList extends _$EntryList {
       logger.i("Doing expensive full entry reload.");
       final rootFolder = ref.read(folderUriProvider).toString();
 
-      final saf = Saf();
+      final saf = ref.read(safProvider);
 
       final yearDirs = (await saf.list(rootFolder))
           .where((file) => file.isDir && int.tryParse(file.name) != null)
@@ -150,8 +149,8 @@ class EntryList extends _$EntryList {
         }
       }
       state = AsyncData(_state);
-    } catch (err) {
-      state = AsyncError(err, StackTrace.current);
+    } catch (err, trace) {
+      state = AsyncError(err, trace);
     }
   }
 }

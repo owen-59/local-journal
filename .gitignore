@@ -5,7 +5,8 @@
 build
 flutter_*.log
 .flutter-plugins-dependencies
-*.g.dart
+lib/**/*.g.dart
+test/**/*.mocks.dart
 devtools_options.yaml
 local.properties
 release-keystore.jks
