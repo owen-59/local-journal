@@ -10,6 +10,7 @@
     };
 
     languages.java.jdk.package = pkgs.jdk21;
+    languages.java.lsp.package = lib.mkForce pkgs.jdt-language-server;
 
     packages = with pkgs; [
         at-spi2-core
