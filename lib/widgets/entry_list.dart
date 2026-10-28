@@ -4,10 +4,11 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:journal/providers/entry_list.dart';
-import 'package:journal/widgets/entry_card.dart';
-import 'package:journal/widgets/entry_card_seperator.dart';
 import 'package:journal/widgets/error_card.dart';
-import 'package:measured/measured.dart';
+import 'package:journal/widgets/measure/entry_card.dart';
+import 'package:journal/widgets/measure/entry_separator_with_text.dart';
+import 'package:journal/widgets/measure/entry_separator_without_text.dart';
+import 'package:journal/widgets/sliver_entry_list.dart';
 
 class EntryList extends ConsumerStatefulWidget {
   const EntryList({super.key});
@@ -25,7 +26,7 @@ class EntryListState extends ConsumerState<EntryList>
 
   double _entryCardTemplateHeight = 0;
   double _entrySeparatorWithTextHeight = 0;
-  double _entrySeparatorHeight = 0;
+  double _entrySeparatorWithoutTextHeight = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -41,23 +42,12 @@ class EntryListState extends ConsumerState<EntryList>
             AsyncData(:final value) => CustomScrollView(
               controller: _scrollController,
               slivers: [
-                SliverVariedExtentList.builder(
-                  itemCount: value.length,
-                  itemExtentBuilder: (index, dimensions) =>
-                      calculateItemHeight(index, value),
-                  itemBuilder: (context, index) => index < value.length
-                      ? Column(
-                          children: [
-                            EntryCardSeperator(
-                              aboveEntryDt: index == 0
-                                  ? DateTime.fromMillisecondsSinceEpoch(0)
-                                  : value[index - 1],
-                              belowEntryDt: value[index],
-                            ),
-                            EntryCard(entryDt: value[index]),
-                          ],
-                        )
-                      : null,
+                SliverEntryList(
+                  entries: value,
+                  entryCardTemplateHeight: _entryCardTemplateHeight,
+                  entrySeparatorWithTextHeight: _entrySeparatorWithTextHeight,
+                  entrySeparatorWithoutTextHeight:
+                      _entrySeparatorWithoutTextHeight,
                 ),
               ],
             ),
@@ -67,40 +57,17 @@ class EntryListState extends ConsumerState<EntryList>
             _ => Center(child: const CircularProgressIndicator()),
           },
         ),
-        Offstage(
-          child: Measured(
-            onChanged: (size) =>
-                setState(() => _entryCardTemplateHeight = size.height),
-            child: EntryCard(
-              entryDt: DateTime.now().copyWith(
-                hour: 0,
-                minute: 0,
-                second: 0,
-                millisecond: 0,
-                microsecond: 0,
-              ),
-            ),
-          ),
+        EntryCardMeasurer(
+          onChanged: (height) =>
+              setState(() => _entryCardTemplateHeight = height),
         ),
-        Offstage(
-          child: Measured(
-            onChanged: (size) =>
-                setState(() => _entrySeparatorHeight = size.height),
-            child: EntryCardSeperator(
-              aboveEntryDt: DateTime(1970),
-              belowEntryDt: DateTime(1970),
-            ),
-          ),
+        EntrySeparatorWithoutTextMeasurer(
+          onChanged: (height) =>
+              setState(() => _entrySeparatorWithoutTextHeight = height),
         ),
-        Offstage(
-          child: Measured(
-            onChanged: (size) =>
-                setState(() => _entrySeparatorWithTextHeight = size.height),
-            child: EntryCardSeperator(
-              aboveEntryDt: DateTime(1970),
-              belowEntryDt: DateTime(1971),
-            ),
-          ),
+        EntrySeparatorWithTextMeasurer(
+          onChanged: (height) =>
+              setState(() => _entrySeparatorWithTextHeight = height),
         ),
       ],
     );
@@ -122,7 +89,7 @@ class EntryListState extends ConsumerState<EntryList>
 
     final separatorHeight = hasTextSeparator
         ? _entrySeparatorWithTextHeight
-        : _entrySeparatorHeight;
+        : _entrySeparatorWithoutTextHeight;
 
     return separatorHeight + _entryCardTemplateHeight;
   }
@@ -157,7 +124,8 @@ class EntryListState extends ConsumerState<EntryList>
 
       final totalTextSeparatorHeight =
           textSeperatorCount * _entrySeparatorWithTextHeight;
-      final totalSeparatorHeight = separatorCount * _entrySeparatorHeight;
+      final totalSeparatorHeight =
+          separatorCount * _entrySeparatorWithoutTextHeight;
       final totalEntryHeight = (index - 1) * _entryCardTemplateHeight;
 
       final scrollPixels =

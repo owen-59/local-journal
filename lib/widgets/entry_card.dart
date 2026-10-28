@@ -6,11 +6,13 @@ import 'package:journal/providers/entry.dart';
 import 'package:journal/providers/images.dart';
 import 'package:journal/widgets/entry_card_template.dart';
 import 'package:journal/widgets/error_card.dart';
+import 'package:substring_highlight/substring_highlight.dart';
 
 class EntryCard extends ConsumerWidget {
   final DateTime entryDt;
+  final String? searchText;
 
-  const EntryCard({super.key, required this.entryDt});
+  const EntryCard({super.key, required this.entryDt, this.searchText});
 
   void _redirectToEntry(BuildContext context) {
     context.push("/entry/$entryDt");
@@ -56,9 +58,15 @@ class EntryCard extends ConsumerWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text(
-                                  value.body,
-                                  style: Theme.of(context).textTheme.bodyLarge,
+                                SubstringHighlight(
+                                  text: value.body,
+                                  term: searchText ?? "",
+                                  textStyle: Theme.of(context).textTheme.bodyLarge ?? DefaultTextStyle.of(context).style,
+                                  textStyleHighlight: (Theme.of(context).textTheme.bodyLarge 
+                                      ?? DefaultTextStyle.of(context).style).copyWith(
+                                        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                                      ),
                                   maxLines: 3,
                                   overflow: TextOverflow.ellipsis,
                                 ),
