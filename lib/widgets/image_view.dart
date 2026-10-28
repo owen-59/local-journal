@@ -1,31 +1,37 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
-import 'package:journal/models/image.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:journal/providers/image.dart';
 
-class ImageView extends StatefulWidget {
-  final ImageData imageData;
+class ImageView extends ConsumerStatefulWidget {
+  // final ImageData imageData;
   final void Function() removeCallback;
+  final DateTime entryDt;
+  final String name;
 
   const ImageView({
     super.key,
-    required this.imageData,
+    // required this.imageData,
     required this.removeCallback,
+    required this.entryDt,
+    required this.name,
   });
 
   @override
-  State<StatefulWidget> createState() => _ImageViewState();
+  ConsumerState<ImageView> createState() => _ImageViewState();
 }
 
-class _ImageViewState extends State<ImageView> {
+class _ImageViewState extends ConsumerState<ImageView> {
   final MenuController _menuController = MenuController();
 
   @override
   Widget build(BuildContext context) {
-    return switch (widget.imageData.bytes) {
-      Uint8List bytes => Padding(
+    final image = ref.watch(
+      imageProvider(widget.entryDt, widget.name, QualityLevel.full),
+    );
+
+    return switch (image) {
+      AsyncData(value: final bytes) when bytes != null => Padding(
         padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-        // child: Stack(
         child: ClipRRect(
           borderRadius: const BorderRadius.all(Radius.circular(12.0)),
           child: Image.memory(
@@ -76,7 +82,7 @@ class _ImageViewState extends State<ImageView> {
         ),
       ),
 
-      null => Padding(
+      _ => Padding(
         padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
         child: Container(
           decoration: BoxDecoration(
@@ -96,7 +102,7 @@ class _ImageViewState extends State<ImageView> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        "Image not found at '${widget.imageData.name}'.",
+                        "Image not found at '${widget.name}'.",
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.error,
                         ),

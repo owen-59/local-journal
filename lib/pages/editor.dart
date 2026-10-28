@@ -79,7 +79,8 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                               ),
                             ),
                             ImagesList(
-                              entryDateString: widget.entryDateString,
+                              entryDt: value.datetime,
+                              names: value.images,
                               removeCallback: (imageData) =>
                                   onRemoveImageLink(value, imageData),
                             ),
@@ -261,11 +262,11 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
     }
   }
 
-  Future<void> onRemoveImageLink(Entry entry, ImageData imageData) async {
-    logger.i("Removing ${imageData.name}");
+  Future<void> onRemoveImageLink(Entry entry, String imageData) async {
+    logger.i("Removing $imageData");
     await ref
         .read(entryProvider(widget.entryDateString).notifier)
-        .removeImage(imageData.name);
+        .removeImage(imageData);
   }
 
   Future<void> onSetLocationClicked(BuildContext context, Entry entry) async {

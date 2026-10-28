@@ -1,34 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:journal/models/image.dart';
-import 'package:journal/providers/images.dart';
 import 'package:journal/widgets/image_view.dart';
 
 class ImagesList extends ConsumerWidget {
-  final String entryDateString;
-  final void Function(ImageData) removeCallback;
+  final DateTime entryDt;
+  final List<String> names;
+  final void Function(String) removeCallback;
 
   const ImagesList({
     super.key,
-    required this.entryDateString,
+    required this.entryDt,
+    required this.names,
     required this.removeCallback,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final entryImages = ref.watch(imagesProvider(entryDateString));
-    return switch (entryImages) {
-      AsyncData(value: final images) => ListView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: images.length,
-        itemBuilder: (context, index) => ImageView(
-          imageData: images[index],
-          removeCallback: () => removeCallback(images[index]),
-        ),
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: names.length,
+      itemBuilder: (_, index) => ImageView(
+        entryDt: entryDt,
+        name: names[index],
+        removeCallback: () => removeCallback(names[index]),
       ),
-      AsyncError(:final error) => Center(child: Text(error.toString())),
-      _ => Center(child: const CircularProgressIndicator()),
-    };
+    );
   }
 }

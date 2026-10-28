@@ -19,7 +19,7 @@ class EntryCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final entry = ref.watch(entryProvider(entryDt.toString()));
-    final entryImages = ref.watch(imagesProvider(entryDt.toString()));
+    final entryImages = ref.watch(imagesProvider(entryDt));
 
     return GestureDetector(
       onTap: () => _redirectToEntry(context),
