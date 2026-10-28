@@ -61,12 +61,22 @@ class EntryCard extends ConsumerWidget {
                                 SubstringHighlight(
                                   text: value.body,
                                   term: searchText ?? "",
-                                  textStyle: Theme.of(context).textTheme.bodyLarge ?? DefaultTextStyle.of(context).style,
-                                  textStyleHighlight: (Theme.of(context).textTheme.bodyLarge 
-                                      ?? DefaultTextStyle.of(context).style).copyWith(
-                                        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                                        color: Theme.of(context).colorScheme.onPrimaryContainer,
-                                      ),
+                                  textStyle:
+                                      Theme.of(context).textTheme.bodyLarge ??
+                                      DefaultTextStyle.of(context).style,
+                                  textStyleHighlight:
+                                      (Theme.of(context).textTheme.bodyLarge ??
+                                              DefaultTextStyle.of(
+                                                context,
+                                              ).style)
+                                          .copyWith(
+                                            backgroundColor: Theme.of(
+                                              context,
+                                            ).colorScheme.primaryContainer,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.onPrimaryContainer,
+                                          ),
                                   maxLines: 3,
                                   overflow: TextOverflow.ellipsis,
                                 ),
