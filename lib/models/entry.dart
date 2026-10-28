@@ -3,7 +3,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:journal/utils/location.dart';
 import 'package:journal/utils/yaml.dart';
 import 'package:path/path.dart' as path;
-import 'package:journal/models/image.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/utils/file.dart';
 import 'package:journal/utils/frontmatter.dart';
@@ -144,15 +143,6 @@ class Entry implements Comparable<Entry> {
     final newImages = images.where((image) => image != name).toList();
 
     return copyWith(rootFolder, images: newImages);
-  }
-
-  Future<ImageData> readImage(String rootFolder, String name) async {
-    final entryPath = pathFromDatetime(datetime);
-    final imagePath = [...entryPath.sublist(0, entryPath.length - 1), name];
-
-    final bytes = await readFileBytes(rootFolder, imagePath);
-
-    return ImageData(bytes: bytes, name: name);
   }
 
   static Future<Entry?> read(String datetimeString, String rootFolder) async {

@@ -1,3 +1,5 @@
+import 'package:journal/utils/file.dart';
+
 DateTime? getTimeFromPath(String input) {
   final regExp = RegExp(r'^(\d{4})/(\d{2})/(\d{2})/(\d{2})(\d{2})\.md$');
   final match = regExp.firstMatch(input);
@@ -30,4 +32,10 @@ String getRelativePath(Uri folderUri, Uri fileUri) {
   }
 
   return fileId.substring(rootId.length + 1);
+}
+
+List<String> getImagePath(DateTime dt, String name) {
+  final entryPath = pathFromDatetime(dt);
+  final imagePath = [...entryPath.sublist(0, entryPath.length - 1), name];
+  return imagePath;
 }

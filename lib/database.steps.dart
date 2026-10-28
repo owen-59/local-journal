@@ -177,10 +177,85 @@ i1.GeneratedColumn<String> _column_6(String aliasedName) =>
       type: i1.DriftSqlType.string,
       $customConstraints: 'NULL',
     );
+
+final class Schema5 extends i0.VersionedSchema {
+  Schema5({required super.database}) : super(version: 5);
+  @override
+  late final List<i1.DatabaseSchemaEntity> entities = [
+    entriesCache,
+    imageCache,
+  ];
+  late final Shape2 entriesCache = Shape2(
+    source: i0.VersionedTable(
+      entityName: 'entries_cache',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(created_date)'],
+      columns: [
+        _column_0,
+        _column_1,
+        _column_6,
+        _column_2,
+        _column_5,
+        _column_3,
+        _column_4,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape3 imageCache = Shape3(
+    source: i0.VersionedTable(
+      entityName: 'image_cache',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(source_path, quality_level)'],
+      columns: [_column_7, _column_8, _column_9],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+}
+
+class Shape3 extends i0.VersionedTable {
+  Shape3({required super.source, required super.alias}) : super.aliased();
+  i1.GeneratedColumn<String> get sourcePath =>
+      columnsByName['source_path']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get destinationPath =>
+      columnsByName['destination_path']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get qualityLevel =>
+      columnsByName['quality_level']! as i1.GeneratedColumn<String>;
+}
+
+i1.GeneratedColumn<String> _column_7(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'source_path',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL',
+    );
+i1.GeneratedColumn<String> _column_8(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'destination_path',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL',
+    );
+i1.GeneratedColumn<String> _column_9(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'quality_level',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL',
+    );
 i0.MigrationStepWithVersion migrationSteps({
   required Future<void> Function(i1.Migrator m, Schema2 schema) from1To2,
   required Future<void> Function(i1.Migrator m, Schema3 schema) from2To3,
   required Future<void> Function(i1.Migrator m, Schema4 schema) from3To4,
+  required Future<void> Function(i1.Migrator m, Schema5 schema) from4To5,
 }) {
   return (currentVersion, database) async {
     switch (currentVersion) {
@@ -199,6 +274,11 @@ i0.MigrationStepWithVersion migrationSteps({
         final migrator = i1.Migrator(database, schema);
         await from3To4(migrator, schema);
         return 4;
+      case 4:
+        final schema = Schema5(database: database);
+        final migrator = i1.Migrator(database, schema);
+        await from4To5(migrator, schema);
+        return 5;
       default:
         throw ArgumentError.value('Unknown migration from $currentVersion');
     }
@@ -209,10 +289,12 @@ i1.OnUpgrade stepByStep({
   required Future<void> Function(i1.Migrator m, Schema2 schema) from1To2,
   required Future<void> Function(i1.Migrator m, Schema3 schema) from2To3,
   required Future<void> Function(i1.Migrator m, Schema4 schema) from3To4,
+  required Future<void> Function(i1.Migrator m, Schema5 schema) from4To5,
 }) => i0.VersionedSchema.stepByStepHelper(
   step: migrationSteps(
     from1To2: from1To2,
     from2To3: from2To3,
     from3To4: from3To4,
+    from4To5: from4To5,
   ),
 );

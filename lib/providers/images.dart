@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:journal/models/image.dart';
 import 'package:journal/logger.dart';
-import 'package:journal/main.dart';
 import 'package:journal/providers/entry.dart';
+import 'package:journal/providers/image.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'images.g.dart';
@@ -18,12 +18,13 @@ class Images extends _$Images {
       return [];
     }
 
-    final rootFolder = ref.watch(folderUriProvider);
-
     var imageList = <ImageData>[];
 
     for (final imageName in entry.images) {
-      final imageData = await entry.readImage(rootFolder.toString(), imageName);
+      final imageBytes = await ref.watch(
+        imageProvider(entry.datetime, imageName, QualityLevel.full).future,
+      );
+      final imageData = ImageData(name: imageName, bytes: imageBytes);
       logger.d("Read image $imageName for ${entry.datetime}");
       imageList.add(imageData);
       imageList = [...imageList];

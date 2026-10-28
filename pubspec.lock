@@ -189,10 +189,10 @@ packages:
     dependency: transitive
     description:
       name: crypto
-      sha256: c8ea0233063ba03258fbcf2ca4d6dadfefe14f02fab57702265467a19f27fadf
+      sha256: e3626ae6270383c9e3a549f34c9e4cd26c09ae6a9adaab2bf4737a00340efdc4
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.7"
+    version: "3.0.8"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -342,6 +342,54 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_image_compress:
+    dependency: "direct main"
+    description:
+      name: flutter_image_compress
+      sha256: "98a48c05a7add6869c6838270e862124a4d571f9dd5d0cf209ed03a71b20ea84"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.5.1"
+  flutter_image_compress_common:
+    dependency: transitive
+    description:
+      name: flutter_image_compress_common
+      sha256: "76869e4d5f3d65f3431e7edff0b2d8ad1eea68b49c6a37772fdb1ae6016da9ed"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.1"
+  flutter_image_compress_macos:
+    dependency: transitive
+    description:
+      name: flutter_image_compress_macos
+      sha256: "0d2a842d2e544828fb32bda16dcfccb3149107df568898a4936d78232e486847"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
+  flutter_image_compress_ohos:
+    dependency: transitive
+    description:
+      name: flutter_image_compress_ohos
+      sha256: "1491bb7bcfdf59e3b127c263c116cfbf8ed3afade6e7fa691d9622e838ed7e48"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.3+1"
+  flutter_image_compress_platform_interface:
+    dependency: transitive
+    description:
+      name: flutter_image_compress_platform_interface
+      sha256: bbefb7967bda565004fdabdb3300dcbfb40c7ef8402675d23206e5bddc358178
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
+  flutter_image_compress_web:
+    dependency: transitive
+    description:
+      name: flutter_image_compress_web
+      sha256: "91cc58e091a1e09c7683d216d579e2b964119a8527fc43b64dfdb00f1acc94ec"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.5+1"
   flutter_keyboard_controller:
     dependency: "direct main"
     description:
@@ -1270,7 +1318,7 @@ packages:
     source: hosted
     version: "3.1.6"
   uuid:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: uuid
       sha256: "9b129329f58692f6e6578329498a8fe9fbe98f090beb764ffbb8ee2eadd01dcd"

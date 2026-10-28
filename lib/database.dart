@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:journal/database.steps.dart';
 import 'package:journal/models/entry.dart';
+import 'package:journal/providers/image.dart';
 import 'package:journal/utils/string_list_converter.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -34,14 +35,23 @@ class EntriesCache extends Table {
   Set<Column<Object>> get primaryKey => {createdDate};
 }
 
-@DriftDatabase(tables: [EntriesCache])
+class ImageCache extends Table {
+  TextColumn get sourcePath => text().map(const StringListConverter())();
+  TextColumn get destinationPath => text()();
+  TextColumn get qualityLevel => textEnum<QualityLevel>()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {sourcePath, qualityLevel};
+}
+
+@DriftDatabase(tables: [EntriesCache, ImageCache])
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   AppDatabase.forTesting(super.e);
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration {
@@ -86,6 +96,9 @@ extension Migrations on GeneratedDatabase {
           newColumns: [schema.entriesCache.body],
         ),
       );
+    },
+    from4To5: (m, schema) async {
+      await m.createTable(schema.imageCache);
     },
   );
 }
