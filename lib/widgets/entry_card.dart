@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:journal/providers/entry.dart';
+import 'package:journal/providers/entry_main_image.dart';
+import 'package:journal/providers/image.dart';
 import 'package:journal/providers/images.dart';
 import 'package:journal/widgets/entry_card_template.dart';
 import 'package:journal/widgets/error_card.dart';
@@ -21,7 +23,9 @@ class EntryCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final entry = ref.watch(entryProvider(entryDt.toString()));
-    final entryImages = ref.watch(imagesProvider(entryDt));
+    final image = ref.watch(
+      entryMainImageProvider(entryDt, QualityLevel.thumbnail),
+    );
 
     return GestureDetector(
       onTap: () => _redirectToEntry(context),
@@ -95,35 +99,28 @@ class EntryCard extends ConsumerWidget {
                               ],
                             ),
                           ),
-                          switch (entryImages) {
-                            AsyncData(value: final images) =>
-                              images.isNotEmpty && images[0].bytes != null
-                                  ? SizedBox.square(
-                                      dimension: 80,
-                                      child: ClipRRect(
-                                        borderRadius: const BorderRadius.all(
-                                          Radius.circular(4.0),
-                                        ),
-                                        child: Image.memory(
-                                          images[0].bytes!,
-                                          fit: BoxFit.cover,
-                                          frameBuilder:
-                                              (
-                                                context,
-                                                child,
-                                                frame,
-                                                _,
-                                              ) => frame == null
-                                              ? const Center(
-                                                  child:
-                                                      CircularProgressIndicator(),
-                                                )
-                                              : child,
-                                        ),
-                                      ),
-                                    )
-                                  : const SizedBox.shrink(),
-                            _ => Text(""),
+                          switch (image) {
+                            AsyncData(value: final imageBytes)
+                                when imageBytes != null =>
+                              SizedBox.square(
+                                dimension: 80,
+                                child: ClipRRect(
+                                  borderRadius: const BorderRadius.all(
+                                    Radius.circular(4.0),
+                                  ),
+                                  child: Image.memory(
+                                    imageBytes,
+                                    fit: BoxFit.cover,
+                                    frameBuilder: (context, child, frame, _) =>
+                                        frame == null
+                                        ? const Center(
+                                            child: CircularProgressIndicator(),
+                                          )
+                                        : child,
+                                  ),
+                                ),
+                              ),
+                            _ => SizedBox.shrink(),
                           },
                         ],
                       ),
