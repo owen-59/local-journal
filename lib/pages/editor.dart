@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:journal/models/entry.dart';
-import 'package:journal/models/image.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/providers/entry.dart';
 import 'package:journal/utils/location.dart';
@@ -26,6 +25,7 @@ class EntryEditor extends ConsumerStatefulWidget {
 
 class _EntryEditorState extends ConsumerState<EntryEditor> {
   String body = "";
+  bool hasBeenEdited = false;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +54,10 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                           children: [
                             MarkdownEditor(
                               initialValue: value.body,
-                              onChanged: (text) => setState(() => body = text),
+                              onChanged: (text) => setState(() {
+                                body = text;
+                                hasBeenEdited = true;
+                              }),
                             ),
 
                             if (value.location != null)
@@ -140,7 +143,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
   }
 
   void onGoBack(bool didPop, BuildContext context, Object? popObject) {
-    if (!didPop || popObject == "DO_NOT_WRITE") return;
+    if (!didPop || popObject == "DO_NOT_WRITE" || !hasBeenEdited) return;
     ref
         .read(entryProvider(widget.entryDateString).notifier)
         .writeWith(body: body);
