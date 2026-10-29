@@ -42,16 +42,12 @@ jobs:
         run: dart run build_runner build --delete-conflicting-outputs
         
       - name: Build APK
-        env:
-            KEYSTORE_PATH: "release-keystore.jks" # Relative path from android/app/
-            KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-            KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-            KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: flutter build apk --release
 
-      # - name: Create Release
-      #   uses: softprops/action-gh-release@v2
-      #   with:
-      #     files: build/app/outputs/flutter-apk/app-release.apk
-      #     token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Release
+        if: github.event_name != 'workflow_dispatch'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/app/outputs/flutter-apk/app-release.apk
+          token: ${{ secrets.GITHUB_TOKEN }}
             
