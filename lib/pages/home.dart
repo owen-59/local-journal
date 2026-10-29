@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/pages/search.dart';
+import 'package:journal/providers/cache_entries.dart';
 import 'package:journal/providers/entry_list.dart';
 import 'package:journal/widgets/calendar_view.dart';
 import 'package:journal/widgets/entry_list.dart' as wid;
@@ -48,12 +49,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       appBar: AppBar(
         title: Text("Journal"),
         actions: [
-          ?_currentPageIndex == 0
-              ? IconButton(
-                  icon: Icon(Icons.calendar_month),
-                  onPressed: () => onDateClicked(context, ref),
-                )
-              : null,
+          ?switch (_currentPageIndex) {
+            0 => IconButton(icon: Icon(Icons.calendar_month), onPressed: () {}),
+            1 || 2 => IconButton(
+              icon: Icon(Icons.refresh),
+              onPressed: () {
+                ref.invalidate(cacheEntriesProvider);
+              },
+            ),
+            _ => null,
+          },
           IconButton(
             icon: Icon(Icons.search),
             onPressed: () => Navigator.push(

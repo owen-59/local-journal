@@ -114,11 +114,20 @@ class _MapPageState extends ConsumerState<MapPage>
   }
 
   Future _updateGeoJsonSource(List<Object> geoJsonData) async {
-    await controller.addGeoJsonSource("entries", {
-      "type": "FeatureCollection",
-      "features": geoJsonData,
-    });
+    if ((await controller.getSourceIds()).contains("entries")) {
+      await controller.setGeoJsonSource("entries", {
+        "type": "FeatureCollection",
+        "features": geoJsonData,
+      });
+    } else {
+      await controller.addGeoJsonSource("entries", {
+        "type": "FeatureCollection",
+        "features": geoJsonData,
+      });
+    }
 
+    await controller.removeLayer("entries-heat");
+    await controller.removeLayer("entries-circles");
     await controller.addHeatmapLayer(
       'entries',
       'entries-heat',
