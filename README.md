@@ -8,7 +8,7 @@ A journal app like some certain more premium paid options, but without any AI fe
  - Markdown editor
 
 ## Install
-Get the latest release off the [releases page](https://github.com/owen-59/local-journal/releases).
+Get the latest release off the [releases page](https://github.com/owen-59/local-journal/releases) or [on Obtainium](https://apps.obtainium.imranr.dev/redirect?r=obtainium://app/%7B%0A%20%20%22id%22:%20%22com%2Eowen59%2Ejournal%22,%0A%20%20%22url%22:%20%22https://github%2Ecom/owen%2D59/local%2Djournal%22,%0A%20%20%22author%22:%20%22owen%2D59%22,%0A%20%20%22name%22:%20%22Journal%22%0A%7D%0A).
 
 ## Transitioning from Day One
 This tool is very rough and does not support all Day One features.
