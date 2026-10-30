@@ -55,12 +55,6 @@ class _MainTreeState extends State<MainTree> {
     _initProviderContainer();
   }
 
-  @override
-  void dispose() {
-    _providerContainer.dispose();
-    super.dispose();
-  }
-
   Future<void> _initSharingIntent() async {
     final handler = ShareHandlerPlatform.instance;
     final media = await handler.getInitialSharedMedia();
