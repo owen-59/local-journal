@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
+import 'package:exif_reader/exif_reader.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:journal/database.dart';
@@ -80,8 +81,12 @@ class EntryList extends _$EntryList {
     state = AsyncData(_state);
   }
 
-  Future<DateTime> newEntry() async {
-    var dt = DateTime.now().copyWith(second: 0, millisecond: 0, microsecond: 0);
+  Future<DateTime> newEntry({DateTime? requestDt}) async {
+    var dt = (requestDt ?? DateTime.now()).copyWith(
+      second: 0,
+      millisecond: 0,
+      microsecond: 0,
+    );
 
     while (_state.any((entryDt) => entryDt.isAtSameMomentAs(dt))) {
       dt = dt.copyWith(minute: dt.minute + 1);
@@ -162,8 +167,27 @@ class EntryList extends _$EntryList {
   Future<DateTime> createEntryWithImage(File file) async {
     final bytes = await file.readAsBytes();
     final xfile = XFile(file.path, bytes: bytes);
+    final exif = await readExifFromBytes(bytes);
 
-    final newEntryDt = await newEntry();
+    final dtFormat = DateFormat("yyyy:MM:dd HH:mm:ss");
+    final imageDtString = exif.tags["EXIF DateTimeOriginal"]?.printable;
+    final imageDt = imageDtString != null
+        ? dtFormat.tryParse(imageDtString)
+        : null;
+    if (imageDt == null) {
+      if (imageDtString != null) {
+        logger.w(
+          "Couldn't parse \"$imageDtString\" from EXIF DateTimeOriginal",
+        );
+      } else {
+        logger.w("EXIF DateTimeOriginal not found in ${exif.tags.keys}");
+      }
+    }
+    logger.d("Extracted $imageDt from EXIF.");
+
+    final requestDt = imageDt ?? DateTime.now();
+
+    final newEntryDt = await newEntry(requestDt: requestDt);
 
     final entry = ref.read(entryProvider(newEntryDt.toString()).notifier);
     await entry.addImage(xfile, path.basenameWithoutExtension(file.path));

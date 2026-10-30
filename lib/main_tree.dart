@@ -80,10 +80,9 @@ class _MainTreeState extends State<MainTree> {
 
       try {
         final entryList = _providerContainer.read(entryListProvider.notifier);
-        logger.i("1: ${file.path}");
         final entryDt = await entryList.createEntryWithImage(File(file.path));
-        logger.i("Going to $entryDt");
-        _router.go("/entry/$entryDt");
+        logger.d("Going to /entry/$entryDt from sharing intent.");
+        _router.push("/entry/$entryDt");
       } catch (err, stackTrace) {
         logger.e("$err: $stackTrace", stackTrace: stackTrace);
       }
