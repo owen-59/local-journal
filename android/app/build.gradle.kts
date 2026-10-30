@@ -39,12 +39,18 @@ android {
         }
     }
 
+    buildFeatures {
+        resValues = true
+    }
+
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("release")
+            resValue("string", "app_name", "Journal")
         }
         debug {
             applicationIdSuffix = ".debug"
+            resValue("string", "app_name", "Journal (Debug)")
         }
     }
 }
