@@ -43,6 +43,7 @@ dependencies:
   substring_highlight: ^1.0.33
   flutter_sharing_intent: ^2.0.4
   share_handler: ^0.0.25
+  exif_reader: ^4.2.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
