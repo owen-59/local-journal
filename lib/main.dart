@@ -1,11 +1,16 @@
+import 'dart:async';
+
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_controller/flutter_keyboard_controller.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_sharing_intent/flutter_sharing_intent.dart';
+import 'package:flutter_sharing_intent/model/sharing_file.dart';
 import 'package:go_router/go_router.dart';
 import 'package:journal/database.dart';
 import 'package:journal/logger.dart';
+import 'package:journal/main_tree.dart';
 import 'package:journal/pages/editor.dart';
 import 'package:journal/pages/home.dart';
 import 'package:journal/widgets/folder_selection_page.dart';
@@ -130,6 +135,11 @@ class _AppState extends State<App> {
     }
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   void onPermissionsGranted(Uri dirUri) {
     widget.prefs.setString("saf_authorised_uri", dirUri.toString());
     setState(() {
@@ -141,33 +151,10 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     return _authorised
-        ? ProviderScope(
-            overrides: [
-              folderUriProvider.overrideWithValue(_folderUri),
-              appDatabaseProvider.overrideWithValue(widget.database),
-              workerManagerProvider.overrideWithValue(widget.workerManager),
-            ],
-            retry: (_, _) => null,
-            child: DynamicColorBuilder(
-              builder: (light, dark) => KeyboardProvider(
-                child: MaterialApp.router(
-                  routerConfig: _router,
-                  theme: ThemeData(
-                    colorScheme:
-                        light ??
-                        ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-                  ),
-                  darkTheme: ThemeData(
-                    colorScheme:
-                        dark ??
-                        ColorScheme.fromSeed(
-                          seedColor: Colors.deepPurple,
-                          brightness: Brightness.dark,
-                        ),
-                  ),
-                ),
-              ),
-            ),
+        ? MainTree(
+            database: widget.database,
+            workerManager: widget.workerManager,
+            folderUri: _folderUri,
           )
         : FolderSelectionPage(saf: widget.saf, onGranted: onPermissionsGranted);
   }

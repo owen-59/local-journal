@@ -1,13 +1,17 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:collection/collection.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:journal/database.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/main.dart';
 import 'package:journal/providers/cache_entries.dart';
+import 'package:journal/providers/entry.dart';
 import 'package:journal/utils/file.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:path/path.dart' as path;
 
 part "entry_list.g.dart";
 
@@ -153,5 +157,18 @@ class EntryList extends _$EntryList {
     } catch (err, trace) {
       state = AsyncError(err, trace);
     }
+  }
+
+  Future<DateTime> createEntryWithImage(File file) async {
+    final bytes = await file.readAsBytes();
+    final xfile = XFile(file.path, bytes: bytes);
+
+    final newEntryDt = await newEntry();
+
+    final entry = ref.read(entryProvider(newEntryDt.toString()).notifier);
+    await entry.addImage(xfile, path.basenameWithoutExtension(file.path));
+    await entry.writeWith();
+
+    return entry.getDatetime();
   }
 }
