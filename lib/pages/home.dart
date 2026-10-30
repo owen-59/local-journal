@@ -50,10 +50,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         title: Text("Journal"),
         actions: [
           ?switch (_currentPageIndex) {
-            0 => IconButton(
-              icon: Icon(Icons.calendar_month),
-              onPressed: () => onDateClicked(context, ref),
-            ),
+            0 => IconButton(icon: Icon(Icons.calendar_month), onPressed: () {}),
             1 || 2 => IconButton(
               icon: Icon(Icons.refresh),
               onPressed: () {
