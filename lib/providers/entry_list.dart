@@ -183,7 +183,7 @@ class EntryList extends _$EntryList {
         logger.w("EXIF DateTimeOriginal not found in ${exif.tags.keys}");
       }
     }
-    logger.i("extracted dt: $imageDt");
+    logger.d("Extracted $imageDt from EXIF.");
 
     final requestDt = imageDt ?? DateTime.now();
 
