@@ -9,6 +9,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "109.0.0"
+  analysis_server_plugin:
+    dependency: transitive
+    description:
+      name: analysis_server_plugin
+      sha256: "9f293f95cf41cb513a9a4f322354e2fa5483125e0f18bbeca254543ac9c3dda6"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.24"
   analyzer:
     dependency: transitive
     description:
@@ -25,6 +33,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.4"
+  analyzer_plugin:
+    dependency: transitive
+    description:
+      name: analyzer_plugin
+      sha256: "2c59e6fba4971dc9ece97acd55b4f95b67a98e6ae0a55bff6f9dfc2bb59e8b1a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.14.18"
   archive:
     dependency: transitive
     description:
@@ -1040,6 +1056,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.9"
+  riverpod_lint:
+    dependency: "direct dev"
+    description:
+      name: riverpod_lint
+      sha256: "215cb3cd54a97e09bc3512535fa4e8bedd3bf2a06dc2ae015ac8e0050fc71bd1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.9"
   rookie_yaml:
     dependency: transitive
     description:
