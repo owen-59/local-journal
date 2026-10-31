@@ -1,18 +1,10 @@
 import 'dart:async';
 
-import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_keyboard_controller/flutter_keyboard_controller.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_sharing_intent/flutter_sharing_intent.dart';
-import 'package:flutter_sharing_intent/model/sharing_file.dart';
-import 'package:go_router/go_router.dart';
 import 'package:journal/database.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/main_tree.dart';
-import 'package:journal/pages/editor.dart';
-import 'package:journal/pages/home.dart';
 import 'package:journal/widgets/folder_selection_page.dart';
 import 'package:journal/worker.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
@@ -80,17 +72,6 @@ WorkerManager workerManager(Ref ref) {
 Saf saf(Ref ref) {
   return Saf();
 }
-
-final _router = GoRouter(
-  routes: [
-    GoRoute(path: "/", builder: (context, state) => const HomeScreen()),
-    GoRoute(
-      path: "/entry/:datetime",
-      builder: (context, state) =>
-          EntryEditor(entryDateString: state.pathParameters["datetime"]!),
-    ),
-  ],
-);
 
 class App extends StatefulWidget {
   final Saf saf;

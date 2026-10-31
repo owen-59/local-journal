@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:journal/providers/entry.dart';
 import 'package:journal/providers/entry_main_image.dart';
 import 'package:journal/providers/image.dart';
-import 'package:journal/providers/images.dart';
 import 'package:journal/widgets/entry_card_template.dart';
 import 'package:journal/widgets/error_card.dart';
 import 'package:substring_highlight/substring_highlight.dart';
