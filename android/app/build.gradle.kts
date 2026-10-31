@@ -48,6 +48,10 @@ android {
             signingConfig = signingConfigs.getByName("release")
             resValue("string", "app_name", "Journal")
         }
+        getByName("profile") {
+            applicationIdSuffix = ".profile"
+            resValue("string", "app_name", "Journal (Profile)")
+        }
         debug {
             applicationIdSuffix = ".debug"
             resValue("string", "app_name", "Journal (Debug)")
