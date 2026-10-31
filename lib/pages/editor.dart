@@ -6,7 +6,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:journal/models/entry.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/providers/entry.dart';
+import 'package:journal/utils/exif.dart';
 import 'package:journal/utils/location.dart';
+import 'package:journal/widgets/confirm_dialogue.dart';
 import 'package:journal/widgets/error_card.dart';
 import 'package:journal/widgets/images_list.dart';
 import 'package:journal/widgets/location_card.dart';
@@ -217,22 +219,12 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
   Future<void> onDeleteClicked(BuildContext context, Entry entry) async {
     final result = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Delete?"),
-        content: const Text("Are you sure you want to delete this entry?"),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text("Cancel"),
-          ),
-          TextButton(
-            style: TextButton.styleFrom(
-              foregroundColor: Theme.of(context).colorScheme.onErrorContainer,
-            ),
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text("Delete"),
-          ),
-        ],
+      builder: (context) => ConfirmDialogue(
+        titleText: "Delete?",
+        description: "Are you sure you want to delete this entry?",
+        cancelText: "Cancel",
+        confirmText: "Delete",
+        isDestructive: true,
       ),
     );
 
@@ -253,15 +245,35 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
         builder: (context) => TextInputDialog(),
       );
       if (name == null) return;
-      logger.i("fileUri: ${image.path} $name");
-      ref
-          .read(entryProvider(widget.entryDateString).notifier)
-          .addImage(image, name);
-    } else {
-      logger.w(
-        "Received image, but context became unmounted before showing name chooser.",
-      );
-      return;
+
+      final bytes = await image.readAsBytes();
+      final imageDt = await datetimeFromExif(bytes);
+
+      final shouldUseImageDt =
+          imageDt != null &&
+          context.mounted &&
+          (await showDialog<bool>(
+                context: context,
+                builder: (context) => ConfirmDialogue(
+                  titleText: "Use image date?",
+                  description: "Should this date be changed to $imageDt?",
+                  cancelText: "No",
+                  confirmText: "Yes",
+                  isDestructive: false,
+                ),
+              ) ==
+              true);
+
+      if (shouldUseImageDt) {
+        final newEntry = await ref.read(entryProvider(widget.entryDateString).notifier).writeWith(datetime: imageDt, body: body);
+        await ref.read(entryProvider(newEntry.datetime.toString()).notifier).addImage(bytes, name, image.path);
+        await ref.read(entryProvider(newEntry.datetime.toString()).notifier).writeWith();
+        if (context.mounted) {
+          context.replace("/entry/${newEntry.datetime}");
+        }
+      } else {
+        await ref.read(entryProvider(widget.entryDateString).notifier).addImage(bytes, name, image.path);
+      }
     }
   }
 
