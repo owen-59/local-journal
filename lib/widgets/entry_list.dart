@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:journal/providers/entry_list.dart';
 import 'package:journal/widgets/error_card.dart';
@@ -41,6 +42,7 @@ class EntryListState extends ConsumerState<EntryList>
           child: switch (entries) {
             AsyncData(:final value) => CustomScrollView(
               controller: _scrollController,
+              scrollCacheExtent: ScrollCacheExtent.viewport(2),
               slivers: [
                 SliverEntryList(
                   entries: value,

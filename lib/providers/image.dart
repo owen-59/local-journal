@@ -24,9 +24,11 @@ Future<Uint8List?> image(
 
   final imagePath = getImagePath(dt, name);
 
-  final cachedImage = await (database.select(
-    database.imageCache,
-  )..where((a) => a.sourcePath.equalsValue(imagePath))).getSingleOrNull();
+  final cachedImage =
+      await (database.select(database.imageCache)
+            ..where((a) => a.sourcePath.equalsValue(imagePath))
+            ..where((a) => a.qualityLevel.equalsValue(quality)))
+          .getSingleOrNull();
   if (cachedImage != null) {
     final destinationPath = cachedImage.destinationPath;
     final cacheFile = File(destinationPath);
