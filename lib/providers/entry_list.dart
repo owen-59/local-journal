@@ -18,12 +18,9 @@ part "entry_list.g.dart";
 @Riverpod(keepAlive: true)
 class EntryList extends _$EntryList {
   var _state = <DateTime>[];
-  late AppDatabase database;
 
   @override
   Future<List<DateTime>> build() async {
-    database = ref.watch(appDatabaseProvider);
-
     fullReload();
 
     return [];

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:journal/database.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/main_tree.dart';
@@ -39,36 +40,38 @@ void main() async {
   );
 
   runApp(
-    App(
-      saf: saf,
-      cachedUri: cachedUri,
-      prefs: prefs,
-      database: database,
-      workerManager: workerManager,
+    ProviderScope(
+      child: App(
+        saf: saf,
+        cachedUri: cachedUri,
+        prefs: prefs,
+        database: database,
+        workerManager: workerManager,
+      ),
     ),
   );
 }
 
 // initialise this in overrides
-@riverpod
+@Riverpod(keepAlive: true)
 Uri folderUri(Ref ref) {
   logger.e("Accessed folderUriProvider before overriding!");
   throw UnimplementedError();
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 AppDatabase appDatabase(Ref ref) {
   logger.e("Accessed appDatabaseProvider before overriding!");
   throw UnimplementedError();
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 WorkerManager workerManager(Ref ref) {
   logger.e("Accessed workerManagerProvider before overriding!");
   throw UnimplementedError();
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 Saf saf(Ref ref) {
   return Saf();
 }
