@@ -2,14 +2,13 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
-import 'package:exif_reader/exif_reader.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:journal/database.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/main.dart';
 import 'package:journal/providers/cache_entries.dart';
 import 'package:journal/providers/entry.dart';
+import 'package:journal/utils/exif.dart';
 import 'package:journal/utils/file.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:path/path.dart' as path;
@@ -166,31 +165,16 @@ class EntryList extends _$EntryList {
 
   Future<DateTime> createEntryWithImage(File file) async {
     final bytes = await file.readAsBytes();
-    final xfile = XFile(file.path, bytes: bytes);
-    final exif = await readExifFromBytes(bytes);
 
-    final dtFormat = DateFormat("yyyy:MM:dd HH:mm:ss");
-    final imageDtString = exif.tags["EXIF DateTimeOriginal"]?.printable;
-    final imageDt = imageDtString != null
-        ? dtFormat.tryParse(imageDtString)
-        : null;
-    if (imageDt == null) {
-      if (imageDtString != null) {
-        logger.w(
-          "Couldn't parse \"$imageDtString\" from EXIF DateTimeOriginal",
-        );
-      } else {
-        logger.w("EXIF DateTimeOriginal not found in ${exif.tags.keys}");
-      }
-    }
-    logger.d("Extracted $imageDt from EXIF.");
-
-    final requestDt = imageDt ?? DateTime.now();
+    final exifDt = await datetimeFromExif(bytes);
+    final requestDt = exifDt ?? DateTime.now();
 
     final newEntryDt = await newEntry(requestDt: requestDt);
+    final imageName = path.basenameWithoutExtension(file.path);
+    final ext = path.extension(file.path);
 
     final entry = ref.read(entryProvider(newEntryDt.toString()).notifier);
-    await entry.addImage(xfile, path.basenameWithoutExtension(file.path));
+    await entry.addImage(bytes, imageName, ext);
     await entry.writeWith();
 
     return entry.getDatetime();
