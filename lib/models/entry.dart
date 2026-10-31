@@ -1,8 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:journal/utils/location.dart';
 import 'package:journal/utils/yaml.dart';
-import 'package:path/path.dart' as path;
 import 'package:journal/logger.dart';
 import 'package:journal/utils/file.dart';
 import 'package:journal/utils/frontmatter.dart';
@@ -110,26 +110,30 @@ class Entry implements Comparable<Entry> {
 
   Future<void> delete(String rootFolder) async {
     final path = pathFromDatetime(datetime);
+    final folderPath = parentPathFromDatetime(datetime);
     await deleteFile(rootFolder, path);
+    for (final image in images) {
+      final imagePath = [...folderPath, image];
+      await deleteFile(rootFolder, imagePath);
+    }
   }
 
-  Future<Entry> addImage(String rootFolder, XFile image, String name) async {
-    final ext = path.extension(image.name);
-    final imageName = name + ext;
+  Future<Entry> addImage(
+    String rootFolder,
+    Uint8List bytes,
+    String name,
+    String ext,
+  ) async {
+    final fullName = name + ext;
 
     final entryPath = pathFromDatetime(datetime);
-    final imagePath = [
-      ...entryPath.sublist(0, entryPath.length - 1),
-      imageName,
-    ];
+    final imagePath = [...entryPath.sublist(0, entryPath.length - 1), fullName];
 
     logger.d("Adding image to entry at path $imagePath.");
 
-    final imageBytes = await image.readAsBytes();
+    await writeFileBytes(rootFolder, imagePath, bytes, "image/$ext");
 
-    await writeFileBytes(rootFolder, imagePath, imageBytes, "image/xyz");
-
-    return copyWith(rootFolder, images: [...images, imageName]);
+    return copyWith(rootFolder, images: [...images, fullName]);
   }
 
   Future<Entry> removeImage(String rootFolder, String name) async {

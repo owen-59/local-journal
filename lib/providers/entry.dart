@@ -1,4 +1,5 @@
-import 'package:image_picker/image_picker.dart';
+import 'dart:typed_data';
+
 import 'package:journal/database.dart';
 import 'package:journal/models/entry.dart';
 import 'package:journal/logger.dart';
@@ -7,6 +8,7 @@ import 'package:journal/providers/entry_list.dart';
 import 'package:journal/utils/file.dart';
 import 'package:journal/utils/location.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:path/path.dart' as path;
 
 part "entry.g.dart";
 
@@ -101,13 +103,18 @@ class EntryNotifier extends _$EntryNotifier {
     ref.read(entryListProvider.notifier).removeEntry(current.datetime);
   }
 
-  Future<void> addImage(XFile image, String name) async {
+  Future<void> addImage(Uint8List bytes, String name, String sourcePath) async {
     final keepAliveLink = ref.keepAlive();
     try {
       final rootFolder = ref.watch(folderUriProvider).toString();
       final current = await future;
 
-      final newEntry = await current.addImage(rootFolder, image, name);
+      final newEntry = await current.addImage(
+        rootFolder,
+        bytes,
+        name,
+        path.extension(sourcePath),
+      );
       state = AsyncData(newEntry);
     } finally {
       keepAliveLink.close();
