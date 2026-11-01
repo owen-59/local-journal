@@ -101,7 +101,7 @@ class _AppState extends State<App> {
   bool _authorised = false;
 
   @override
-  initState() {
+  void initState() {
     super.initState();
     _initSaf();
   }

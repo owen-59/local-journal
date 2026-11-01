@@ -18,7 +18,7 @@ Iterable<String> _getLinesSync(String text) sync* {
 /// where the [String] is the plaintext content.
 ///
 /// If '`---`' is not the first thing to occur in the file,
-/// [null] is returned, otherwise everything in between that
+/// `null` is returned, otherwise everything in between that
 /// and the next '`---`' is parsed as YAML.
 (String, YamlMap?) parseMdFrontmatter(String text) {
   final lineStream = _getLinesSync(text);
@@ -45,7 +45,7 @@ Iterable<String> _getLinesSync(String text) sync* {
     yamlData = YamlMap();
   }
 
-  var remainingLines = [];
+  final remainingLines = [];
   while (iterator.moveNext()) {
     remainingLines.add(iterator.current);
   }

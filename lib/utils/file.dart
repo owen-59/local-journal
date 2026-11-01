@@ -49,7 +49,7 @@ Future<SafNewFile> writeFileString(
 Future<SafNewFile> writeFileBytes(
   String rootFolder,
   List<String> path,
-  Uint8List content,
+  Uint8List bytes,
   String mime,
 ) async {
   final saf = Saf();
@@ -79,7 +79,7 @@ Future<SafNewFile> writeFileBytes(
       deepestDir.uri,
       path.last,
       mime,
-      content,
+      bytes,
       overwrite: true,
       append: false,
     );
@@ -90,7 +90,7 @@ Future<SafNewFile> writeFileBytes(
 }
 
 /// Reads a file at [path] inside [rootFolder] as a [String].
-/// Returns [null] if there was an error reading the file.
+/// Returns `null` if there was an error reading the file.
 ///
 /// Wrapper around [readFileBytes] that decodes the bytes as utf8.
 Future<String?> readFile(String rootFolder, List<String> path) async {
@@ -99,7 +99,7 @@ Future<String?> readFile(String rootFolder, List<String> path) async {
 }
 
 /// Reads a file at [path] inside [rootFolder] as a [Uint8List].
-/// Returns [null] if there was an error reading the file.
+/// Returns `null` if there was an error reading the file.
 Future<Uint8List?> readFileBytes(String rootFolder, List<String> path) async {
   final saf = Saf();
   final safStream = SafStream();
@@ -154,7 +154,7 @@ Future<SafDocumentFile> copyLocalFile(
 }
 
 /// Moves a file from [srcPath] to [destDirPath] within [rootFolder].
-/// If [srcPath] does not exist, [null] is returned.
+/// If [srcPath] does not exist, `null` is returned.
 Future<SafDocumentFile?> moveFile(
   String rootFolder,
   List<String> srcPath,

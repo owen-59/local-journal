@@ -91,7 +91,7 @@ class Entry implements Comparable<Entry> {
   Future<void> write(String rootFolder) async {
     final path = pathFromDatetime(datetime);
 
-    Map<String, dynamic> yamlData = {"tags": tags, "images": images};
+    final Map<String, dynamic> yamlData = {"tags": tags, "images": images};
 
     if (location != null) {
       yamlData["location"] = [location!.latitude, location!.longitude];
