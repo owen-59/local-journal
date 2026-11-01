@@ -39,7 +39,7 @@ Future<Uint8List?> image(
     logger.e("Error when reading cached file at $cacheFile: $err");
   }
 
-  var bytes = await readFileBytes(rootFolder, imagePath);
+  final bytes = await readFileBytes(rootFolder, imagePath);
   if (bytes == null) return null;
 
   () async {

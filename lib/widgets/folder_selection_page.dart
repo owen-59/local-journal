@@ -13,7 +13,7 @@ class FolderSelectionPage extends StatelessWidget {
 
   Future<void> _requestFolder(BuildContext context) async {
     try {
-      SafDocumentFile? dir = await saf.pickDirectory();
+      final SafDocumentFile? dir = await saf.pickDirectory();
 
       if (dir != null) {
         onGranted(Uri.parse(dir.uri));

@@ -47,7 +47,7 @@ class _TagsEditorState extends ConsumerState<TagsEditor> {
               child: switch (allTags) {
                 AsyncData(:final value) => StatefulBuilder(
                   builder: (context, setState) {
-                    var filteredTags =
+                    final filteredTags =
                         <String>{
                           ...value.where(
                             (tag) =>
