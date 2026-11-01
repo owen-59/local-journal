@@ -1,5 +1,7 @@
 import "package:journal/utils/file.dart";
 
+/// Matchs [input] with a regexp to extract the
+/// year, month, day, hour and minute.
 DateTime? getTimeFromPath(String input) {
   final regExp = RegExp(r"^(\d{4})/(\d{2})/(\d{2})/(\d{2})(\d{2})\.md$");
   final match = regExp.firstMatch(input);
@@ -15,25 +17,9 @@ DateTime? getTimeFromPath(String input) {
   return DateTime(year, month, day, hour, minute);
 }
 
-String getRelativePath(Uri folderUri, Uri fileUri) {
-  final rootId = Uri.decodeComponent(folderUri.pathSegments.last);
-
-  final fileSegments = fileUri.pathSegments;
-  final documentIndex = fileSegments.indexOf("document");
-
-  if (documentIndex == -1 || documentIndex + 1 >= fileSegments.length) {
-    throw StateError("Invalid SAF document URI: $fileUri");
-  }
-
-  final fileId = Uri.decodeComponent(fileSegments[documentIndex + 1]);
-
-  if (!fileId.startsWith("$rootId/")) {
-    throw StateError("File is not inside selected folder");
-  }
-
-  return fileId.substring(rootId.length + 1);
-}
-
+/// Returns the path of the image with [name] attached to the entry at [dt].
+///
+/// Equivalent to replacing the last segment of an entry path with [name].
 List<String> getImagePath(DateTime dt, String name) {
   final entryPath = pathFromDatetime(dt);
   final imagePath = [...entryPath.sublist(0, entryPath.length - 1), name];
