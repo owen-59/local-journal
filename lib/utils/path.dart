@@ -17,9 +17,7 @@ DateTime? getTimeFromPath(String input) {
   return DateTime(year, month, day, hour, minute);
 }
 
-/// Returns the path of the image with [name] attached to the entry at [dt].
-///
-/// Equivalent to replacing the last segment of an entry path with [name].
+
 List<String> getImagePath(DateTime dt, String name) {
   final entryPath = pathFromDatetime(dt);
   final imagePath = [...entryPath.sublist(0, entryPath.length - 1), name];
