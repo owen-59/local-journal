@@ -1,6 +1,6 @@
-import 'package:flutter/services.dart';
-import 'package:isolate_kit/isolate_kit.dart';
-import 'package:journal/models/entry.dart';
+import "package:flutter/services.dart";
+import "package:isolate_kit/isolate_kit.dart";
+import "package:journal/models/entry.dart";
 
 class UpdateStaleCachePayload {
   final DateTime dt;

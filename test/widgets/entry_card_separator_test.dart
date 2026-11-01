@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:intl/intl.dart';
-import 'package:journal/widgets/entry_card_seperator.dart';
+import "package:flutter/material.dart";
+import "package:flutter_test/flutter_test.dart";
+import "package:intl/intl.dart";
+import "package:journal/widgets/entry_card_seperator.dart";
 
 Future<void> _setupTests(WidgetTester tester, Widget child) async {
   await tester.pumpWidget(MaterialApp(home: child));

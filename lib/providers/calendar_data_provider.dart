@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:journal/logger.dart';
-import 'package:journal/providers/entry_list.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
+import "package:flutter/material.dart";
+import "package:journal/logger.dart";
+import "package:journal/providers/entry_list.dart";
+import "package:riverpod_annotation/riverpod_annotation.dart";
 
 part "calendar_data_provider.g.dart";
 

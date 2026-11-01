@@ -1,8 +1,8 @@
-import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_keyboard_controller/flutter_keyboard_controller.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:journal/providers/tags_list.dart';
+import "package:collection/collection.dart";
+import "package:flutter/material.dart";
+import "package:flutter_keyboard_controller/flutter_keyboard_controller.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:journal/providers/tags_list.dart";
 
 class TagsEditor extends ConsumerStatefulWidget {
   const TagsEditor({super.key, required this.initialTags});
@@ -72,7 +72,7 @@ class _TagsEditorState extends ConsumerState<TagsEditor> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            'Tags',
+                            "Tags",
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
 
@@ -129,7 +129,7 @@ class _TagsEditorState extends ConsumerState<TagsEditor> {
 
                           TextButton(
                             onPressed: () => Navigator.pop(context, tags),
-                            child: const Text('Done'),
+                            child: const Text("Done"),
                           ),
                         ],
                       ),

@@ -1,18 +1,18 @@
-import 'dart:async';
+import "dart:async";
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:journal/database.dart';
-import 'package:journal/logger.dart';
-import 'package:journal/main_tree.dart';
-import 'package:journal/widgets/folder_selection_page.dart';
-import 'package:journal/worker.dart';
-import 'package:maplibre_gl/maplibre_gl.dart';
-import 'package:nominatim_flutter/nominatim_flutter.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:saf/saf.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import "package:flutter/foundation.dart";
+import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:journal/database.dart";
+import "package:journal/logger.dart";
+import "package:journal/main_tree.dart";
+import "package:journal/widgets/folder_selection_page.dart";
+import "package:journal/worker.dart";
+import "package:maplibre_gl/maplibre_gl.dart";
+import "package:nominatim_flutter/nominatim_flutter.dart";
+import "package:riverpod_annotation/riverpod_annotation.dart";
+import "package:saf/saf.dart";
+import "package:shared_preferences/shared_preferences.dart";
 
 part "main.g.dart";
 

@@ -1,19 +1,19 @@
-import 'dart:async';
-import 'dart:io';
+import "dart:async";
+import "dart:io";
 
-import 'package:dynamic_color/dynamic_color.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_keyboard_controller/flutter_keyboard_controller.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:journal/database.dart';
-import 'package:journal/logger.dart';
-import 'package:journal/main.dart';
-import 'package:journal/pages/editor.dart';
-import 'package:journal/pages/home.dart';
-import 'package:journal/providers/entry_list.dart';
-import 'package:journal/worker.dart';
-import 'package:share_handler/share_handler.dart';
+import "package:dynamic_color/dynamic_color.dart";
+import "package:flutter/material.dart";
+import "package:flutter_keyboard_controller/flutter_keyboard_controller.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:go_router/go_router.dart";
+import "package:journal/database.dart";
+import "package:journal/logger.dart";
+import "package:journal/main.dart";
+import "package:journal/pages/editor.dart";
+import "package:journal/pages/home.dart";
+import "package:journal/providers/entry_list.dart";
+import "package:journal/worker.dart";
+import "package:share_handler/share_handler.dart";
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey _providerScopeKey = GlobalKey();

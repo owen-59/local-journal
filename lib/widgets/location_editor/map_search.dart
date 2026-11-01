@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:journal/logger.dart';
-import 'package:journal/providers/osm_reverse_geocode.dart';
-import 'package:journal/utils/location.dart';
-import 'package:maplibre_gl/maplibre_gl.dart';
+import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:journal/logger.dart";
+import "package:journal/providers/osm_reverse_geocode.dart";
+import "package:journal/utils/location.dart";
+import "package:maplibre_gl/maplibre_gl.dart";
 
 class MapSearch extends ConsumerStatefulWidget {
   final void Function(Location) onLocationPicked;

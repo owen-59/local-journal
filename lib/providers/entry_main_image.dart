@@ -1,9 +1,9 @@
-import 'package:flutter/services.dart';
-import 'package:journal/providers/entry.dart';
-import 'package:journal/providers/image.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
+import "package:flutter/services.dart";
+import "package:journal/providers/entry.dart";
+import "package:journal/providers/image.dart";
+import "package:riverpod_annotation/riverpod_annotation.dart";
 
-part 'entry_main_image.g.dart';
+part "entry_main_image.g.dart";
 
 @riverpod
 Future<Uint8List?> entryMainImage(

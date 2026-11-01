@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:journal/utils/location.dart';
+import "package:flutter/material.dart";
+import "package:journal/utils/location.dart";
 
 enum PrimaryDisplay { name, displayName, coordinates }
 

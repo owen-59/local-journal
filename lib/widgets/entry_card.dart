@@ -1,13 +1,13 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
-import 'package:journal/providers/entry.dart';
-import 'package:journal/providers/entry_main_image.dart';
-import 'package:journal/providers/image.dart';
-import 'package:journal/widgets/entry_card_template.dart';
-import 'package:journal/widgets/error_card.dart';
-import 'package:substring_highlight/substring_highlight.dart';
+import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:go_router/go_router.dart";
+import "package:intl/intl.dart";
+import "package:journal/providers/entry.dart";
+import "package:journal/providers/entry_main_image.dart";
+import "package:journal/providers/image.dart";
+import "package:journal/widgets/entry_card_template.dart";
+import "package:journal/widgets/error_card.dart";
+import "package:substring_highlight/substring_highlight.dart";
 
 class EntryCard extends ConsumerWidget {
   final DateTime entryDt;

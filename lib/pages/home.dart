@@ -1,13 +1,13 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:journal/logger.dart';
-import 'package:journal/pages/search.dart';
-import 'package:journal/providers/cache_entries.dart';
-import 'package:journal/providers/entry_list.dart';
-import 'package:journal/widgets/calendar_view.dart';
-import 'package:journal/widgets/entry_list.dart' as wid;
-import 'package:journal/widgets/map.dart';
+import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:go_router/go_router.dart";
+import "package:journal/logger.dart";
+import "package:journal/pages/search.dart";
+import "package:journal/providers/cache_entries.dart";
+import "package:journal/providers/entry_list.dart";
+import "package:journal/widgets/calendar_view.dart";
+import "package:journal/widgets/entry_list.dart" as wid;
+import "package:journal/widgets/map.dart";
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});

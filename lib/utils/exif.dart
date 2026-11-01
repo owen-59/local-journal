@@ -1,6 +1,6 @@
-import 'package:exif_reader/exif_reader.dart';
-import 'package:flutter/foundation.dart';
-import 'package:intl/intl.dart';
+import "package:exif_reader/exif_reader.dart";
+import "package:flutter/foundation.dart";
+import "package:intl/intl.dart";
 
 Future<DateTime?> datetimeFromExif(Uint8List bytes) async {
   final exif = await readExifFromBytes(bytes);

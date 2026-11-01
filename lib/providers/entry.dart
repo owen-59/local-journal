@@ -1,14 +1,14 @@
-import 'dart:typed_data';
+import "dart:typed_data";
 
-import 'package:journal/database.dart';
-import 'package:journal/models/entry.dart';
-import 'package:journal/logger.dart';
-import 'package:journal/main.dart';
-import 'package:journal/providers/entry_list.dart';
-import 'package:journal/utils/file.dart';
-import 'package:journal/utils/location.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:path/path.dart' as path;
+import "package:journal/database.dart";
+import "package:journal/models/entry.dart";
+import "package:journal/logger.dart";
+import "package:journal/main.dart";
+import "package:journal/providers/entry_list.dart";
+import "package:journal/utils/file.dart";
+import "package:journal/utils/location.dart";
+import "package:riverpod_annotation/riverpod_annotation.dart";
+import "package:path/path.dart" as path;
 
 part "entry.g.dart";
 
