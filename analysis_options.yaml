@@ -15,4 +15,5 @@ plugins:
 
 linter:
   rules:
+    - lines_longer_than_80_chars
 
