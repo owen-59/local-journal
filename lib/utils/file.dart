@@ -6,6 +6,7 @@ import 'package:saf/saf.dart';
 import 'package:saf_stream/saf_stream.dart';
 import 'package:saf_stream/saf_stream_platform_interface.dart';
 
+/// Returns the path of an entry from [datetime] as [List<String>].
 List<String> pathFromDatetime(DateTime datetime) {
   return [
     datetime.year.toString().padLeft(4, "0"),
@@ -18,6 +19,8 @@ List<String> pathFromDatetime(DateTime datetime) {
   ];
 }
 
+/// Returns the path of the folder that an entry from [datetime] would
+/// be stored as [List<String>].
 List<String> parentPathFromDatetime(DateTime datetime) {
   return [
     datetime.year.toString().padLeft(4, "0"),
@@ -26,6 +29,10 @@ List<String> parentPathFromDatetime(DateTime datetime) {
   ];
 }
 
+/// Writes a file at [path] inside [rootFolder], with content [content]
+/// and mime type [mime].
+///
+/// Wrapper over [writeFileBytes] that encodes [content] as utf8.
 Future<SafNewFile> writeFileString(
   String rootFolder,
   List<String> path,
@@ -35,6 +42,10 @@ Future<SafNewFile> writeFileString(
   return await writeFileBytes(rootFolder, path, utf8.encode(content), mime);
 }
 
+/// Writes a file at [path] inside [rootFolder], with content [bytes]
+/// and mime type [mime].
+///
+/// Creates parent directories as neccessary.
 Future<SafNewFile> writeFileBytes(
   String rootFolder,
   List<String> path,
@@ -78,11 +89,17 @@ Future<SafNewFile> writeFileBytes(
   }
 }
 
+/// Reads a file at [path] inside [rootFolder] as a [String].
+/// Returns [null] if there was an error reading the file.
+///
+/// Wrapper around [readFileBytes] that decodes the bytes as utf8.
 Future<String?> readFile(String rootFolder, List<String> path) async {
   final fileBytes = await readFileBytes(rootFolder, path);
   return fileBytes == null ? null : utf8.decode(fileBytes);
 }
 
+/// Reads a file at [path] inside [rootFolder] as a [Uint8List].
+/// Returns [null] if there was an error reading the file.
 Future<Uint8List?> readFileBytes(String rootFolder, List<String> path) async {
   final saf = Saf();
   final safStream = SafStream();
@@ -98,6 +115,8 @@ Future<Uint8List?> readFileBytes(String rootFolder, List<String> path) async {
   }
 }
 
+/// Deletes a file at [path] inside [rootFolder].
+/// If the file doesn't exist, no error is thrown, but is logged.
 Future<void> deleteFile(String rootFolder, List<String> path) async {
   final saf = Saf();
 
@@ -109,6 +128,9 @@ Future<void> deleteFile(String rootFolder, List<String> path) async {
   await saf.delete(fileDoc.uri);
 }
 
+/// Copies a local file at [srcPath] to [destPath] inside [rootFolder]
+/// with mime type [mime].
+/// Creates directories if neccessary.
 Future<SafDocumentFile> copyLocalFile(
   String rootFolder,
   String srcPath,
@@ -131,6 +153,8 @@ Future<SafDocumentFile> copyLocalFile(
   );
 }
 
+/// Moves a file from [srcPath] to [destDirPath] within [rootFolder].
+/// If [srcPath] does not exist, [null] is returned.
 Future<SafDocumentFile?> moveFile(
   String rootFolder,
   List<String> srcPath,

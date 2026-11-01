@@ -2,6 +2,10 @@ import 'package:journal/logger.dart';
 import 'package:journal/utils/location.dart';
 import 'package:yaml/yaml.dart';
 
+/// Takes any abject [obj], and returns a list.
+///
+/// A non-[YamlList] [obj] will return `[]`.
+/// Any non-[R] values in the `YamlList` will be stripped out.
 List<R> dynamicYamlToList<R>(dynamic obj) {
   if (obj is! YamlList) {
     logger.w(
@@ -13,6 +17,7 @@ List<R> dynamicYamlToList<R>(dynamic obj) {
   return list.whereType<R>().toList();
 }
 
+/// Returns a [Location] if it can be parsed from a [YamlMap].
 Location? locationFromYaml(YamlMap map) {
   final coordsList = map["location"];
   final name = map["place_name"];
