@@ -9,7 +9,10 @@ import 'package:mockito/annotations.dart';
 
 import 'calendar_view_test.mocks.dart';
 
-@GenerateMocks([], customMocks: [MockSpec<AppDatabase>(as: #MockDatabaseClient)])
+@GenerateMocks(
+  [],
+  customMocks: [MockSpec<AppDatabase>(as: #MockDatabaseClient)],
+)
 void main() {
   group('ImagesList', () {
     testWidgets("Renders the correct amount of images.", (tester) async {
@@ -17,7 +20,7 @@ void main() {
         ProviderScope(
           overrides: [
             folderUriProvider.overrideWithValue(Uri.parse("")),
-            appDatabaseProvider.overrideWithValue(MockDatabaseClient())
+            appDatabaseProvider.overrideWithValue(MockDatabaseClient()),
           ],
           child: MaterialApp(
             home: ImagesList(
@@ -26,7 +29,7 @@ void main() {
               removeCallback: (_) {},
             ),
           ),
-        )
+        ),
       );
 
       expect(find.byType(ImageView), findsNWidgets(3));

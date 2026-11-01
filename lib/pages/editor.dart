@@ -265,14 +265,22 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
               true);
 
       if (shouldUseImageDt) {
-        final newEntry = await ref.read(entryProvider(widget.entryDateString).notifier).writeWith(datetime: imageDt, body: body);
-        await ref.read(entryProvider(newEntry.datetime.toString()).notifier).addImage(bytes, name, image.path);
-        await ref.read(entryProvider(newEntry.datetime.toString()).notifier).writeWith();
+        final newEntry = await ref
+            .read(entryProvider(widget.entryDateString).notifier)
+            .writeWith(datetime: imageDt, body: body);
+        await ref
+            .read(entryProvider(newEntry.datetime.toString()).notifier)
+            .addImage(bytes, name, image.path);
+        await ref
+            .read(entryProvider(newEntry.datetime.toString()).notifier)
+            .writeWith();
         if (context.mounted) {
           context.replace("/entry/${newEntry.datetime}");
         }
       } else {
-        await ref.read(entryProvider(widget.entryDateString).notifier).addImage(bytes, name, image.path);
+        await ref
+            .read(entryProvider(widget.entryDateString).notifier)
+            .addImage(bytes, name, image.path);
       }
     }
   }
