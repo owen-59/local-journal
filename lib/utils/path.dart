@@ -1,6 +1,7 @@
 import 'package:journal/utils/file.dart';
 
-/// Matchs [input] with a regexp to extract the year, month, day, hour and minute.
+/// Matchs [input] with a regexp to extract the 
+/// year, month, day, hour and minute.
 DateTime? getTimeFromPath(String input) {
   final regExp = RegExp(r'^(\d{4})/(\d{2})/(\d{2})/(\d{2})(\d{2})\.md$');
   final match = regExp.firstMatch(input);
