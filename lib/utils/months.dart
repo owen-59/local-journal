@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Returns the amount of weeks in month given by [dt], 
+/// Returns the amount of weeks in month given by [dt],
 /// including non-full weeks.
 int getWeeksInMonth(DateTime dt) {
   final daysInMonth = DateUtils.getDaysInMonth(dt.year, dt.month);

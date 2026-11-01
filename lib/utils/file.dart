@@ -19,7 +19,7 @@ List<String> pathFromDatetime(DateTime datetime) {
   ];
 }
 
-/// Returns the path of the folder that an entry from [datetime] would 
+/// Returns the path of the folder that an entry from [datetime] would
 /// be stored as [List<String>].
 List<String> parentPathFromDatetime(DateTime datetime) {
   return [
@@ -29,7 +29,7 @@ List<String> parentPathFromDatetime(DateTime datetime) {
   ];
 }
 
-/// Writes a file at [path] inside [rootFolder], with content [content] 
+/// Writes a file at [path] inside [rootFolder], with content [content]
 /// and mime type [mime].
 ///
 /// Wrapper over [writeFileBytes] that encodes [content] as utf8.
