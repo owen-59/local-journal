@@ -10,7 +10,10 @@ import 'package:mockito/annotations.dart';
 
 import 'calendar_view_test.mocks.dart';
 
-@GenerateMocks([], customMocks: [MockSpec<AppDatabase>(as: #MockDatabaseClient)])
+@GenerateMocks(
+  [],
+  customMocks: [MockSpec<AppDatabase>(as: #MockDatabaseClient)],
+)
 Future<void> _setupTests(WidgetTester tester) async {
   tester.view.physicalSize = Size(400, 800);
   final dbClient = MockDatabaseClient();
@@ -20,18 +23,18 @@ Future<void> _setupTests(WidgetTester tester) async {
       overrides: [
         folderUriProvider.overrideWithValue(Uri.parse("FOLDER_URI")),
         appDatabaseProvider.overrideWithValue(dbClient),
-        entryProvider.overrideWithBuild((_, _) => Entry(
-          body: "BODY",
-          location: null,
-          images: [],
-          tags: ["TAG1", "TAG2"],
-          datetime: DateTime(2026, 1),
-        )),
+        entryProvider.overrideWithBuild(
+          (_, _) => Entry(
+            body: "BODY",
+            location: null,
+            images: [],
+            tags: ["TAG1", "TAG2"],
+            datetime: DateTime(2026, 1),
+          ),
+        ),
       ],
-      child: MaterialApp(
-        home: EntryCard(entryDt: DateTime(2026, 1))
-      )
-    )
+      child: MaterialApp(home: EntryCard(entryDt: DateTime(2026, 1))),
+    ),
   );
 
   await tester.pumpAndSettle();
@@ -48,5 +51,5 @@ void main() {
       await _setupTests(tester);
       expect(find.text("00:00 01 January - TAG1, TAG2"), findsOne);
     });
-  }); 
+  });
 }
