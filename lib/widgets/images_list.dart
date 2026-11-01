@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:journal/widgets/image_view.dart';
 
-class ImagesList extends ConsumerWidget {
+class ImagesList extends StatelessWidget {
   final DateTime entryDt;
   final List<String> names;
   final void Function(String) removeCallback;
@@ -15,7 +14,7 @@ class ImagesList extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
