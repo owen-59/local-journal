@@ -251,11 +251,38 @@ i1.GeneratedColumn<String> _column_9(String aliasedName) =>
       type: i1.DriftSqlType.string,
       $customConstraints: 'NOT NULL',
     );
+
+final class Schema6 extends i0.VersionedSchema {
+  Schema6({required super.database}) : super(version: 6);
+  @override
+  late final List<i1.DatabaseSchemaEntity> entities = [entriesCache];
+  late final Shape2 entriesCache = Shape2(
+    source: i0.VersionedTable(
+      entityName: 'entries_cache',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(created_date)'],
+      columns: [
+        _column_0,
+        _column_1,
+        _column_6,
+        _column_2,
+        _column_5,
+        _column_3,
+        _column_4,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+}
+
 i0.MigrationStepWithVersion migrationSteps({
   required Future<void> Function(i1.Migrator m, Schema2 schema) from1To2,
   required Future<void> Function(i1.Migrator m, Schema3 schema) from2To3,
   required Future<void> Function(i1.Migrator m, Schema4 schema) from3To4,
   required Future<void> Function(i1.Migrator m, Schema5 schema) from4To5,
+  required Future<void> Function(i1.Migrator m, Schema6 schema) from5To6,
 }) {
   return (currentVersion, database) async {
     switch (currentVersion) {
@@ -279,6 +306,11 @@ i0.MigrationStepWithVersion migrationSteps({
         final migrator = i1.Migrator(database, schema);
         await from4To5(migrator, schema);
         return 5;
+      case 5:
+        final schema = Schema6(database: database);
+        final migrator = i1.Migrator(database, schema);
+        await from5To6(migrator, schema);
+        return 6;
       default:
         throw ArgumentError.value('Unknown migration from $currentVersion');
     }
@@ -290,11 +322,13 @@ i1.OnUpgrade stepByStep({
   required Future<void> Function(i1.Migrator m, Schema3 schema) from2To3,
   required Future<void> Function(i1.Migrator m, Schema4 schema) from3To4,
   required Future<void> Function(i1.Migrator m, Schema5 schema) from4To5,
+  required Future<void> Function(i1.Migrator m, Schema6 schema) from5To6,
 }) => i0.VersionedSchema.stepByStepHelper(
   step: migrationSteps(
     from1To2: from1To2,
     from2To3: from2To3,
     from3To4: from3To4,
     from4To5: from4To5,
+    from5To6: from5To6,
   ),
 );

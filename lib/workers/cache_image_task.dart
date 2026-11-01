@@ -6,15 +6,18 @@ import 'package:isolate_kit/isolate_kit.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/providers/image.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:uuid/uuid.dart';
 import 'package:path/path.dart';
 
 class CacheImagePayload {
+  final String name;
+  final DateTime entryDt;
   final Uint8List bytes;
   final QualityLevel quality;
   final RootIsolateToken token;
 
   CacheImagePayload({
+    required this.name,
+    required this.entryDt,
     required this.bytes,
     required this.quality,
     required this.token,
@@ -41,20 +44,29 @@ class CacheImageTask extends IsolateTask<CacheImagePayload, File?> {
   }) async {
     try {
       BackgroundIsolateBinaryMessenger.ensureInitialized(data.token);
-      final uuid = Uuid();
-      final fileName = uuid.v4();
+      final fileName = "${data.entryDt}-${data.name}-${data.quality}.jpg";
       final cacheDirectory = await getApplicationCacheDirectory();
       final cacheFile = File(join(cacheDirectory.path, "images", fileName));
 
-      final bytes = data.quality == QualityLevel.full
-          ? data.bytes
-          : await FlutterImageCompress.compressWithList(
-              data.bytes,
-              minWidth: 200,
-              minHeight: 200,
-              quality: 85,
-              format: CompressFormat.jpeg,
-            );
+      final bytes = switch (data.quality) {
+        QualityLevel.full => data.bytes,
+        QualityLevel.thumbnailSmall =>
+          await FlutterImageCompress.compressWithList(
+            data.bytes,
+            minWidth: 200,
+            minHeight: 200,
+            quality: 85,
+            format: CompressFormat.jpeg,
+          ),
+        QualityLevel.thumbnailLarge =>
+          await FlutterImageCompress.compressWithList(
+            data.bytes,
+            minWidth: 500,
+            minHeight: 500,
+            quality: 85,
+            format: CompressFormat.jpeg,
+          ),
+      };
       await cacheFile.create(recursive: true);
       return await cacheFile.writeAsBytes(bytes);
     } catch (err, stacktrace) {

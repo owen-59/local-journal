@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:isolate_kit/isolate_kit.dart';
 import 'package:journal/logger.dart';
 import 'package:journal/models/entry.dart';
-import 'package:journal/providers/image.dart';
 import 'package:journal/workers/cache_image_task.dart';
 import 'package:journal/workers/update_stale_cache_task.dart';
 
@@ -43,22 +42,9 @@ class WorkerManager {
     }
   }
 
-  Future<File?> runCacheImageTask(Uint8List bytes, QualityLevel quality) async {
-    final rootToken = RootIsolateToken.instance;
-    if (rootToken != null) {
-      final payload = CacheImagePayload(
-        bytes: bytes,
-        quality: quality,
-        token: rootToken,
-      );
-      final taskHandle = _isolateKit.runTask(CacheImageTask(payload));
-      final result = await taskHandle.future;
-      return result;
-    } else {
-      logger.w(
-        "RootIsolateToken.instance was null, skipped running CacheImageTask.",
-      );
-      return null;
-    }
+  Future<File?> runCacheImageTask(CacheImagePayload payload) async {
+    final taskHandle = _isolateKit.runTask(CacheImageTask(payload));
+    final result = await taskHandle.future;
+    return result;
   }
 }
