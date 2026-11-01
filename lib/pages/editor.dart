@@ -307,5 +307,5 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
   String getCurrentContents(Entry entry) {
     if (hasBeenEdited) return body;
     return entry.body;
-  } 
+  }
 }
