@@ -158,7 +158,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
   ) async {
     final newEntry = await ref
         .read(entryProvider(widget.entryDateString).notifier)
-        .writeWith(body: body, datetime: datetime);
+        .writeWith(body: getCurrentContents(entry), datetime: datetime);
 
     if (context.mounted) {
       context.replace("/entry/${newEntry.datetime}");
@@ -213,7 +213,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
     }
     await ref
         .read(entryProvider(widget.entryDateString).notifier)
-        .writeWith(body: body, tags: tags);
+        .writeWith(body: getCurrentContents(entry), tags: tags);
   }
 
   Future<void> onDeleteClicked(BuildContext context, Entry entry) async {
@@ -267,7 +267,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
       if (shouldUseImageDt) {
         final newEntry = await ref
             .read(entryProvider(widget.entryDateString).notifier)
-            .writeWith(datetime: imageDt, body: body);
+            .writeWith(datetime: imageDt, body: getCurrentContents(entry));
         await ref
             .read(entryProvider(newEntry.datetime.toString()).notifier)
             .addImage(bytes, name, image.path);
@@ -301,6 +301,11 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
     if (location == null) return;
     await ref
         .read(entryProvider(widget.entryDateString).notifier)
-        .writeWith(body: body, location: location);
+        .writeWith(body: getCurrentContents(entry), location: location);
+  }
+
+  String getCurrentContents(Entry entry) {
+    if (hasBeenEdited) return body;
+    return entry.body;
   }
 }
