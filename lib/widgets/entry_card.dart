@@ -23,7 +23,7 @@ class EntryCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final entry = ref.watch(entryProvider(entryDt.toString()));
     final image = ref.watch(
-      entryMainImageProvider(entryDt, QualityLevel.thumbnail),
+      entryMainImageProvider(entryDt, QualityLevel.thumbnailLarge),
     );
 
     return GestureDetector(

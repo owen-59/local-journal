@@ -21,7 +21,11 @@ final dayImageProvider = FutureProvider.autoDispose
       if (firstEntry == null) return null;
 
       final imageData = await ref.watch(
-        imageProvider(dt, firstEntry.images![0], QualityLevel.thumbnail).future,
+        imageProvider(
+          dt,
+          firstEntry.images![0],
+          QualityLevel.thumbnailSmall,
+        ).future,
       );
       return imageData;
     });
