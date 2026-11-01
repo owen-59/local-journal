@@ -29,13 +29,13 @@ class CacheImageTask extends IsolateTask<CacheImagePayload, File?> {
   CacheImageTask(this.data);
 
   @override
-  get command => (data);
+  CacheImagePayload get command => (data);
 
   @override
-  get payload => {"data": data};
+  Map<String, CacheImagePayload> get payload => {"data": data};
 
   @override
-  get priority => TaskPriority.low;
+  int get priority => TaskPriority.low;
 
   @override
   Future<File?> execute({
