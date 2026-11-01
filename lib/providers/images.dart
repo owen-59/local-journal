@@ -1,12 +1,12 @@
-import 'dart:async';
+import "dart:async";
 
-import 'package:journal/models/image.dart';
-import 'package:journal/logger.dart';
-import 'package:journal/providers/entry.dart';
-import 'package:journal/providers/image.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
+import "package:journal/models/image.dart";
+import "package:journal/logger.dart";
+import "package:journal/providers/entry.dart";
+import "package:journal/providers/image.dart";
+import "package:riverpod_annotation/riverpod_annotation.dart";
 
-part 'images.g.dart';
+part "images.g.dart";
 
 @riverpod
 Future<List<ImageData>> images(Ref ref, DateTime entryDt) async {

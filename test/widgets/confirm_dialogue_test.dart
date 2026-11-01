@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:journal/widgets/confirm_dialogue.dart';
+import "package:flutter/material.dart";
+import "package:flutter_test/flutter_test.dart";
+import "package:journal/widgets/confirm_dialogue.dart";
 
 Future<void> _setupTests(
   WidgetTester tester, {
@@ -25,7 +25,7 @@ Future<void> _setupTests(
 }
 
 void main() {
-  group('ConfirmDialogue', () {
+  group("ConfirmDialogue", () {
     testWidgets("Title is shown once.", (tester) async {
       await _setupTests(tester);
       expect(find.text("TITLE"), findsOneWidget);

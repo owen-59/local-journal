@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:journal/providers/osm_search.dart';
-import 'package:journal/utils/location.dart';
+import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:journal/providers/osm_search.dart";
+import "package:journal/utils/location.dart";
 
 class NameSearch extends ConsumerStatefulWidget {
   final void Function(Location) onLocationPicked;

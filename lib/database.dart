@@ -1,11 +1,11 @@
-import 'package:drift/drift.dart';
-import 'package:drift_flutter/drift_flutter.dart';
-import 'package:journal/database.steps.dart';
-import 'package:journal/models/entry.dart';
-import 'package:journal/utils/string_list_converter.dart';
-import 'package:path_provider/path_provider.dart';
+import "package:drift/drift.dart";
+import "package:drift_flutter/drift_flutter.dart";
+import "package:journal/database.steps.dart";
+import "package:journal/models/entry.dart";
+import "package:journal/utils/string_list_converter.dart";
+import "package:path_provider/path_provider.dart";
 
-part 'database.g.dart';
+part "database.g.dart";
 
 const cacheTtl = Duration(days: 30);
 
@@ -50,7 +50,7 @@ class AppDatabase extends _$AppDatabase {
 
   static QueryExecutor _openConnection() {
     return driftDatabase(
-      name: 'journal_database',
+      name: "journal_database",
       native: const DriftNativeOptions(
         databaseDirectory: getApplicationSupportDirectory,
       ),

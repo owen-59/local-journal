@@ -1,6 +1,6 @@
-import 'package:journal/logger.dart';
-import 'package:journal/utils/location.dart';
-import 'package:yaml/yaml.dart';
+import "package:journal/logger.dart";
+import "package:journal/utils/location.dart";
+import "package:yaml/yaml.dart";
 
 /// Takes any abject [obj], and returns a list.
 ///

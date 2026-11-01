@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:journal/widgets/image_view.dart';
+import "package:flutter/material.dart";
+import "package:journal/widgets/image_view.dart";
 
 class ImagesList extends StatelessWidget {
   final DateTime entryDt;

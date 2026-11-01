@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:stack_trace/stack_trace.dart';
+import "package:flutter/material.dart";
+import "package:stack_trace/stack_trace.dart";
 
 class ErrorCard extends StatelessWidget {
   final Object error;

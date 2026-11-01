@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:journal/widgets/location_editor/map_search.dart';
-import 'package:journal/widgets/location_editor/name_search.dart';
+import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:journal/widgets/location_editor/map_search.dart";
+import "package:journal/widgets/location_editor/name_search.dart";
 
 class LocationEditor extends ConsumerStatefulWidget {
   const LocationEditor({super.key});

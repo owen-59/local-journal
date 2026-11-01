@@ -1,9 +1,9 @@
-import 'package:dump_yaml/dump_yaml.dart';
-import 'package:journal/logger.dart';
-import 'package:yaml/yaml.dart';
+import "package:dump_yaml/dump_yaml.dart";
+import "package:journal/logger.dart";
+import "package:yaml/yaml.dart";
 
 Iterable<String> _getLinesSync(String text) sync* {
-  final RegExp lineRegExp = RegExp(r'(.*)\r?\n|(.+)$');
+  final RegExp lineRegExp = RegExp(r"(.*)\r?\n|(.+)$");
   final matches = lineRegExp.allMatches(text);
 
   for (final match in matches) {

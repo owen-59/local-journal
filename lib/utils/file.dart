@@ -1,10 +1,10 @@
-import 'dart:convert';
-import 'dart:typed_data';
+import "dart:convert";
+import "dart:typed_data";
 
-import 'package:journal/logger.dart';
-import 'package:saf/saf.dart';
-import 'package:saf_stream/saf_stream.dart';
-import 'package:saf_stream/saf_stream_platform_interface.dart';
+import "package:journal/logger.dart";
+import "package:saf/saf.dart";
+import "package:saf_stream/saf_stream.dart";
+import "package:saf_stream/saf_stream_platform_interface.dart";
 
 /// Returns the path of an entry from [datetime] as [List<String>].
 List<String> pathFromDatetime(DateTime datetime) {

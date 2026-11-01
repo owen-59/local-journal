@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:journal/providers/image.dart';
+import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:journal/providers/image.dart";
 
 class ImageView extends ConsumerStatefulWidget {
   // final ImageData imageData;

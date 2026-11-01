@@ -1,14 +1,14 @@
-import 'package:collection/collection.dart';
-import 'package:drift/native.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
-import 'package:saf/saf.dart';
-import 'package:journal/database.dart';
-import 'package:journal/main.dart';
-import 'package:journal/providers/entry_list.dart';
-import 'entry_list_test.mocks.dart';
+import "package:collection/collection.dart";
+import "package:drift/native.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:flutter_test/flutter_test.dart";
+import "package:mockito/annotations.dart";
+import "package:mockito/mockito.dart";
+import "package:saf/saf.dart";
+import "package:journal/database.dart";
+import "package:journal/main.dart";
+import "package:journal/providers/entry_list.dart";
+import "entry_list_test.mocks.dart";
 
 Uri folderUri = Uri.parse("content://abcdefghijklmnopqrstuvwxyz");
 

@@ -1,10 +1,10 @@
-import 'dart:typed_data';
+import "dart:typed_data";
 
-import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:journal/providers/cache_entries.dart';
-import 'package:journal/providers/image.dart';
+import "package:collection/collection.dart";
+import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:journal/providers/cache_entries.dart";
+import "package:journal/providers/image.dart";
 
 final dayImageProvider = FutureProvider.autoDispose
     .family<Uint8List?, DateTime>((ref, DateTime dt) async {

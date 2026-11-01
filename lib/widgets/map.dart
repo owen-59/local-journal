@@ -1,12 +1,12 @@
-import 'dart:async';
+import "dart:async";
 
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:journal/logger.dart';
-import 'package:journal/providers/map_points.dart';
-import 'package:maplibre_gl/maplibre_gl.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:url_launcher/link.dart';
+import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:journal/logger.dart";
+import "package:journal/providers/map_points.dart";
+import "package:maplibre_gl/maplibre_gl.dart";
+import "package:permission_handler/permission_handler.dart";
+import "package:url_launcher/link.dart";
 
 class MapPage extends ConsumerStatefulWidget {
   const MapPage({super.key});
@@ -129,12 +129,12 @@ class _MapPageState extends ConsumerState<MapPage>
     await controller.removeLayer("entries-heat");
     await controller.removeLayer("entries-circles");
     await controller.addHeatmapLayer(
-      'entries',
-      'entries-heat',
+      "entries",
+      "entries-heat",
       HeatmapLayerProperties(
         heatmapRadius: [
           Expressions.interpolate,
-          ['linear'],
+          ["linear"],
           [Expressions.zoom],
           0,
           2,
@@ -143,7 +143,7 @@ class _MapPageState extends ConsumerState<MapPage>
         ],
         heatmapIntensity: [
           Expressions.interpolate,
-          ['linear'],
+          ["linear"],
           [Expressions.zoom],
           0,
           1,
@@ -152,7 +152,7 @@ class _MapPageState extends ConsumerState<MapPage>
         ],
         heatmapOpacity: [
           Expressions.interpolate,
-          ['linear'],
+          ["linear"],
           [Expressions.zoom],
           10,
           1.0,
@@ -160,32 +160,32 @@ class _MapPageState extends ConsumerState<MapPage>
           0.4,
         ],
         heatmapColor: [
-          'interpolate',
-          ['linear'],
-          ['heatmap-density'],
+          "interpolate",
+          ["linear"],
+          ["heatmap-density"],
           0,
-          'rgba(0, 0, 255, 0)',
+          "rgba(0, 0, 255, 0)",
           0.2,
-          'rgb(198, 219, 239)',
+          "rgb(198, 219, 239)",
           0.4,
-          'rgb(158, 202, 225)',
+          "rgb(158, 202, 225)",
           0.6,
-          'rgb(107, 174, 214)',
+          "rgb(107, 174, 214)",
           0.8,
-          'rgb(49, 130, 189)',
+          "rgb(49, 130, 189)",
           1.0,
-          'rgb(8, 81, 156)',
+          "rgb(8, 81, 156)",
         ],
       ),
     );
 
     await controller.addCircleLayer(
-      'entries',
-      'entries-circles',
+      "entries",
+      "entries-circles",
       CircleLayerProperties(
         circleOpacity: [
           Expressions.interpolate,
-          ['linear'],
+          ["linear"],
           [Expressions.zoom],
           10,
           0.0,
@@ -193,7 +193,7 @@ class _MapPageState extends ConsumerState<MapPage>
           1.0,
         ],
         circleRadius: 4,
-        circleColor: 'rgb(8,81,156)',
+        circleColor: "rgb(8,81,156)",
       ),
       minzoom: 7,
     );

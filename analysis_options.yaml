@@ -8,11 +8,13 @@ analyzer:
     - macos/**
     - linux/**
     - lib/providers/entry_list.dart
-include: package:flutter_lints/flutter.yaml
+include: 
+ - package:lints/recommended.yaml
+ - package:flutter_lints/flutter.yaml
 
 plugins:
   riverpod_lint: ^3.1.9
 
 linter:
   rules:
-
+    - prefer_double_quotes

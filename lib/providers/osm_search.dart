@@ -1,7 +1,7 @@
-import 'package:journal/utils/location.dart';
-import 'package:nominatim_flutter/model/request/request.dart';
-import 'package:nominatim_flutter/nominatim_flutter.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
+import "package:journal/utils/location.dart";
+import "package:nominatim_flutter/model/request/request.dart";
+import "package:nominatim_flutter/nominatim_flutter.dart";
+import "package:riverpod_annotation/riverpod_annotation.dart";
 
 part "osm_search.g.dart";
 

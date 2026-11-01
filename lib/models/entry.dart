@@ -1,12 +1,12 @@
-import 'dart:typed_data';
+import "dart:typed_data";
 
-import 'package:flutter/material.dart';
-import 'package:journal/utils/location.dart';
-import 'package:journal/utils/yaml.dart';
-import 'package:journal/logger.dart';
-import 'package:journal/utils/file.dart';
-import 'package:journal/utils/frontmatter.dart';
-import 'package:yaml/yaml.dart';
+import "package:flutter/material.dart";
+import "package:journal/utils/location.dart";
+import "package:journal/utils/yaml.dart";
+import "package:journal/logger.dart";
+import "package:journal/utils/file.dart";
+import "package:journal/utils/frontmatter.dart";
+import "package:yaml/yaml.dart";
 
 class Entry implements Comparable<Entry> {
   final String body;

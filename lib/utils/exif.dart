@@ -1,6 +1,6 @@
-import 'package:exif_reader/exif_reader.dart';
-import 'package:flutter/foundation.dart';
-import 'package:intl/intl.dart';
+import "package:exif_reader/exif_reader.dart";
+import "package:flutter/foundation.dart";
+import "package:intl/intl.dart";
 
 /// Returns the EXIF DateTime extracted from [bytes].
 ///

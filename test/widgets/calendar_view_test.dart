@@ -1,12 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:journal/main.dart';
-import 'package:journal/widgets/calendar_view.dart';
-import 'package:mockito/annotations.dart';
-import 'package:journal/database.dart';
+import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:flutter_test/flutter_test.dart";
+import "package:journal/main.dart";
+import "package:journal/widgets/calendar_view.dart";
+import "package:mockito/annotations.dart";
+import "package:journal/database.dart";
 
-import 'calendar_view_test.mocks.dart';
+import "calendar_view_test.mocks.dart";
 
 @GenerateMocks(
   [],
@@ -35,7 +35,7 @@ Future<void> _setupTests(WidgetTester tester, GlobalKey monthSectionKey) async {
 }
 
 void main() {
-  group('MonthSectionWidget', () {
+  group("MonthSectionWidget", () {
     testWidgets("There is one instance of MonthSectionWidget", (tester) async {
       final monthSectionKey = GlobalKey();
       await _setupTests(tester, monthSectionKey);

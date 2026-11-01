@@ -1,12 +1,12 @@
-import 'dart:io';
+import "dart:io";
 
-import 'package:flutter/services.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:isolate_kit/isolate_kit.dart';
-import 'package:journal/logger.dart';
-import 'package:journal/providers/image.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart';
+import "package:flutter/services.dart";
+import "package:flutter_image_compress/flutter_image_compress.dart";
+import "package:isolate_kit/isolate_kit.dart";
+import "package:journal/logger.dart";
+import "package:journal/providers/image.dart";
+import "package:path_provider/path_provider.dart";
+import "package:path/path.dart";
 
 class CacheImagePayload {
   final String name;

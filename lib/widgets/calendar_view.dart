@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
-import 'package:journal/providers/day_image.dart';
-import 'package:journal/utils/months.dart';
-import 'package:measured/measured.dart';
+import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:intl/intl.dart";
+import "package:journal/providers/day_image.dart";
+import "package:journal/utils/months.dart";
+import "package:measured/measured.dart";
 
 double getGridLineHeight(BuildContext context) {
   return MediaQuery.sizeOf(context).width / 7;
