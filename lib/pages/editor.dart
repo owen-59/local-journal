@@ -158,7 +158,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
   ) async {
     final newEntry = await ref
         .read(entryProvider(widget.entryDateString).notifier)
-        .writeWith(body: body, datetime: datetime);
+        .writeWith(body: hasBeenEdited ? body : entry.body, datetime: datetime);
 
     if (context.mounted) {
       context.replace("/entry/${newEntry.datetime}");
