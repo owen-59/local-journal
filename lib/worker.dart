@@ -1,5 +1,3 @@
-import "dart:io";
-
 import "package:flutter/services.dart";
 import "package:isolate_kit/isolate_kit.dart";
 import "package:journal/logger.dart";
@@ -42,7 +40,7 @@ class WorkerManager {
     }
   }
 
-  Future<File?> runCacheImageTask(CacheImagePayload payload) async {
+  Future<Uint8List?> runCacheImageTask(CacheImagePayload payload) async {
     final taskHandle = _isolateKit.runTask(CacheImageTask(payload));
     final result = await taskHandle.future;
     return result;
