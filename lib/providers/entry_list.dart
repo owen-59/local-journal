@@ -64,7 +64,7 @@ class EntryList extends _$EntryList {
                   saf: saf,
                   safStream: safStream,
                   token: RootIsolateToken.instance!,
-                )
+                ),
               );
           if (entry != null) {
             final database = ref.read(appDatabaseProvider);
@@ -102,7 +102,14 @@ class EntryList extends _$EntryList {
     final saf = ref.read(safProvider);
     final safStream = ref.read(safStreamProvider);
     final path = pathFromDatetime(dt);
-    await writeFileString(rootFolder.toString(), path, "", "text/markdown", saf, safStream);
+    await writeFileString(
+      rootFolder.toString(),
+      path,
+      "",
+      "text/markdown",
+      saf,
+      safStream,
+    );
 
     return dt;
   }

@@ -40,7 +40,12 @@ class UpdateStaleCacheTask
     CancellationToken? cancellationToken,
   }) async {
     BackgroundIsolateBinaryMessenger.ensureInitialized(data.token);
-    final entry = Entry.read(data.dt.toString(), data.rootFolder, data.saf, data.safStream);
+    final entry = Entry.read(
+      data.dt.toString(),
+      data.rootFolder,
+      data.saf,
+      data.safStream,
+    );
     return entry;
   }
 }

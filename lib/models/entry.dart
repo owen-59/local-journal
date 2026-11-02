@@ -37,7 +37,7 @@ class Entry implements Comparable<Entry> {
     DateTime newDatetime,
     Saf saf,
     SafStream safStream,
-    ) async {
+  ) async {
     final oldEntryDirPath = parentPathFromDatetime(oldDatetime);
     final newEntryDirPath = parentPathFromDatetime(newDatetime);
 
@@ -47,19 +47,31 @@ class Entry implements Comparable<Entry> {
 
       logger.d("moving image $image from $oldImagePath to $newImagePath");
 
-      final imageBytes = await readFileBytes(rootFolder, oldImagePath, saf, safStream);
+      final imageBytes = await readFileBytes(
+        rootFolder,
+        oldImagePath,
+        saf,
+        safStream,
+      );
       if (imageBytes == null) {
         logger.w("Couldn't find image at $oldImagePath when moving it.");
         continue;
       }
 
-      await writeFileBytes(rootFolder, newImagePath, imageBytes, "image/xyz", saf, safStream);
+      await writeFileBytes(
+        rootFolder,
+        newImagePath,
+        imageBytes,
+        "image/xyz",
+        saf,
+        safStream,
+      );
       await deleteFile(rootFolder, oldImagePath, saf);
     }
   }
 
   Future<Entry> copyWith(
-  String rootFolder,
+    String rootFolder,
     Saf saf,
     SafStream safStream, {
     String? body,
@@ -83,7 +95,7 @@ class Entry implements Comparable<Entry> {
         this.datetime,
         datetime ?? this.datetime,
         saf,
-        safStream
+        safStream,
       );
     }
 
@@ -113,7 +125,14 @@ class Entry implements Comparable<Entry> {
 
     final content = addMdFrontmatter(body, yamlData);
 
-    await writeFileString(rootFolder, path, content, "text/markdown", saf, safStream);
+    await writeFileString(
+      rootFolder,
+      path,
+      content,
+      "text/markdown",
+      saf,
+      safStream,
+    );
   }
 
   Future<void> delete(String rootFolder, Saf saf, SafStream safStream) async {
@@ -141,12 +160,24 @@ class Entry implements Comparable<Entry> {
 
     logger.d("Adding image to entry at path $imagePath.");
 
-    await writeFileBytes(rootFolder, imagePath, bytes, "image/$ext", saf, safStream);
+    await writeFileBytes(
+      rootFolder,
+      imagePath,
+      bytes,
+      "image/$ext",
+      saf,
+      safStream,
+    );
 
     return copyWith(rootFolder, saf, safStream, images: [...images, fullName]);
   }
 
-  Future<Entry> removeImage(String rootFolder, String name, Saf saf, SafStream safStream) async {
+  Future<Entry> removeImage(
+    String rootFolder,
+    String name,
+    Saf saf,
+    SafStream safStream,
+  ) async {
     final entryPath = pathFromDatetime(datetime);
     final imagePath = [...entryPath.sublist(0, entryPath.length - 1), name];
 
@@ -159,7 +190,12 @@ class Entry implements Comparable<Entry> {
     return copyWith(rootFolder, saf, safStream, images: newImages);
   }
 
-  static Future<Entry?> read(String datetimeString, String rootFolder, Saf saf, SafStream safStream) async {
+  static Future<Entry?> read(
+    String datetimeString,
+    String rootFolder,
+    Saf saf,
+    SafStream safStream,
+  ) async {
     final datetime = DateTime.tryParse(datetimeString);
     if (datetime == null) return null;
 

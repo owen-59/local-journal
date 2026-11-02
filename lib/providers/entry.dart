@@ -42,7 +42,12 @@ class EntryNotifier extends _$EntryNotifier {
       throw Exception("Couldn't find the entry.");
     }
 
-    final entry = await Entry.read(datetimeString, rootFolder.toString(), saf, safStream);
+    final entry = await Entry.read(
+      datetimeString,
+      rootFolder.toString(),
+      saf,
+      safStream,
+    );
     if (entry != null) {
       database
           .into(database.entriesCache)
@@ -143,7 +148,12 @@ class EntryNotifier extends _$EntryNotifier {
       throw Exception("Tried to update entry when the provider was busy.");
     }
 
-    final newEntry = await current.removeImage(rootFolder, name, saf, safStream);
+    final newEntry = await current.removeImage(
+      rootFolder,
+      name,
+      saf,
+      safStream,
+    );
     state = AsyncData(newEntry);
   }
 }
