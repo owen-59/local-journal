@@ -64,25 +64,35 @@ class EntryCard extends ConsumerWidget {
                                 IntrinsicHeight(
                                   child: Stack(
                                     children: [
-                                      Text("\n\n", style: Theme.of(context).textTheme.bodyLarge),
+                                      Text(
+                                        "\n\n",
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.bodyLarge,
+                                      ),
                                       SubstringHighlight(
                                         text: value.body,
                                         term: searchText ?? "",
                                         textStyle:
-                                            Theme.of(context).textTheme.bodyLarge ??
+                                            Theme.of(
+                                              context,
+                                            ).textTheme.bodyLarge ??
                                             DefaultTextStyle.of(context).style,
                                         textStyleHighlight:
-                                            (Theme.of(context).textTheme.bodyLarge ??
+                                            (Theme.of(
+                                                      context,
+                                                    ).textTheme.bodyLarge ??
                                                     DefaultTextStyle.of(
                                                       context,
                                                     ).style)
                                                 .copyWith(
-                                                  backgroundColor: Theme.of(
-                                                    context,
-                                                  ).colorScheme.primaryContainer,
-                                                  color: Theme.of(
-                                                    context,
-                                                  ).colorScheme.onPrimaryContainer,
+                                                  backgroundColor:
+                                                      Theme.of(context)
+                                                          .colorScheme
+                                                          .primaryContainer,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onPrimaryContainer,
                                                 ),
                                         maxLines: 3,
                                         overflow: TextOverflow.ellipsis,
