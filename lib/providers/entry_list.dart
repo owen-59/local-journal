@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import "dart:ui";
 
 import 'package:collection/collection.dart';
 import 'package:intl/intl.dart';
@@ -10,6 +11,7 @@ import 'package:journal/providers/cache_entries.dart';
 import 'package:journal/providers/entry.dart';
 import 'package:journal/utils/exif.dart';
 import 'package:journal/utils/file.dart';
+import 'package:journal/workers/update_stale_cache_task.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:path/path.dart' as path;
 
@@ -50,11 +52,19 @@ class EntryList extends _$EntryList {
       if (lastChecked == null ||
           DateTime.now().difference(lastChecked) > cacheTtl) {
         (() async {
+          final rootFolder = ref.read(folderUriProvider).toString();
+          final saf = ref.read(safProvider);
+          final safStream = ref.read(safStreamProvider);
           final entry = await ref
               .read(workerManagerProvider)
               .updateStaleEntry(
-                entryDt,
-                ref.read(folderUriProvider).toString(),
+                UpdateStaleCachePayload(
+                  dt: entryDt,
+                  rootFolder: rootFolder,
+                  saf: saf,
+                  safStream: safStream,
+                  token: RootIsolateToken.instance!,
+                )
               );
           if (entry != null) {
             final database = ref.read(appDatabaseProvider);
@@ -89,8 +99,10 @@ class EntryList extends _$EntryList {
     }
 
     final rootFolder = ref.read(folderUriProvider);
+    final saf = ref.read(safProvider);
+    final safStream = ref.read(safStreamProvider);
     final path = pathFromDatetime(dt);
-    await writeFileString(rootFolder.toString(), path, "", "text/markdown");
+    await writeFileString(rootFolder.toString(), path, "", "text/markdown", saf, safStream);
 
     return dt;
   }

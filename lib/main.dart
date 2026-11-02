@@ -12,6 +12,7 @@ import "package:maplibre_gl/maplibre_gl.dart";
 import "package:nominatim_flutter/nominatim_flutter.dart";
 import "package:riverpod_annotation/riverpod_annotation.dart";
 import "package:saf/saf.dart";
+import "package:saf_stream/saf_stream.dart";
 import "package:shared_preferences/shared_preferences.dart";
 
 part "main.g.dart";
@@ -74,6 +75,11 @@ WorkerManager workerManager(Ref ref) {
 @Riverpod(keepAlive: true)
 Saf saf(Ref ref) {
   return Saf();
+}
+
+@Riverpod(keepAlive: true)
+SafStream safStream(Ref ref) {
+  return SafStream();
 }
 
 class App extends StatefulWidget {
