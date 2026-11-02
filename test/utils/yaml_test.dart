@@ -29,13 +29,13 @@ void main() {
       for (final key in ["location", "place_name", "address"]) {
         test("returns null if $key is neither String nor null", () {
           final val = YamlMap.wrap({
-            "coordinates": [1,2],
-            key: 5
+            "coordinates": [1, 2],
+            key: 5,
           });
           final res = locationFromYaml(val);
           expect(res, null);
         });
       }
     });
-  }); 
+  });
 }
