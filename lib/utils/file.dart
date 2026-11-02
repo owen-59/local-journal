@@ -38,8 +38,17 @@ Future<SafNewFile> writeFileString(
   List<String> path,
   String content,
   String mime,
+  Saf saf,
+  SafStream safStream,
 ) async {
-  return await writeFileBytes(rootFolder, path, utf8.encode(content), mime);
+  return await writeFileBytes(
+    rootFolder,
+    path,
+    utf8.encode(content),
+    mime,
+    saf,
+    safStream,
+  );
 }
 
 /// Writes a file at [path] inside [rootFolder], with content [bytes]
@@ -51,10 +60,9 @@ Future<SafNewFile> writeFileBytes(
   List<String> path,
   Uint8List bytes,
   String mime,
+  Saf saf,
+  SafStream safStream,
 ) async {
-  final saf = Saf();
-  final safStream = SafStream();
-
   late final SafDocumentFile deepestDir;
 
   try {
@@ -93,17 +101,24 @@ Future<SafNewFile> writeFileBytes(
 /// Returns `null` if there was an error reading the file.
 ///
 /// Wrapper around [readFileBytes] that decodes the bytes as utf8.
-Future<String?> readFile(String rootFolder, List<String> path) async {
-  final fileBytes = await readFileBytes(rootFolder, path);
+Future<String?> readFile(
+  String rootFolder,
+  List<String> path,
+  Saf saf,
+  SafStream safStream,
+) async {
+  final fileBytes = await readFileBytes(rootFolder, path, saf, safStream);
   return fileBytes == null ? null : utf8.decode(fileBytes);
 }
 
 /// Reads a file at [path] inside [rootFolder] as a [Uint8List].
 /// Returns `null` if there was an error reading the file.
-Future<Uint8List?> readFileBytes(String rootFolder, List<String> path) async {
-  final saf = Saf();
-  final safStream = SafStream();
-
+Future<Uint8List?> readFileBytes(
+  String rootFolder,
+  List<String> path,
+  Saf saf,
+  SafStream safStream,
+) async {
   final fileSafDocument = await saf.child(rootFolder, path);
   if (fileSafDocument == null) return null;
 
@@ -117,9 +132,7 @@ Future<Uint8List?> readFileBytes(String rootFolder, List<String> path) async {
 
 /// Deletes a file at [path] inside [rootFolder].
 /// If the file doesn't exist, no error is thrown, but is logged.
-Future<void> deleteFile(String rootFolder, List<String> path) async {
-  final saf = Saf();
-
+Future<void> deleteFile(String rootFolder, List<String> path, Saf saf) async {
   final fileDoc = await saf.child(rootFolder, path);
   if (fileDoc == null) {
     logger.w("Tried to delete a non existent file at $path");
@@ -136,14 +149,12 @@ Future<SafDocumentFile> copyLocalFile(
   String srcPath,
   List<String> destPath,
   String mime,
+  Saf saf,
 ) async {
-  final saf = Saf();
-
   final deepestDir = await saf.mkdirp(
     rootFolder,
     destPath.sublist(0, destPath.length - 1),
   );
-  // await saf.child(deepestDir.uri, [destPath.last]);
   return await saf.pasteLocalFile(
     srcPath,
     deepestDir.uri,
@@ -159,9 +170,8 @@ Future<SafDocumentFile?> moveFile(
   String rootFolder,
   List<String> srcPath,
   List<String> destDirPath,
+  Saf saf,
 ) async {
-  final saf = Saf();
-
   final deepestDir = await saf.mkdirp(rootFolder, destDirPath);
 
   final srcUri = await saf.child(rootFolder, srcPath);

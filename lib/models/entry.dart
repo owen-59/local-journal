@@ -6,6 +6,8 @@ import "package:journal/utils/yaml.dart";
 import "package:journal/logger.dart";
 import "package:journal/utils/file.dart";
 import "package:journal/utils/frontmatter.dart";
+import "package:saf/saf.dart";
+import "package:saf_stream/saf_stream.dart";
 import "package:yaml/yaml.dart";
 
 class Entry implements Comparable<Entry> {
@@ -33,6 +35,8 @@ class Entry implements Comparable<Entry> {
     List<String> images,
     DateTime oldDatetime,
     DateTime newDatetime,
+    Saf saf,
+    SafStream safStream,
   ) async {
     final oldEntryDirPath = parentPathFromDatetime(oldDatetime);
     final newEntryDirPath = parentPathFromDatetime(newDatetime);
@@ -43,19 +47,33 @@ class Entry implements Comparable<Entry> {
 
       logger.d("moving image $image from $oldImagePath to $newImagePath");
 
-      final imageBytes = await readFileBytes(rootFolder, oldImagePath);
+      final imageBytes = await readFileBytes(
+        rootFolder,
+        oldImagePath,
+        saf,
+        safStream,
+      );
       if (imageBytes == null) {
         logger.w("Couldn't find image at $oldImagePath when moving it.");
         continue;
       }
 
-      await writeFileBytes(rootFolder, newImagePath, imageBytes, "image/xyz");
-      await deleteFile(rootFolder, oldImagePath);
+      await writeFileBytes(
+        rootFolder,
+        newImagePath,
+        imageBytes,
+        "image/xyz",
+        saf,
+        safStream,
+      );
+      await deleteFile(rootFolder, oldImagePath, saf);
     }
   }
 
   Future<Entry> copyWith(
-    String rootFolder, {
+    String rootFolder,
+    Saf saf,
+    SafStream safStream, {
     String? body,
     DateTime? datetime,
     List<String>? tags,
@@ -76,6 +94,8 @@ class Entry implements Comparable<Entry> {
         newImages,
         this.datetime,
         datetime ?? this.datetime,
+        saf,
+        safStream,
       );
     }
 
@@ -88,7 +108,7 @@ class Entry implements Comparable<Entry> {
     );
   }
 
-  Future<void> write(String rootFolder) async {
+  Future<void> write(String rootFolder, Saf saf, SafStream safStream) async {
     final path = pathFromDatetime(datetime);
 
     final Map<String, dynamic> yamlData = {"tags": tags, "images": images};
@@ -105,16 +125,23 @@ class Entry implements Comparable<Entry> {
 
     final content = addMdFrontmatter(body, yamlData);
 
-    await writeFileString(rootFolder, path, content, "text/markdown");
+    await writeFileString(
+      rootFolder,
+      path,
+      content,
+      "text/markdown",
+      saf,
+      safStream,
+    );
   }
 
-  Future<void> delete(String rootFolder) async {
+  Future<void> delete(String rootFolder, Saf saf, SafStream safStream) async {
     final path = pathFromDatetime(datetime);
     final folderPath = parentPathFromDatetime(datetime);
-    await deleteFile(rootFolder, path);
+    await deleteFile(rootFolder, path, saf);
     for (final image in images) {
       final imagePath = [...folderPath, image];
-      await deleteFile(rootFolder, imagePath);
+      await deleteFile(rootFolder, imagePath, saf);
     }
   }
 
@@ -123,6 +150,8 @@ class Entry implements Comparable<Entry> {
     Uint8List bytes,
     String name,
     String ext,
+    Saf saf,
+    SafStream safStream,
   ) async {
     final fullName = name + ext;
 
@@ -131,30 +160,47 @@ class Entry implements Comparable<Entry> {
 
     logger.d("Adding image to entry at path $imagePath.");
 
-    await writeFileBytes(rootFolder, imagePath, bytes, "image/$ext");
+    await writeFileBytes(
+      rootFolder,
+      imagePath,
+      bytes,
+      "image/$ext",
+      saf,
+      safStream,
+    );
 
-    return copyWith(rootFolder, images: [...images, fullName]);
+    return copyWith(rootFolder, saf, safStream, images: [...images, fullName]);
   }
 
-  Future<Entry> removeImage(String rootFolder, String name) async {
+  Future<Entry> removeImage(
+    String rootFolder,
+    String name,
+    Saf saf,
+    SafStream safStream,
+  ) async {
     final entryPath = pathFromDatetime(datetime);
     final imagePath = [...entryPath.sublist(0, entryPath.length - 1), name];
 
     logger.d("Deleting image at path $imagePath");
 
-    await deleteFile(rootFolder, imagePath);
+    await deleteFile(rootFolder, imagePath, saf);
 
     final newImages = images.where((image) => image != name).toList();
 
-    return copyWith(rootFolder, images: newImages);
+    return copyWith(rootFolder, saf, safStream, images: newImages);
   }
 
-  static Future<Entry?> read(String datetimeString, String rootFolder) async {
+  static Future<Entry?> read(
+    String datetimeString,
+    String rootFolder,
+    Saf saf,
+    SafStream safStream,
+  ) async {
     final datetime = DateTime.tryParse(datetimeString);
     if (datetime == null) return null;
 
     final path = pathFromDatetime(datetime);
-    final content = await readFile(rootFolder.toString(), path);
+    final content = await readFile(rootFolder.toString(), path, saf, safStream);
     if (content == null) return null;
 
     return Entry.fromContent(content, datetime);
