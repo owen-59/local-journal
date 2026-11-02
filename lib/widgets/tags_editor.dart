@@ -47,25 +47,24 @@ class _TagsEditorState extends ConsumerState<TagsEditor> {
               child: switch (allTags) {
                 AsyncData(:final value) => StatefulBuilder(
                   builder: (context, setState) {
-                    final filteredTags =
-                        <String>{
-                          ...value.where(
-                            (tag) =>
-                                searchInput.trim().isEmpty ||
-                                tag.toLowerCase().contains(
-                                  searchInput.toLowerCase(),
-                                ),
-                          ),
-                          ...tags,
-                        }.toList().sorted((a, b) {
-                          final aMatchs = tags.contains(a);
-                          final bMatchs = tags.contains(b);
-
-                          if (aMatchs && !bMatchs) return -1;
-                          if (bMatchs && !aMatchs) return 1;
-                          return 0;
-                        });
-
+                    final allTags = [
+                      ...tags.map((tag) {
+                        final matchingExistingTag = value.firstWhereOrNull(
+                          (tagEntry) => tagEntry.name == tag,
+                        );
+                        if (matchingExistingTag == null) {
+                          return TagEntry(name: tag, frequency: 1);
+                        }
+                        return TagEntry(
+                          name: tag,
+                          frequency: matchingExistingTag.frequency + 1,
+                        );
+                      }),
+                      ...value
+                          .map((tag) => tags.contains(tag.name) ? null : tag)
+                          .nonNulls
+                          .sorted((a, b) => b.frequency.compareTo(a.frequency)),
+                    ];
                     return ConstrainedBox(
                       constraints: BoxConstraints(maxHeight: 500),
                       child: Column(
@@ -90,7 +89,7 @@ class _TagsEditorState extends ConsumerState<TagsEditor> {
                           ConstrainedBox(
                             constraints: const BoxConstraints(maxHeight: 250),
                             child: ListView.builder(
-                              itemCount: filteredTags.length + 1,
+                              itemCount: allTags.length + 1,
                               itemBuilder: (context, index) => index == 0
                                   ? (searchInput.trim().isNotEmpty &&
                                             !tags
@@ -115,12 +114,15 @@ class _TagsEditorState extends ConsumerState<TagsEditor> {
                                   : ListTile(
                                       leading: Checkbox(
                                         onChanged: (checked) =>
-                                            toggleTag(filteredTags[index - 1]),
+                                            toggleTag(allTags[index - 1].name),
                                         value: tags.contains(
-                                          filteredTags[index - 1],
+                                          allTags[index - 1].name,
                                         ),
                                       ),
-                                      title: Text(filteredTags[index - 1]),
+                                      title: Text(allTags[index - 1].name),
+                                      trailing: Text(
+                                        allTags[index - 1].frequency.toString(),
+                                      ),
                                     ),
                             ),
                           ),
