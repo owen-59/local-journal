@@ -24,7 +24,7 @@ class ImageNotifier extends _$ImageNotifier {
   ) async {
     final rootFolder = ref.watch(folderUriProvider).toString();
     final imagePath = getImagePath(dt, name);
-    
+
     if (quality != QualityLevel.full) {
       final cachedBytes = await loadCache();
       if (cachedBytes != null) return cachedBytes;
@@ -61,7 +61,7 @@ class ImageNotifier extends _$ImageNotifier {
   Future<Uint8List?> loadOriginal() async {
     final rootFolder = ref.watch(folderUriProvider).toString();
     final imagePath = getImagePath(dt, name);
-    
+
     final bytes = await readFileBytes(rootFolder, imagePath);
     if (bytes == null || quality == QualityLevel.full) return bytes;
 
