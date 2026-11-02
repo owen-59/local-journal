@@ -24,7 +24,7 @@ class CacheImagePayload {
   });
 }
 
-class CacheImageTask extends IsolateTask<CacheImagePayload, File?> {
+class CacheImageTask extends IsolateTask<CacheImagePayload, Uint8List?> {
   final CacheImagePayload data;
   CacheImageTask(this.data);
 
@@ -38,7 +38,7 @@ class CacheImageTask extends IsolateTask<CacheImagePayload, File?> {
   int get priority => TaskPriority.low;
 
   @override
-  Future<File?> execute({
+  Future<Uint8List?> execute({
     void Function(TaskProgress)? sendProgress,
     CancellationToken? cancellationToken,
   }) async {
@@ -68,7 +68,8 @@ class CacheImageTask extends IsolateTask<CacheImagePayload, File?> {
           ),
       };
       await cacheFile.create(recursive: true);
-      return await cacheFile.writeAsBytes(bytes);
+      await cacheFile.writeAsBytes(bytes);
+      return bytes;
     } catch (err, stacktrace) {
       logger.e("Error when caching an image: $err", stackTrace: stacktrace);
       return null;

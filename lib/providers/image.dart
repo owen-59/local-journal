@@ -15,37 +15,80 @@ part "image.g.dart";
 enum QualityLevel { full, thumbnailSmall, thumbnailLarge }
 
 @riverpod
-Future<Uint8List?> image(
-  Ref ref,
-  DateTime dt,
-  String name,
-  QualityLevel quality,
-) async {
-  final rootFolder = ref.watch(folderUriProvider).toString();
-  final imagePath = getImagePath(dt, name);
+class ImageNotifier extends _$ImageNotifier {
+  @override
+  Future<Uint8List?> build(
+    DateTime dt,
+    String name,
+    QualityLevel quality,
+  ) async {
+    final rootFolder = ref.watch(folderUriProvider).toString();
+    final imagePath = getImagePath(dt, name);
+    
+    if (quality != QualityLevel.full) {
+      final cachedBytes = await loadCache();
+      if (cachedBytes != null) return cachedBytes;
+    }
 
-  final cacheFileName = "$dt-$name-$quality.jpg";
-  final cacheDirectory = await getApplicationCacheDirectory();
-  final cacheFile = File(
-    path.join(cacheDirectory.path, "images", cacheFileName),
-  );
+    final bytes = await readFileBytes(rootFolder, imagePath);
+    if (bytes == null) return null;
 
-  try {
-    final bytes = await cacheFile.readAsBytes();
-    logger.i("Read cache for $cacheFile");
+    () async {
+      final keepAliveLink = ref.keepAlive();
+      try {
+        await ref
+            .read(workerManagerProvider)
+            .runCacheImageTask(
+              CacheImagePayload(
+                name: name,
+                entryDt: dt,
+                bytes: bytes,
+                quality: quality,
+                token: RootIsolateToken.instance!,
+              ),
+            );
+        ref.invalidateSelf();
+      } catch (err) {
+        logger.e("Error when updating image cache from image provider: $err");
+      } finally {
+        keepAliveLink.close();
+      }
+    }();
+
     return bytes;
-  } on PathNotFoundException catch (_) {
-  } catch (err) {
-    logger.e("Error when reading cached file at $cacheFile: $err");
   }
 
-  final bytes = await readFileBytes(rootFolder, imagePath);
-  if (bytes == null) return null;
+  Future<Uint8List?> loadOriginal() async {
+    final rootFolder = ref.watch(folderUriProvider).toString();
+    final imagePath = getImagePath(dt, name);
+    
+    final bytes = await readFileBytes(rootFolder, imagePath);
+    if (bytes == null || quality == QualityLevel.full) return bytes;
 
-  () async {
+    createCache(bytes);
+    return bytes;
+  }
+
+  Future<Uint8List?> loadCache() async {
+    final cacheFileName = "$dt-$name-$quality.jpg";
+    final cacheDirectory = await getApplicationCacheDirectory();
+    final cacheFile = File(
+      path.join(cacheDirectory.path, "images", cacheFileName),
+    );
+
+    try {
+      return await cacheFile.readAsBytes();
+    } on PathNotFoundException catch (_) {
+    } catch (err) {
+      logger.e("Error when reading cached file at $cacheFile: $err");
+    }
+    return null;
+  }
+
+  Future<void> createCache(Uint8List bytes) async {
     final keepAliveLink = ref.keepAlive();
     try {
-      await ref
+      final compressedBytes = await ref
           .read(workerManagerProvider)
           .runCacheImageTask(
             CacheImagePayload(
@@ -56,13 +99,13 @@ Future<Uint8List?> image(
               token: RootIsolateToken.instance!,
             ),
           );
-      ref.invalidateSelf();
+      if (compressedBytes != null) {
+        state = AsyncData(compressedBytes);
+      }
     } catch (err) {
       logger.e("Error when updating image cache from image provider: $err");
     } finally {
       keepAliveLink.close();
     }
-  }();
-
-  return bytes;
+  }
 }
