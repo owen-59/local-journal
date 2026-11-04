@@ -22,41 +22,12 @@ class ImageNotifier extends _$ImageNotifier {
     String name,
     QualityLevel quality,
   ) async {
-    final rootFolder = ref.watch(folderUriProvider).toString();
-    final saf = ref.watch(safProvider);
-    final safStream = ref.watch(safStreamProvider);
-    final imagePath = getImagePath(dt, name);
-
     if (quality != QualityLevel.full) {
       final cachedBytes = await loadCache();
       if (cachedBytes != null) return cachedBytes;
     }
 
-    final bytes = await readFileBytes(rootFolder, imagePath, saf, safStream);
-    if (bytes == null) return null;
-
-    () async {
-      final keepAliveLink = ref.keepAlive();
-      try {
-        await ref
-            .read(workerManagerProvider)
-            .runCacheImageTask(
-              CacheImagePayload(
-                name: name,
-                entryDt: dt,
-                bytes: bytes,
-                quality: quality,
-                token: RootIsolateToken.instance!,
-              ),
-            );
-        ref.invalidateSelf();
-      } catch (err) {
-        logger.e("Error when updating image cache from image provider: $err");
-      } finally {
-        keepAliveLink.close();
-      }
-    }();
-
+    final bytes = await loadOriginal();
     return bytes;
   }
 
@@ -68,7 +39,7 @@ class ImageNotifier extends _$ImageNotifier {
 
     final bytes = await readFileBytes(rootFolder, imagePath, saf, safStream);
     if (bytes == null || quality == QualityLevel.full) return bytes;
-
+    
     createCache(bytes);
     return bytes;
   }
@@ -90,26 +61,30 @@ class ImageNotifier extends _$ImageNotifier {
   }
 
   Future<void> createCache(Uint8List bytes) async {
-    final keepAliveLink = ref.keepAlive();
-    try {
-      final compressedBytes = await ref
-          .read(workerManagerProvider)
-          .runCacheImageTask(
-            CacheImagePayload(
-              name: name,
-              entryDt: dt,
-              bytes: bytes,
-              quality: quality,
-              token: RootIsolateToken.instance!,
-            ),
-          );
-      if (compressedBytes != null) {
-        state = AsyncData(compressedBytes);
+    if (quality != QualityLevel.full) {
+      final keepAliveLink = ref.keepAlive();
+      try {
+        final compressedBytes = await ref
+            .read(workerManagerProvider)
+            .runCacheImageTask(
+              CacheImagePayload(
+                name: name,
+                entryDt: dt,
+                bytes: bytes,
+                quality: quality,
+                token: RootIsolateToken.instance!,
+              ),
+            );
+        if (compressedBytes != null) {
+          state = AsyncData(compressedBytes);
+        }
+      } catch (err) {
+        logger.e("Error when updating image cache from image provider: $err");
+      } finally {
+        keepAliveLink.close();
       }
-    } catch (err) {
-      logger.e("Error when updating image cache from image provider: $err");
-    } finally {
-      keepAliveLink.close();
+    } else {
+      logger.w("Tried to create cache of $dt/$name, but quality was full quality.");
     }
   }
 }
