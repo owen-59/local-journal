@@ -47,24 +47,40 @@ class _TagsEditorState extends ConsumerState<TagsEditor> {
               child: switch (allTags) {
                 AsyncData(:final value) => StatefulBuilder(
                   builder: (context, setState) {
-                    final allTags = [
-                      ...tags.map((tag) {
-                        final matchingExistingTag = value.firstWhereOrNull(
-                          (tagEntry) => tagEntry.name == tag,
-                        );
-                        if (matchingExistingTag == null) {
-                          return TagEntry(name: tag, frequency: 1);
-                        }
-                        return TagEntry(
-                          name: tag,
-                          frequency: matchingExistingTag.frequency + 1,
-                        );
-                      }),
-                      ...value
-                          .map((tag) => tags.contains(tag.name) ? null : tag)
-                          .nonNulls
-                          .sorted((a, b) => b.frequency.compareTo(a.frequency)),
-                    ];
+                    final allTags =
+                        [
+                              ...tags.map((tag) {
+                                final matchingExistingTag = value
+                                    .firstWhereOrNull(
+                                      (tagEntry) => tagEntry.name == tag,
+                                    );
+                                if (matchingExistingTag == null) {
+                                  return TagEntry(name: tag, frequency: 1);
+                                }
+                                return TagEntry(
+                                  name: tag,
+                                  frequency: matchingExistingTag.frequency + 1,
+                                );
+                              }),
+                              ...value
+                                  .map(
+                                    (tag) =>
+                                        tags.contains(tag.name) ? null : tag,
+                                  )
+                                  .nonNulls
+                                  .sorted(
+                                    (a, b) =>
+                                        b.frequency.compareTo(a.frequency),
+                                  ),
+                            ]
+                            .where(
+                              (tag) =>
+                                  searchInput.trim().isEmpty ||
+                                  tag.name.toLowerCase().contains(
+                                    searchInput.trim().toLowerCase(),
+                                  ),
+                            )
+                            .toList();
                     return ConstrainedBox(
                       constraints: BoxConstraints(maxHeight: 500),
                       child: Column(
