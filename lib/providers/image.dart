@@ -39,7 +39,7 @@ class ImageNotifier extends _$ImageNotifier {
 
     final bytes = await readFileBytes(rootFolder, imagePath, saf, safStream);
     if (bytes == null || quality == QualityLevel.full) return bytes;
-    
+
     createCache(bytes);
     return bytes;
   }
@@ -84,7 +84,9 @@ class ImageNotifier extends _$ImageNotifier {
         keepAliveLink.close();
       }
     } else {
-      logger.w("Tried to create cache of $dt/$name, but quality was full quality.");
+      logger.w(
+        "Tried to create cache of $dt/$name, but quality was full quality.",
+      );
     }
   }
 }
