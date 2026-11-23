@@ -1,4 +1,7 @@
 # Journal App
+> [!WARNING]
+> This repository is archived because development has been merged into [owen-59/journal](https://github.com/owen-59/journal).
+
 A journal app like some certain more premium paid options, but without any AI features, payment, or servers. It works on Android by storing your markdown files where you want them, and storing them with front-matter (mostly) compatible with Obsidian. It is coded in Flutter, but it does not currently have iOS support (and probably won't ever).
 
 ## Features
